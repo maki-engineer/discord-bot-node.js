@@ -2,3 +2,6 @@
 discord-token.json
 node_modules
 package-lock.json
+birthdays.js
+function.js
+test.js
