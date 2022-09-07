@@ -132,11 +132,7 @@ client.on("ready", function() {
         // 誕生日が1人いた時と複数人いた時
         if(today_birthday.length === 1){
   
-          setTimeout(function(){
-  
-            client.channels.cache.get(chat_place).send("本日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
-  
-          }, 4_000);  // 4秒後
+          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
   
         }else if(today_birthday.length > 1){
   
@@ -145,7 +141,7 @@ client.on("ready", function() {
               clearInterval(birthday_timer);
             }else if(today_birthday_people === 0){
   
-              client.channels.cache.get(chat_place).send("本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+              client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
   
               today_birthday_people++;
   
@@ -162,27 +158,27 @@ client.on("ready", function() {
       }else if((today_hour === 12) && (today_min === 0)){
         if((today_month === side_m.month) && (today_date === side_m.date)){
   
-          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター SideM』**は**" + today_year - side_m.year + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター SideM』**は**" + Number(today_year - side_m.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
   
         }else if((today_month === shiny_colors.month) && (today_date === shiny_colors.date)){
   
-          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター シャイニーカラーズ』**は**" + today_year - shiny_colors.year + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター シャイニーカラーズ』**は**" + Number(today_year - shiny_colors.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
   
         }else if((today_month === million_live_theater_days.month) && (today_date === million_live_theater_days.date)){
   
-          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター ミリオンライブ！ シアターデイズ』**は**" + today_year - million_live_theater_days.year + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター ミリオンライブ！ シアターデイズ』**は**" + Number(today_year - million_live_theater_days.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
   
         }else if((today_month === idol_master.month) && (today_date === idol_master.date)){
   
-          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター』**は**" + today_year - idol_master.year + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター』**は**" + Number(today_year - idol_master.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
   
         }else if((today_month === cinderella_girls.month) && (today_date === cinderella_girls.date)){
   
-          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター シンデレラガールズ スターライトステージ』**は**" + today_year - idol_master.year + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター シンデレラガールズ スターライトステージ』**は**" + Number(today_year - idol_master.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
   
         }else if((today_month === server_for_235.month) && (today_date === server_for_235.date)){
   
-          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**235プロダクション**が設立されて**" + today_year - idol_master.year + "年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪");
+          client.channels.cache.get(chat_place).send("本日" + today_month + "月" + today_date + "日で**235プロダクション**が設立されて**" + Number(today_year - idol_master.year) + "年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪");
   
         }
       }
