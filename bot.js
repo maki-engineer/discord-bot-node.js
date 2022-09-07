@@ -60,11 +60,11 @@ client.on("messageCreate", function(message) {
 
             db.run("alter table APmusics add column " + message.author.username + "_flg default 0");
 
-            message.reply("今回" + message.author.username + "さんは初めてapコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、どんどんAPすることが出来た曲を登録していきましょう！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーして登録するか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、登録することが出来ません。）**\n**※登録したい曲はいくつも登録することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\nAPすることが出来た曲を登録するコマンド → **235ap DIAMOND 夢にかけるRainbow**");
+            message.reply("今回" + message.author.username + "さんは初めてapコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、どんどんAPすることが出来た曲を登録していきましょう！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、登録することが出来ません。）**\n**※登録したい曲はいくつも指定することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\nAPすることが出来た曲を登録するコマンド → **235ap DIAMOND 夢にかけるRainbow**");
 
           }else{
 
-            message.reply(message.author.username + "さんは既にAP曲データが登録されています！ APすることが出来た曲を登録したい場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーして登録するか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、登録することが出来ません。）**\n**※登録したい曲はいくつも登録することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\n**235ap DIAMOND 夢にかけるRainbow**");
+            message.reply(message.author.username + "さんは既にAP曲データが登録されています！ APすることが出来た曲を登録したい場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、登録することが出来ません。）**\n**※登録したい曲はいくつも指定することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\n**235ap DIAMOND 夢にかけるRainbow**");
 
           }
         });
@@ -118,7 +118,7 @@ client.on("messageCreate", function(message) {
           // まだ1曲もAPしてないかどうか
           if(rows.length === 0){
 
-            message.reply(message.author.username + "さんはまだ今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーして登録するか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、登録することが出来ません。）**\n**※登録したい曲はいくつも登録することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\n**235ap DIAMOND 夢にかけるRainbow**");
+            message.reply(message.author.username + "さんはまだ今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、登録することが出来ません。）**\n**※登録したい曲はいくつも指定することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\n**235ap DIAMOND 夢にかけるRainbow**");
 
           }else{
 
@@ -137,7 +137,41 @@ client.on("messageCreate", function(message) {
     // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
     }else if(command === "apsearch"){
 
-      //
+      if(data.length === 0){
+
+        message.reply("曲名が入力されていません！　曲名を入力してください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーして入力するか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、見つけることが出来ません。）**\n**※APすることが出来ているか知りたい曲はいくつも指定することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\n**235apsearch DIAMOND 夢にかけるRainbow**");
+
+      }else{
+
+        let text = "";
+
+        db.run("", (err, rows) => {
+          if(err){
+
+            text += "まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！";
+
+          }else{
+
+            for(let music of data){
+              db.all("select name " + message.author.username + "_flg from APmusics where name = ?", music, (err, rows) => {
+                if(rows.length === 0){
+                  text += "**" + music + "：曲名を見つけることが出来ませんでした。**\n";
+                }else{
+                  if(rows[0][message.author.username + "_flg"] === 1){
+                    text += "**" + music + "：AP出来てます！**\n";
+                  }else{
+                    text += music + "：AP出来ていません！\n";
+                  }
+                }
+              });
+            }
+
+          }
+        });
+
+        message.reply(text);
+
+      }
 
     // helpコマンド 235botの機能一覧を教える。
     }else if(command === "help"){
