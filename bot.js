@@ -145,10 +145,12 @@ client.on("messageCreate", function(message) {
 
         let text = "";
 
-        db.run("", (err, rows) => {
+        db.all("select " + message.author.username + "_flg from APmusics", (err, rows) => {
           if(err){
 
             text += "まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！";
+
+            message.reply(text);
 
           }else{
 
@@ -166,10 +168,10 @@ client.on("messageCreate", function(message) {
               });
             }
 
+            message.reply(text);
+
           }
         });
-
-        message.reply(text);
 
       }
 
