@@ -11,6 +11,7 @@ const def      = require("./function");
 const { Client, GatewayIntentBits, TextChannel } = require("discord.js");
 const token                         = require("./discord-token.json");
 const { IncomingMessage } = require("http");
+const { devNull } = require("os");
 const client                        = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -48,14 +49,60 @@ client.on("messageCreate", function(message) {
     const data    = msg.split(" ");                        // コマンド以外の文字があったらそれを配列で取得
     const command = data.shift().toLowerCase();            // コマンド内容を小文字で取得
 
-    // apコマンド処理
+    // apコマンド このコマンドを初めて使った人のAP曲データ登録、APした曲をデータに登録する。
     if(command === "ap"){
-      // apコマンドのみの場合apしてきた曲を一覧表示、曲名が含まれてたらその曲がapされてるか返す。
+      // apコマンドのみの場合 初めて使った人ならAP曲データ登録、2度目以降なら曲名入れてね警告する。
       if(data.length === 0){
-        message.reply("AP曲数：13\nAP曲一覧\n『真夏のダイヤ』\n");
+
+        db.all("select " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 1", (err, rows) => {
+          // コマンドを打ってきた人がまだカラムを登録してなかったらカラムを登録してから処理を開始
+          if(err){
+
+            db.run("alter table APmusics add column " + message.author.username + "_flg default 0");
+
+            message.reply("今回" + message.author.username + "さんは初めてapコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、どんどんAPすることが出来た曲を登録していきましょう！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーして登録するか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、エラーが発生します。）**\n**※登録したい曲はいくつも登録することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\nAPすることが出来た曲を登録するコマンド → **235ap DIAMOND 夢にかけるRainbow**");
+
+          }else{
+
+            message.reply(message.author.username + "さんは既にAP曲データが登録されています！ APすることが出来た曲を登録したい場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーして登録するか、もしくは直接フルで入力してください！（フルで入力することが出来ていない場合、エラーが発生します。）**\n**※登録したい曲はいくつも登録することが出来ます！ （半角スペースで区切るのを忘れずに！！）**\n\n**235ap DIAMOND 夢にかけるRainbow**");
+
+          }
+        });
+
       }else{
-        message.reply("はAP済みです！");
+
+        db.all("select " + message.author.username + "_flg" + " from APmusics limit 1", (err, rows) => {
+          // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+          if(err){
+
+            message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+
+          }else{
+
+            let text = "以下の曲を登録しました。\n\n";
+
+            for(let music of data){
+              db.run("update APmusics set " + message.author.username + "_flg = 1 where name = ?", music);
+              text += music + "\n";
+            }
+
+            text += "\nAPおめでとうございます♪";
+
+            message.reply(text);
+          }
+        });
+
       }
+
+    // apallコマンド 今までAPしてきた曲一覧を教える。
+    }else if(command === "apall"){
+
+      //
+
+    // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
+    }else if(command === "apsearch"){
+
+      //
 
     // helpコマンド 235botの機能一覧を教える。
     }else if(command === "help"){
