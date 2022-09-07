@@ -8,11 +8,11 @@ const db      = new sqlite3.Database("235data.db");
 const birthday = require("./birthdays");
 const def      = require("./function");
 
-const { Client, GatewayIntentBits, TextChannel } = require("discord.js");
-const token                         = require("./discord-token.json");
-const { IncomingMessage } = require("http");
-const { devNull } = require("os");
-const client                        = new Client({
+const { Client, GatewayIntentBits, TextChannel, MessageType } = require("discord.js");
+const token                                      = require("./discord-token.json");
+const { IncomingMessage }                        = require("http");
+const { devNull }                                = require("os");
+const client                                     = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
@@ -187,28 +187,56 @@ client.on("messageCreate", function(message) {
       if((data.length < 3) || (data.length > 3)){
         message.reply("birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n**※半角スペースで区切るのを忘れずに！！**\n\n(例) 235birthday 8 15 21");
       }else{
-        // 半角かつint型に変換
-        let month = Number(def.hankakuToZenkaku(data[0]));
 
-        const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+        let int_check = true;
 
-        // 指定された日の曜日を取得
-        let now      = new Date();
-        let year     = now.getFullYear();
-        let eventDay = new Date(year, month - 1, Number(data[1]));
-        let dayIndex = eventDay.getDay();
-
-        let text = "@everyone\n日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n";
-
-        for(let member of birthday.data){
-          if(member.month === month){
-            text += "**" + member.date + "日..." + member.name + "さん**\n";
+        for(let check of data){
+          if(!Number.isInteger(Number(check))){
+            int_check = false;
           }
         }
 
-        text += "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)";
+        if(!int_check){
+          message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字**で入力してください！");
+        }else{
+          if((Number(data[0]) >= 1) && (Number(data[0]) <= 12)){
+            let last_date_check = new Date();
+            let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
+            let last_date       = last_date_month.getDate();                                // 今月末日
+            if((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)){
+              if((Number(data[2]) >= 0) && (Number(data[2]) <= 23)){
+                const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+        
+                // 指定された日の曜日を取得
+                let now      = new Date();
+                let year     = now.getFullYear();
+                let month    = Number(data[0]);
+                let eventDay = new Date(year, month - 1, Number(data[1]));
+                let dayIndex = eventDay.getDay();
+        
+                let text = "@everyone\n日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n";
+        
+                for(let member of birthday.data){
+                  if(member.month === month){
+                    text += "**" + member.date + "日..." + member.name + "さん**\n";
+                  }
+                }
+        
+                text += "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)";
+        
+                message.channel.send(text);
+              }else{
+                message.reply("時間は0～23の間で入力してください！");
+              }
+            }else{
+              message.reply("日は1～" + last_date + "の間で入力してください！");
+            }
+          }else{
+            message.reply("月は1～12の間で入力してください！");
+          }
+        }
 
-        message.channel.send(text);
+
       }
 
     // テスト用 メンバーのみんなにはこのコマンドは教えないようにする。
@@ -221,7 +249,7 @@ client.on("messageCreate", function(message) {
 client.on("ready", function() {
   // それ以外の処理機能
   {
-    const chat_place              = "1016885428911095920";
+    const chat_place                = "791397952090275900";
     const server_for_235            = {year: 2020, month: 12, date: 26};
     const cinderella_girls          = {year: 2015, month: 9, date: 3};
     const shiny_colors              = {year: 2018, month: 4, date: 24};
@@ -312,5 +340,4 @@ client.on("ready", function() {
 
 client.login(token.BOT_TOKEN);
 
-// 曲の登録とか検索とか曲一覧のテストを試す。
 // 一通り235botが完成して、235プロダクションにお迎え出来た時には chat_space の値をきちんと『雑談場(通話外)』のIDに変えること！
