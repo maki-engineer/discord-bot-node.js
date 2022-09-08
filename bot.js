@@ -35,10 +35,28 @@ const client                                     = new Client({
 });
 
 const prefix = "235";
+const emojis = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
 
 client.on("messageCreate", function(message) {
   // コマンドに対する処理機能
   {
+
+    // イベント企画の文章作成機能でアクションを付ける必要がある235botのメッセージだけは反応する
+    db.all("select * from emojis", (err, rows) => {
+      if(err){
+        console.log(err);
+      }else{
+        if(rows.length === 1){
+          for(let i = 0; i < rows[0].count; i++){
+            message.react(emojis[i]);
+          }
+
+          // emojisテーブル初期化
+          db.run("delete from emojis");
+        }
+      }
+    });
+
     // botからのメッセージは無視
     if(message.author.bot) return;
 
@@ -89,8 +107,12 @@ client.on("messageCreate", function(message) {
                   if(rows.length === 0){
                     message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
                   }else{
-                    db.run("update APmusics set " + message.author.username + "_flg = 1 where name = ?", music);
-                    message.reply("登録成功：" + music);
+                    if(rows[0][message.author.username + "_flg"] === 1){
+                      message.reply("この曲は既に登録されています！");
+                    }else{
+                      db.run("update APmusics set " + message.author.username + "_flg = 1 where name = ?", music);
+                      message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
+                    }
                   }
                 }
               });
