@@ -105,9 +105,7 @@ client.on("messageCreate", function(message) {
     // apallコマンド 今までAPしてきた曲一覧を教える。
     }else if(command === "apall"){
 
-      if(data.length > 0){
-        message.reply("apallコマンドはこれまでAPしてきた曲を一覧で表示するコマンドです。\n\nAPすることが出来た曲を登録したい場合は **235ap DIAMOND**\nAPすることが出来ているか調べたい場合は **235apsearch DIAMOND**\n\nコマンドを使用してください。");
-      }else{
+      if(data.length === 0){
         db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 1", (err, rows) => {
           // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
           if(err){
@@ -134,6 +132,119 @@ client.on("messageCreate", function(message) {
             }
           }
         });
+      }else if((data.length >= 1) && (data.length <= 3)){
+
+        // タイプ以外の文字が入力されてたら警告
+        let check = false;
+
+        for(let type of data){
+          if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], type)){
+            check = true;
+          }
+        }
+
+        if(check){
+
+          message.reply("入力された文字の中にタイプ以外の文字が含まれているか、タイプ名がフルで入力されていないか、大文字から書かれていない可能性があります！\nタイプ名を入力する場合、フル （All、Princess、Fairy、Angel） で入力してください！\n\n**235apall All Fairy**");
+
+        }else{
+          if(def.existsSameValue(data)){
+
+            message.reply("重複された内容が入っています。\nタイプを指定する場合は被りの内容に気をつけてください！");
+
+          }else{
+            if(data.length === 1){
+
+              db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 1 and type = ?", data[0], (err, rows) => {
+                // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+                if(err){
+        
+                  message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+        
+                }else{
+        
+                  // まだ1曲もAPしてないかどうか
+                  if(rows.length === 0){
+        
+                    message.reply(message.author.username + "さんはまだ" + data[0] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）**\n\n**235ap DIAMOND**");
+        
+                  }else{
+        
+                    let text = "AP曲数：" + rows.length + "\n\n";
+        
+                    for(let music of rows){
+                      text += music.name + "\n";
+                    }
+        
+                    message.reply(text);
+        
+                  }
+                }
+              });
+
+            }else if(data.length === 2){
+
+              db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 1 and type in (?, ?)", data[0], data[1], (err, rows) => {
+                // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+                if(err){
+        
+                  message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+        
+                }else{
+        
+                  // まだ1曲もAPしてないかどうか
+                  if(rows.length === 0){
+        
+                    message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）**\n\n**235ap DIAMOND**");
+        
+                  }else{
+        
+                    let text = "AP曲数：" + rows.length + "\n\n";
+        
+                    for(let music of rows){
+                      text += music.name + "\n";
+                    }
+        
+                    message.reply(text);
+        
+                  }
+                }
+              });
+
+            }else{
+
+              db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 1 and type in (?, ?, ?)", data[0], data[1], data[2], (err, rows) => {
+                // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+                if(err){
+        
+                  message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+        
+                }else{
+        
+                  // まだ1曲もAPしてないかどうか
+                  if(rows.length === 0){
+        
+                    message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "，" + data[2] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、下記のようにコマンドを使ってください！\n**※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）**\n\n**235ap DIAMOND**");
+        
+                  }else{
+        
+                    let text = "AP曲数：" + rows.length + "\n\n";
+        
+                    for(let music of rows){
+                      text += music.name + "\n";
+                    }
+        
+                    message.reply(text);
+        
+                  }
+                }
+              });
+
+            }
+          }
+        }
+      }else{
+        message.reply("入力された内容が多すぎます！ 入力できる数は最大**3つまで**です！\n\n**235apall Angel Fairy Princess**");
       }
 
     // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
@@ -179,7 +290,7 @@ client.on("messageCreate", function(message) {
 
     // helpコマンド 235botの機能一覧を教える。
     }else if(command === "help"){
-      message.reply("");
+      message.reply("help");
 
     // birthdayコマンド 毎月の誕生日祝い企画文章を作成
     }else if(command === "birthday"){
