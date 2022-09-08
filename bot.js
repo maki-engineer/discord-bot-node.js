@@ -121,11 +121,7 @@ client.on("messageCreate", function(message) {
   
             }else{
   
-              let text = "AP曲数：" + rows.length + "\n\n";
-  
-              for(let music of rows){
-                text += music.name + "\n";
-              }
+              let text = "AP曲数：" + rows.length;
   
               message.reply(text);
   
@@ -170,11 +166,7 @@ client.on("messageCreate", function(message) {
         
                   }else{
         
-                    let text = "AP曲数：" + rows.length + "\n\n";
-        
-                    for(let music of rows){
-                      text += music.name + "\n";
-                    }
+                    let text = "AP曲数：" + rows.length;
         
                     message.reply(text);
         
@@ -199,11 +191,7 @@ client.on("messageCreate", function(message) {
         
                   }else{
         
-                    let text = "AP曲数：" + rows.length + "\n\n";
-        
-                    for(let music of rows){
-                      text += music.name + "\n";
-                    }
+                    let text = "AP曲数：" + rows.length;
         
                     message.reply(text);
         
@@ -228,11 +216,7 @@ client.on("messageCreate", function(message) {
         
                   }else{
         
-                    let text = "AP曲数：" + rows.length + "\n\n";
-        
-                    for(let music of rows){
-                      text += music.name + "\n";
-                    }
+                    let text = "AP曲数：" + rows.length;
         
                     message.reply(text);
         
@@ -245,6 +229,135 @@ client.on("messageCreate", function(message) {
         }
       }else{
         message.reply("入力された内容が多すぎます！ 入力できる数は最大**3つまで**です！\n\n**235apall Angel Fairy Princess**");
+      }
+
+    // notapコマンド まだAPしてない曲一覧を教える。
+    }else if(command === "notap"){
+
+      if(data.length === 0){
+        db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 0", (err, rows) => {
+          // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+          if(err){
+  
+            message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+  
+          }else{
+  
+            // まだ1曲もAPしてないかどうか
+            if(rows.length === 0){
+  
+              message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
+  
+            }else{
+  
+              let text = "AP未達成数：" + rows.length;
+  
+              message.reply(text);
+  
+            }
+          }
+        });
+      }else if((data.length >= 1) && (data.length <= 3)){
+
+        // タイプ以外の文字が入力されてたら警告
+        let check = false;
+
+        for(let type of data){
+          if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], type)){
+            check = true;
+          }
+        }
+
+        if(check){
+
+          message.reply("入力された文字の中にタイプ以外の文字が含まれているか、タイプ名がフルで入力されていないか、大文字から書かれていない可能性があります！\nタイプ名を入力する場合、フル （All、Princess、Fairy、Angel） で入力してください！\n\n**235apall All Fairy**");
+
+        }else{
+          if(def.existsSameValue(data)){
+
+            message.reply("重複された内容が入っています。\nタイプを指定する場合は被りの内容に気をつけてください！");
+
+          }else{
+            if(data.length === 1){
+
+              db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 0 and type = ?", data[0], (err, rows) => {
+                // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+                if(err){
+        
+                  message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+        
+                }else{
+        
+                  // まだ1曲もAPしてないかどうか
+                  if(rows.length === 0){
+        
+                    message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
+        
+                  }else{
+        
+                    let text = "AP未達成数：" + rows.length;
+        
+                    message.reply(text);
+        
+                  }
+                }
+              });
+
+            }else if(data.length === 2){
+
+              db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 0 and type in (?, ?)", data[0], data[1], (err, rows) => {
+                // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+                if(err){
+        
+                  message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+        
+                }else{
+        
+                  // まだ1曲もAPしてないかどうか
+                  if(rows.length === 0){
+        
+                    message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
+        
+                  }else{
+        
+                    let text = "AP未達成数：" + rows.length;
+        
+                    message.reply(text);
+        
+                  }
+                }
+              });
+
+            }else{
+
+              db.all("select name, " + message.author.username + "_flg" + " from APmusics where " + message.author.username + "_flg = 0 and type in (?, ?, ?)", data[0], data[1], data[2], (err, rows) => {
+                // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+                if(err){
+        
+                  message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは　**235ap**　コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+        
+                }else{
+        
+                  // まだ1曲もAPしてないかどうか
+                  if(rows.length === 0){
+        
+                    message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
+        
+                  }else{
+        
+                    let text = "AP未達成数：" + rows.length;
+
+                    message.reply(text);
+
+                  }
+                }
+              });
+
+            }
+          }
+        }
+      }else{
+        message.reply("入力された内容が多すぎます！ 入力できる数は最大**3つまで**です！\n\n**235notap Angel Fairy Princess**");
       }
 
     // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
