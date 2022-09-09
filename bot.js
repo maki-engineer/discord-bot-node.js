@@ -223,7 +223,7 @@ client.on("messageCreate", function(message) {
 
             db.run("alter table APmusics add column " + names + "_flg default 0");
 
-            message.reply("今回" + message.author.username + "さんは初めてapコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、235ap DIAMOND のようにコマンドを使って、どんどんAPすることが出来た曲を登録していきましょう！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+            message.reply("今回" + message.author.username + "さんは初めて235apコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、235ap DIAMOND のようにコマンドを使って、どんどんAPすることが出来た曲を登録していきましょう！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
             setTimeout(function(){message.delete();}, 500);
 
           }else{
@@ -669,7 +669,7 @@ client.on("messageCreate", function(message) {
     }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
       if((data.length < 3) || (data.length > 3)){
 
-        message.reply("birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
+        message.reply("235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
         setTimeout(function(){message.delete();}, 500);
 
       }else{
@@ -684,7 +684,7 @@ client.on("messageCreate", function(message) {
 
         if(!int_check){
 
-          message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字**で入力してください！");
+          message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！");
           setTimeout(function(){message.delete();}, 500);
 
         }else{
@@ -692,6 +692,7 @@ client.on("messageCreate", function(message) {
             let last_date_check = new Date();
             let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
             let last_date       = last_date_month.getDate();                                // 今月末日
+
             if((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)){
               if((Number(data[2]) >= 0) && (Number(data[2]) <= 23)){
                 const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
@@ -734,7 +735,99 @@ client.on("messageCreate", function(message) {
       }
 
     }else if(command === "mendate"){   // mendateコマンド 男子会の日程を決めるためのコマンド
-      //
+      if(data.length === 0){
+        
+        message.reply("235mendateコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**1～10個まで**です！\n\n235mendate 8 12 15 21");
+        setTimeout(function(){message.delete();}, 500);
+
+      }else if(data.length > 10){
+        
+        message.reply("235mendateコマンドで入力することができる日程の数は**1～10個まで**です！");
+        setTimeout(function(){message.delete();}, 500);
+
+      }else{
+        
+        let int_check = true;
+
+        for(let check of data){
+          if(!Number.isInteger(Number(check))){
+            int_check = false;
+          }
+        }
+
+        if(!int_check){
+
+          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
+          setTimeout(function(){message.delete();}, 500);
+
+        }else{
+          
+          if(def.existsSameValue(data)){
+
+            message.reply("同じ日程が入力されています！\n日程を入力するときは同じ日程を入力しないように気をつけてください！");
+            setTimeout(function(){message.delete();}, 500);
+
+          }else{
+
+            let date_check      = true;
+            let last_date_check = new Date();
+            let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
+            let last_date       = last_date_month.getDate();                                                   // 今月末日
+
+            for(let date of data){
+              if((Number(date) < 1) || (Number(date) > last_date)){
+                date_check = false;
+              }
+            }
+
+            if(!date_check){
+
+              message.reply("日は1～" + last_date + "の間で入力してください！");
+              setTimeout(function(){message.delete();}, 500);
+
+            }else{
+
+              const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+        
+              // 指定された日の曜日を取得
+              let now      = new Date();
+              let year     = now.getFullYear();
+              let month    = now.getMonth() + 1;
+              let eventDays = [];
+              let dayIndexs = [];
+
+              // let eventDays = new Date(year, month - 1, data[1]);
+              // let dayIndexs = eventDay.getDay();
+
+              for(let i = 0; i < data.length; i++){
+                data[i] = Number(data[i]);
+                eventDays.push(new Date(year, month - 1, data[i]));
+                dayIndexs.push(eventDays[i].getDay());
+              }
+
+              // 昇順にする
+              data.sort(def.compareFunc);
+
+              let text = "@everyone\nふみこ男子の皆様方～～～～～～～～～～～！" + month + "月期の235士官学校開校日を決めたいと思いますわ～～～～～！！！日程なんですけど、\n\n";
+
+              // 日程一覧
+              for(let i = 0; i < data.length; i++){
+                text += "**" + month + "月" + data[i] + "日 （" + dayArray[dayIndexs[i]] + "）… " + emojis[i] + "**\n";
+              }
+
+              text += "\n誠に勝手ながらこのいずれかの日程でやろうと思いますので、スタンプで反応を頂けると嬉しいです～～～～ふみこ男子の皆様方！よろしくおねがいしますわね！！！！！！！！！ﾍｹｯ!!!!!!!!";
+
+              message.channel.send(text);
+              db.run("insert into emojis(count) values(?)", data.length);
+              setTimeout(function(){message.delete();}, 500);
+
+            }
+
+          }
+
+        }
+
+      }
 
     }else if(command === "men"){       // menコマンド 男子会の企画文章を作成
       //
@@ -746,7 +839,7 @@ client.on("messageCreate", function(message) {
       //
 
     }else if(command === "test"){      // testコマンド テスト用 メンバーのみんなにはこのコマンドは教えないようにする。
-      message.reply("このコマンドはテスト用のコマンドです。");
+      message.reply("テスト用コマンド");
       setTimeout(function(){message.delete();}, 500);
     }
   }
