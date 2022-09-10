@@ -38,12 +38,6 @@ const prefix                      = "235";
 const emojis                      = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
 const escapes                     = ["!", "∨", "@", "/", "#", "$", "%", "&", "(", ")", "=", "-", "_", "~", "^", "|", "[", "]", "{", "}", "*", "+", "д", "?", "<", ">", ".", ",", ":", ";"];
 
-// サーバー参加時に行う処理
-client.on("guildCreate", function(guild) {
-  // setTimeout(() => client.channels.cache.get(channel_for_235_chat_place).send("初めまして！"), 5_000);
-  setTimeout(() => client.channels.cache.get(channel_for_test_chat_place).send("@everyone\n初めまして！"), 5_000);
-});
-
 // 常時行う処理
 client.on("ready", function() {
   // それ以外の処理機能
