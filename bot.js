@@ -61,8 +61,7 @@ client.on("ready", function() {
     {name: "235birthday", description: "毎月開催されるオンライン飲み会の企画文章を作成したいときに使用するコマンドです。"},
     {name: "235mendate", description: "毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。"},
     {name: "235men", description: "毎月開催される235士官学校🌹の企画文章を作成したいときに使用するコマンドです。"},
-    {name: "235women", description: "毎月開催される聖235女学園🌸の企画文章を作成したいときに使用するコマンドです。"},
-    {name: "235lunch", description: "たま～に開催される昼飲み会の企画文章を作成したいときに使用するコマンドです。"}
+    {name: "235women", description: "毎月開催される聖235女学園🌸の企画文章を作成したいときに使用するコマンドです。"}
   ];
 
   if(client.guilds.cache.get("783686370925084672") !== undefined){
@@ -186,27 +185,22 @@ client.on("interactionCreate", function(interaction) {
 
   }else if(interaction.commandName === "235birthday"){
 
-    interaction.reply("235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n※235women コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235birthday 12 14 21");
+    interaction.reply("235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n※235birthday コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235birthday 12 14 21");
     setTimeout(function(){ interaction.deleteReply() }, 60_000);
 
   }else if(interaction.commandName === "235mendate"){
 
-    interaction.reply("235mendateコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n※235women コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235mendate 12 14 16 17");
+    interaction.reply("235mendateコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n※235mendate コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235mendate 12 14 16 17");
     setTimeout(function(){ interaction.deleteReply() }, 60_000);
 
   }else if(interaction.commandName === "235men"){
 
-    interaction.reply("235menコマンドを使用することで、毎月開催される235士官学校🌹の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n※235women コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235men 23");
+    interaction.reply("235menコマンドを使用することで、毎月開催される235士官学校🌹の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n※235men コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235men 23");
     setTimeout(function(){ interaction.deleteReply() }, 60_000);
 
   }else if(interaction.commandName === "235women"){
 
-    interaction.reply("235womenコマンドを使用することで、毎月開催される聖235女学園🌸の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい曜日を入力してください。なお、曜日を入力しなかった場合は、当日の文章が作成されます。\n※235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**が使用することが出来るコマンドです。\n\n235women 金");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
-
-  }else if(interaction.commandName === "235lunch"){
-
-    interaction.reply("235lunchコマンドを使用することで、たま～に開催される(？)昼飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程、時間の**2つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。なお、時間のみを入力した場合は、当日の文章が作成されます。\n※235lunch コマンドは、いつも昼飲み会を企画してくれている**みらさん**が使用することが出来るコマンドです。\n\n235lunch 23 12");
+    interaction.reply("235womenコマンドを使用することで、毎月開催される聖235女学園🌸の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n※235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**が使用することが出来るコマンドです。\n\n235women 12");
     setTimeout(function(){ interaction.deleteReply() }, 60_000);
 
   }
@@ -265,12 +259,12 @@ client.on("messageCreate", function(message) {
 
           db.run("alter table APmusics add column " + names + "_flg default 0");
 
-          message.reply("今回" + message.author.username + "さんは初めて235apコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、235ap DIAMOND のようにコマンドを使って、どんどんAPすることが出来た曲を登録していきましょう！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+          message.reply("今回" + message.author.username + "さんは初めて235apコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、235ap DIAMOND のようにコマンドを使って、どんどんAPすることが出来た曲を登録していきましょう！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
           setTimeout(function(){message.delete();}, 500);
 
         }else{
 
-          message.reply(message.author.username + "さんは既にAP曲データが登録されています！ APすることが出来た曲を登録したい場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+          message.reply(message.author.username + "さんは既にAP曲データが登録されています！ APすることが出来た曲を登録したい場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
           setTimeout(function(){message.delete();}, 500);
 
         }
@@ -392,7 +386,7 @@ client.on("messageCreate", function(message) {
           // まだ1曲もAPしてないかどうか
           if(rows.length === 0){
 
-            message.reply(message.author.username + "さんはまだ今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+            message.reply(message.author.username + "さんはまだ今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
             setTimeout(function(){message.delete();}, 500);
 
           }else{
@@ -459,7 +453,7 @@ client.on("messageCreate", function(message) {
                 // まだ1曲もAPしてないかどうか
                 if(rows.length === 0){
       
-                  message.reply(message.author.username + "さんはまだ" + data[0] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+                  message.reply(message.author.username + "さんはまだ" + data[0] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
                   setTimeout(function(){message.delete();}, 500);
       
                 }else{
@@ -487,7 +481,7 @@ client.on("messageCreate", function(message) {
                 // まだ1曲もAPしてないかどうか
                 if(rows.length === 0){
       
-                  message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+                  message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
                   setTimeout(function(){message.delete();}, 500);
       
                 }else{
@@ -515,7 +509,7 @@ client.on("messageCreate", function(message) {
                 // まだ1曲もAPしてないかどうか
                 if(rows.length === 0){
       
-                  message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "，" + data[2] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーしてペーストするか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+                  message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "，" + data[2] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
                   setTimeout(function(){message.delete();}, 500);
       
                 }else{
@@ -712,7 +706,7 @@ client.on("messageCreate", function(message) {
 
     if(data.length === 0){
 
-      message.reply("曲名が入力されていません！ 235apsearch DIAMOND のように曲名を入力してください！\n※曲名は （ https://imasml-theater-wiki.gamerch.com/%E6%A5%BD%E6%9B%B2%E4%B8%80%E8%A6%A7 ）にある曲名をコピーして入力するか、もしくは直接フルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、見つけることが出来ません。）");
+      message.reply("曲名が入力されていません！ 235apsearch DIAMOND のように曲名を入力してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、見つけることが出来ません。）");
       setTimeout(function(){message.delete();}, 500);
 
     }else{
@@ -796,161 +790,187 @@ client.on("messageCreate", function(message) {
     setTimeout(function(){message.delete();}, 500);
 
   }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
-    if((data.length < 3) || (data.length > 3)){
 
-      message.reply("235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
-      setTimeout(function(){message.delete();}, 500);
+    // うたたねさん以外は使えないように
+    if(message.author.username !== "うたたねさん"){
+
+      message.reply("235birthday コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。");
+      setTimeout(() => message.delete(), 500);
 
     }else{
 
-      let int_check = true;
-
-      for(let check of data){
-        if(!Number.isInteger(Number(check))){
-          int_check = false;
-        }
-      }
-
-      if(!int_check){
-
-        message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！");
+      if((data.length < 3) || (data.length > 3)){
+  
+        message.reply("235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
         setTimeout(function(){message.delete();}, 500);
-
+  
       }else{
-        if((Number(data[0]) >= 1) && (Number(data[0]) <= 12)){
-          let last_date_check = new Date();
-          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-          let last_date       = last_date_month.getDate();                                // 今月末日
-
-          if((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)){
-            if((Number(data[2]) >= 0) && (Number(data[2]) <= 23)){
-              const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
-      
-              // 指定された日の曜日を取得
-              let now      = new Date();
-              let year     = now.getFullYear();
-              let month    = Number(data[0]);
-              let eventDay = new Date(year, month - 1, Number(data[1]));
-              let dayIndex = eventDay.getDay();
-      
-              let text = "@everyone\n日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n";
-      
-              for(let member of birthday.data){
-                if(member.month === month){
-                  text += "**" + member.date + "日..." + member.name + "さん**\n";
+  
+        let int_check = true;
+  
+        for(let check of data){
+          if(!Number.isInteger(Number(check))){
+            int_check = false;
+          }
+        }
+  
+        if(!int_check){
+  
+          message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！");
+          setTimeout(function(){message.delete();}, 500);
+  
+        }else{
+          if((Number(data[0]) >= 1) && (Number(data[0]) <= 12)){
+            let last_date_check = new Date();
+            let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
+            let last_date       = last_date_month.getDate();                                // 今月末日
+  
+            if((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)){
+              if((Number(data[2]) >= 0) && (Number(data[2]) <= 23)){
+                const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+        
+                // 指定された日の曜日を取得
+                let now      = new Date();
+                let year     = now.getFullYear();
+                let month    = Number(data[0]);
+                let eventDay = new Date(year, month - 1, Number(data[1]));
+                let dayIndex = eventDay.getDay();
+        
+                let text = "@everyone\n日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n";
+        
+                for(let member of birthday.data){
+                  if(member.month === month){
+                    text += "**" + member.date + "日..." + member.name + "さん**\n";
+                  }
                 }
+        
+                text += "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)";
+        
+                message.channel.send(text);
+                setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
+                setTimeout(function(){message.delete();}, 3_500);
+  
+  
+              }else{
+                message.reply("時間は0～23の間で入力してください！");
+                setTimeout(function(){message.delete();}, 500);
               }
-      
-              text += "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)";
-      
-              message.channel.send(text);
-              setTimeout(function(){message.delete();}, 500);
-
             }else{
-              message.reply("時間は0～23の間で入力してください！");
+              message.reply("日は1～" + last_date + "の間で入力してください！");
               setTimeout(function(){message.delete();}, 500);
             }
           }else{
-            message.reply("日は1～" + last_date + "の間で入力してください！");
+            message.reply("月は1～12の間で入力してください！");
             setTimeout(function(){message.delete();}, 500);
           }
-        }else{
-          message.reply("月は1～12の間で入力してください！");
-          setTimeout(function(){message.delete();}, 500);
         }
+  
+  
       }
-
 
     }
 
   }else if(command === "mendate"){   // mendateコマンド 男子会の日程を決めるためのコマンド
-    if(data.length === 0){
-      
-      message.reply("235mendateコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235mendate 8 12 15 21");
-      setTimeout(function(){message.delete();}, 500);
 
-    }else if((data.length > 10) || (data.length === 1)){
-      
-      message.reply("235mendateコマンドで入力することができる日程の数は**2～10個まで**です！");
-      setTimeout(function(){message.delete();}, 500);
+    // うたたねさん以外は使えないように
+    if(message.author.username !== "うたたねさん"){
+
+      message.reply("235mendate コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。");
+      setTimeout(() => message.delete(), 500);
 
     }else{
-      
-      let int_check = true;
 
-      for(let check of data){
-        if(!Number.isInteger(Number(check))){
-          int_check = false;
-        }
-      }
-
-      if(!int_check){
-
-        message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
+      if(data.length === 0){
+        
+        message.reply("235mendateコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235mendate 8 12 15 21");
         setTimeout(function(){message.delete();}, 500);
-
+  
+      }else if((data.length > 10) || (data.length === 1)){
+        
+        message.reply("235mendateコマンドで入力することができる日程の数は**2～10個まで**です！");
+        setTimeout(function(){message.delete();}, 500);
+  
       }else{
         
-        if(def.existsSameValue(data)){
-
-          message.reply("同じ日程が入力されています！\n日程を入力するときは同じ日程を入力しないように気をつけてください！");
-          setTimeout(function(){message.delete();}, 500);
-
-        }else{
-
-          let date_check      = true;
-          let last_date_check = new Date();
-          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-          let last_date       = last_date_month.getDate();                                                   // 今月末日
-
-          for(let date of data){
-            if((Number(date) < 1) || (Number(date) > last_date)){
-              date_check = false;
-            }
+        let int_check = true;
+  
+        for(let check of data){
+          if(!Number.isInteger(Number(check))){
+            int_check = false;
           }
-
-          if(!date_check){
-
-            message.reply("日は1～" + last_date + "の間で入力してください！");
-            setTimeout(function(){message.delete();}, 500);
-
-          }else{
-
-            const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
-      
-            // 指定された日の曜日を取得
-            let now      = new Date();
-            let year     = now.getFullYear();
-            let month    = now.getMonth() + 1;
-            let eventDays = [];
-            let dayIndexs = [];
-
-            for(let i = 0; i < data.length; i++){
-              data[i] = Number(data[i]);
-              eventDays.push(new Date(year, month - 1, data[i]));
-              dayIndexs.push(eventDays[i].getDay());
-            }
-
-            // 昇順にする
-            data.sort(def.compareFunc);
-
-            let text = "@everyone\nふみこ男子の皆様方～～～～～～～～～～～！" + month + "月期の235士官学校開校日を決めたいと思いますわ～～～～～！！！日程なんですけど、\n\n";
-
-            // 日程一覧
-            for(let i = 0; i < data.length; i++){
-              text += "**" + month + "月" + data[i] + "日 （" + dayArray[dayIndexs[i]] + "）…　" + emojis[i] + "**\n";
-            }
-
-            text += "\n誠に勝手ながらこのいずれかの日程でやろうと思いますので、スタンプで反応を頂けると嬉しいです～～～～ふみこ男子の皆様方！よろしくおねがいしますわね！！！！！！！！！ﾍｹｯ!!!!!!!!";
-
-            message.channel.send(text);
-            db.run("insert into emojis(count) values(?)", data.length);
-            setTimeout(function(){message.delete();}, 500);
-
-          }
-
         }
-
+  
+        if(!int_check){
+  
+          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
+          setTimeout(function(){message.delete();}, 500);
+  
+        }else{
+          
+          if(def.existsSameValue(data)){
+  
+            message.reply("同じ日程が入力されています！\n日程を入力するときは同じ日程を入力しないように気をつけてください！");
+            setTimeout(function(){message.delete();}, 500);
+  
+          }else{
+  
+            let date_check      = true;
+            let last_date_check = new Date();
+            let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
+            let last_date       = last_date_month.getDate();                                                   // 今月末日
+  
+            for(let date of data){
+              if((Number(date) < 1) || (Number(date) > last_date)){
+                date_check = false;
+              }
+            }
+  
+            if(!date_check){
+  
+              message.reply("日は1～" + last_date + "の間で入力してください！");
+              setTimeout(function(){message.delete();}, 500);
+  
+            }else{
+  
+              const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+        
+              // 指定された日の曜日を取得
+              let now      = new Date();
+              let year     = now.getFullYear();
+              let month    = now.getMonth() + 1;
+              let eventDays = [];
+              let dayIndexs = [];
+  
+              for(let i = 0; i < data.length; i++){
+                data[i] = Number(data[i]);
+                eventDays.push(new Date(year, month - 1, data[i]));
+                dayIndexs.push(eventDays[i].getDay());
+              }
+  
+              // 昇順にする
+              data.sort(def.compareFunc);
+  
+              let text = "@everyone\nふみこ男子の皆様方～～～～～～～～～～～！" + month + "月期の235士官学校開校日を決めたいと思いますわ～～～～～！！！日程なんですけど、\n\n";
+  
+              // 日程一覧
+              for(let i = 0; i < data.length; i++){
+                text += "**" + month + "月" + data[i] + "日 （" + dayArray[dayIndexs[i]] + "）…　" + emojis[i] + "**\n";
+              }
+  
+              text += "\n誠に勝手ながらこのいずれかの日程でやろうと思いますので、スタンプで反応を頂けると嬉しいです～～～～ふみこ男子の皆様方！よろしくおねがいしますわね！！！！！！！！！ﾍｹｯ!!!!!!!!";
+  
+              message.channel.send(text);
+              db.run("insert into emojis(count) values(?)", data.length);
+              setTimeout(function(){message.delete();}, 3_000);
+  
+              setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 2_500);
+  
+            }
+  
+          }
+  
+        }
+  
       }
 
     }
@@ -959,12 +979,82 @@ client.on("messageCreate", function(message) {
     //
 
   }else if(command === "women"){     // womenコマンド 女子会の企画文章を作成
-    //
 
-  }else if(command === "lunch"){     // lunchコマンド 昼飲み会の企画文章を作成
-    //
+    // きなくるさん以外は使えないように
+    if(message.author.username !== "きなくる"){
+
+      message.reply("235women コマンドは、聖235女学園🌸の担当者である**うたたねさん**が使用することが出来るコマンドです。");
+      setTimeout(() => message.delete(), 500);
+
+    }else{
+
+      if(data.length === 0){        // 当日の文章作成
+  
+        message.reply("@everyone\n本日23女🌸です🍾\nよろしくおねがいします🌙🌙");
+        setTimeout(() => message.delete(), 500);
+  
+      }else if(data.length === 1){  // 入力された日の文章作成
+  
+        let int_check = true;
+    
+        if(!Number.isInteger(Number(data[0]))){
+          int_check = false;
+        }
+  
+        if(!int_check){
+  
+          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
+          setTimeout(function(){message.delete();}, 500);
+  
+        }else{
+  
+          let date_check      = true;
+          let last_date_check = new Date();
+          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
+          let last_date       = last_date_month.getDate();                                                   // 今月末日
+  
+          if((Number(data[0]) < 1) || (Number(data[0]) > last_date)){
+            date_check = false;
+          }
+  
+          if(!date_check){
+  
+            message.reply("日は1～" + last_date + "の間で入力してください！");
+            setTimeout(function(){message.delete();}, 500);
+  
+          }else{
+  
+            const dayArray = ["日", "月", "火", "水", "木", "金", "土"];
+          
+            // 指定された日の曜日を取得
+            let now      = new Date();
+            let year     = now.getFullYear();
+            let month    = now.getMonth() + 1;
+            let eventDay = new Date(year, month - 1, Number(data[0]));
+            let dayIndex = eventDay.getDay();
+  
+            let text = "@everyone\n女子の皆様！今月の23女🌸開催は" + month + "/" + data[0] + "（" + dayArray[dayIndex] + "）です。\n\nよろしくお願いします🙇‍♀️";
+  
+            message.channel.send(text);
+            setTimeout(() => message.reply("きなくるさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
+            setTimeout(function(){message.delete();}, 3_500);
+  
+          }
+  
+        }
+  
+      }else{
+        
+        message.reply("指定出来る日程は**1つだけ**です！\n\n235women 12");
+        setTimeout(() => message.delete(), 500);
+  
+      }
+
+    }
+
 
   }else if(command === "test"){      // testコマンド テスト用 メンバーのみんなにはこのコマンドは教えないようにする。
+
     message.reply("テスト用コマンド");
     setTimeout(function(){message.delete();}, 500);
 
