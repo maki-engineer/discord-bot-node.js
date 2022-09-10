@@ -953,7 +953,7 @@ client.on("messageCreate", function(message) {
     let result_command = "";
 
     for(let result of commands){
-        if(command_min > def.levenshteinDistance(command.toUpperCase(), result.toUpperCase())){
+        if(command_min > def.levenshteinDistance(command, result)){
             command_min    = def.levenshteinDistance(command.toUpperCase(), result.toUpperCase());
             result_command = result;
         }
