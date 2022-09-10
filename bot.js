@@ -36,6 +36,8 @@ const channel_for_235_chat_place  = "791397952090275900";
 const channel_for_test_chat_place = "1017805557354205194";
 const prefix                      = "235";
 const emojis                      = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
+const types                       = ["All", "Princess", "Angel", "Fairy"];
+const check_types                 = ["AL", "PR", "AN", "FA"];
 const escapes                     = ["!", "∨", "@", "/", "#", "$", "%", "&", "(", ")", "=", "-", "_", "~", "^", "|", "[", "]", "{", "}", "*", "+", "д", "?", "<", ">", ".", ",", ":", ";"];
 
 // 常時行う処理
@@ -414,7 +416,15 @@ client.on("messageCreate", function(message) {
       names = names.join("");
 
       // タイプ以外の文字が入力されてたら警告
-      let check = false;
+      let check             = false;
+
+      for(let data_index = 0; data_index < data.length; data_index++){
+        for(let type_index = 0; type_index < types.length; type_index++){
+          if(data[data_index].toUpperCase().startsWith(check_types[type_index])){
+            data[data_index] = types[type_index];
+          }
+        }
+      }
 
       for(let type of data){
         if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], type)){
@@ -424,13 +434,14 @@ client.on("messageCreate", function(message) {
 
       if(check){
 
-        message.reply("入力された文字の中にタイプ以外の文字が含まれているか、タイプ名がフルで入力されていないか、大文字から書かれていない可能性があります！\nタイプ名を入力する場合、フル （All、Princess、Fairy、Angel） で入力してください！\n\n235apall All Fairy");
+        message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名を入力してください！\n\n235apall All Fairy");
         setTimeout(function(){message.delete();}, 500);
 
       }else{
+
         if(def.existsSameValue(data)){
 
-          message.reply("重複された内容が入っています。\nタイプを指定する場合は被りの内容に気をつけてください！");
+          message.reply("同じタイプ名が入力されています。\nタイプを入力する場合は被りの内容に気をつけてください！");
           setTimeout(function(){message.delete();}, 500);
 
         }else{
@@ -520,6 +531,7 @@ client.on("messageCreate", function(message) {
 
           }
         }
+
       }
     }else{
       message.reply("入力された内容が多すぎます！ 入力できる数は最大**3つまで**です！\n\n235apall Angel Fairy Princess");
@@ -574,7 +586,15 @@ client.on("messageCreate", function(message) {
       names = names.join("");
 
       // タイプ以外の文字が入力されてたら警告
-      let check = false;
+      let check             = false;
+
+      for(let data_index = 0; data_index < data.length; data_index++){
+        for(let type_index = 0; type_index < types.length; type_index++){
+          if(data[data_index].toUpperCase().startsWith(check_types[type_index])){
+            data[data_index] = types[type_index];
+          }
+        }
+      }
 
       for(let type of data){
         if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], type)){
@@ -584,13 +604,14 @@ client.on("messageCreate", function(message) {
 
       if(check){
 
-        message.reply("入力された文字の中にタイプ以外の文字が含まれているか、タイプ名がフルで入力されていないか、大文字から書かれていない可能性があります！\nタイプ名を入力する場合、フル （All、Princess、Fairy、Angel） で入力してください！\n\n235apall All Fairy");
+        message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名を入力してください！\n\n235apall All Fairy");
         setTimeout(function(){message.delete();}, 500);
 
       }else{
+
         if(def.existsSameValue(data)){
 
-          message.reply("重複された内容が入っています。\nタイプを指定する場合は被りの内容に気をつけてください！");
+          message.reply("同じタイプ名が入力されています。\nタイプを入力する場合は被りの内容に気をつけてください！");
           setTimeout(function(){message.delete();}, 500);
 
         }else{
@@ -680,6 +701,7 @@ client.on("messageCreate", function(message) {
 
           }
         }
+
       }
     }else{
       message.reply("入力された内容が多すぎます！ 入力できる数は最大**3つまで**です！\n\n235notap Angel Fairy Princess");
