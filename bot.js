@@ -75,6 +75,7 @@ client.on("ready", function() {
     client.application.commands.set(commands, "1016543616090517515");
   }
 
+
   // ここにプレイ中を表示させたい
 
   setInterval(function(){
@@ -178,7 +179,7 @@ client.on("interactionCreate", function(interaction) {
 
   }else if(interaction.commandName === "235help"){
 
-    interaction.reply("235botはこのようなコマンド・機能があります。\n\n・");
+    interaction.reply("235botは以下のようなコマンド・機能があります。\n\n・");
     setTimeout(function(){ interaction.deleteReply() }, 60_000);
 
   }else if(interaction.commandName === "235birthday"){
@@ -298,8 +299,8 @@ client.on("messageCreate", function(message) {
           let suggest_music = "";
 
           for(let row of rows){
-              if(min > def.levenshteinDistance(musics[0], row.name)){
-                  min   = def.levenshteinDistance(musics[0], row.name);
+              if(min > def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase())){
+                  min   = def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase());
                   suggest_music = row.name;
               }
           }
@@ -311,22 +312,49 @@ client.on("messageCreate", function(message) {
               }else{
                 if(rows.length === 0){
 
-                  if(min <= 5){
+                  if(min <= 1){
+
+                    db.all("select * from APmusics where name = ?", suggest_music, (err, results) => {
+                      if(results[0][names + "_flg"] === 1){
+
+                        message.reply(results[0].name + " は既に登録されています！");
+                        setTimeout(function(){message.delete();}, 500);
+
+                      }else{
+
+                        db.run("update APmusics set " + names + "_flg = 1 where name = ?", suggest_music);
+                        message.reply("登録成功：" + suggest_music + "\nAPおめでとうございます♪");
+                        setTimeout(function(){message.delete();}, 500);
+
+                      }
+                    });
+
+                  }else if((min > 1) && (min < 6)){
+
                     message.reply("登録に失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
                     setTimeout(function(){message.delete();}, 500);
+
                   }else{
+
                     message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
                     setTimeout(function(){message.delete();}, 500);
+
                   }
                 }else{
+
                   if(rows[0][names + "_flg"] === 1){
-                    message.reply("この曲は既に登録されています！");
+
+                    message.reply(rows[0].name + " は既に登録されています！");
                     setTimeout(function(){message.delete();}, 500);
+
                   }else{
+
                     db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
                     message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
                     setTimeout(function(){message.delete();}, 500);
+
                   }
+
                 }
               }
             });
@@ -679,7 +707,7 @@ client.on("messageCreate", function(message) {
 
       let text = "";
 
-      db.all("select " + names + "_flg from APmusics", (err, rows) => {
+      db.all("select name, " + names + "_flg from APmusics", (err, rows) => {
         if(err){
 
           text += "まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！";
@@ -689,22 +717,46 @@ client.on("messageCreate", function(message) {
 
         }else{
 
+          let min   = 0xFFFF;
+          let suggest_music = "";
+
+          for(let row of rows){
+              if(min > def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase())){
+                  min   = def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase());
+                  suggest_music = row.name;
+              }
+          }
+
           for(let music of musics){
             db.all("select * from APmusics where name = ?", music, (err, rows) => {
               if(rows.length === 0){
 
-                message.reply("曲名を見つけることが出来ませんでした......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
-                setTimeout(function(){message.delete();}, 500);
+                if(min <= 1){
 
-              }else{
-                if(rows[0][names + "_flg"] === 1){
+                  message.reply(suggest_music + " は既にAPすることが出来ています！");
+                  setTimeout(function(){message.delete();}, 500);
 
-                  message.reply("この曲は既にAPすることが出来ています！");
+                }else if((min > 1) && (min < 6)){
+
+                  message.reply("曲名を見つけることが出来ませんでした......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235apsearch " + suggest_music);
                   setTimeout(function(){message.delete();}, 500);
 
                 }else{
 
-                  message.reply("この曲はまだAP出来ていません！");
+                  message.reply("曲名を見つけることが出来ませんでした......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
+                  setTimeout(function(){message.delete();}, 500);
+
+                }
+
+              }else{
+                if(rows[0][names + "_flg"] === 1){
+
+                  message.reply(rows[0].name + " は既にAPすることが出来ています！");
+                  setTimeout(function(){message.delete();}, 500);
+
+                }else{
+
+                  message.reply(rows[0].name + " はまだAP出来ていません！");
                   setTimeout(function(){message.delete();}, 500);
 
                 }
@@ -901,8 +953,8 @@ client.on("messageCreate", function(message) {
     let result_command = "";
 
     for(let result of commands){
-        if(command_min > def.levenshteinDistance(command, result)){
-            command_min    = def.levenshteinDistance(command, result);
+        if(command_min > def.levenshteinDistance(command.toUpperCase(), result.toUpperCase())){
+            command_min    = def.levenshteinDistance(command.toUpperCase(), result.toUpperCase());
             result_command = result;
         }
     }
