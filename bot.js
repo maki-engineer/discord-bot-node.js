@@ -76,8 +76,10 @@ client.on("ready", function() {
     client.application.commands.set(commands, "1016543616090517515");
   }
 
-
-  // ここにプレイ中を表示させたい
+  client.user.setPresence({
+    activities: [{name: "アイドルマスター ミリオンライブ! シアターデイズ "}],
+    status: "online"
+  });
 
   setInterval(function(){
     // 日付設定
