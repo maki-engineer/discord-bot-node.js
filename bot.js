@@ -57,7 +57,6 @@ client.on("ready", function() {
     {name: "235apall", description: "これまでAPしてきた曲数が知りたいときに使用するコマンドです。"},
     {name: "235notap", description: "まだAPすることが出来ていない曲数が知りたいときに使用するコマンドです。"},
     {name: "235apsearch", description: "入力した曲がAP出来ているか知りたいときに使用するコマンドです。"},
-    {name: "235help", description: "235botの機能やコマンドが知りたいときに使用するコマンドです。"},
     {name: "235birthday", description: "毎月開催されるオンライン飲み会の企画文章を作成したいときに使用するコマンドです。"},
     {name: "235mendate", description: "毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。"},
     {name: "235men", description: "毎月開催される235士官学校🌹の企画文章を作成したいときに使用するコマンドです。"},
@@ -178,11 +177,6 @@ client.on("interactionCreate", function(interaction) {
   }else if(interaction.commandName === "235apsearch"){
 
     interaction.reply("235apsearchコマンドを使用することで、" + interaction.user.username + "さんが入力した曲が既にAP出来ているか知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
-
-  }else if(interaction.commandName === "235help"){
-
-    interaction.reply("235botは以下のようなコマンド・機能があります。\n\n・");
     setTimeout(function(){ interaction.deleteReply() }, 60_000);
 
   }else if(interaction.commandName === "235birthday"){
@@ -788,7 +782,8 @@ client.on("messageCreate", function(message) {
     }
 
   }else if(command === "help"){      // helpコマンド 235botの機能一覧を教える。
-    message.reply("help");
+
+    message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n・235apall\n・235notap\n・235apsearch\n・235birthday　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n・235mendate　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n・235men　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n・235women　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの詳細な機能について知りたい場合は、スラッシュコマンドの235help を使用してください。");
     setTimeout(function(){message.delete();}, 500);
 
   }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
