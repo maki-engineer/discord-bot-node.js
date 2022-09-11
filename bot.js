@@ -835,20 +835,46 @@ client.on("messageCreate", function(message) {
                 let month    = Number(data[0]);
                 let eventDay = new Date(year, month - 1, Number(data[1]));
                 let dayIndex = eventDay.getDay();
+                let text     = "@everyone\n";
+
+                let text_1 = [
+                  "日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月にお誕生日を迎える方々のご案内です！\n" + month + "月に誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月にお誕生日を迎えるメンバーさんの…ご案内です！！\n" + month + "月に誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！\n" + month + "月期ラウンジオンライン飲み会のご！案！内！です！\n" + month + "月の誕生日は～～～～…\n\n"
+                ];
+
+                let text_2 = [
+                  "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！",
+                  "\nです！はっぴばーす！！！いや～めでたいねぇ（ひなた）\nではでは、" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！お酒飲めない子はジュースだね！\n　その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
+                  "\nです！！！！！おめでとうございますわ～～～～～～～～！！！！！！\nというわけで！" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！\n　あと、その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
+                  "\nです！！！！！！です！おめでとうございます～～～～～～！！！！！！！"
+                ];
+
+                let text_3 = [
+                  "遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)",
+                  "遅れて参加してもOK、眠くなったら先に眠ってもOKの飲み会です！周年イベントが明けても次のイベントはすぐに始まるから（遠い目） お疲れ様会も兼ねて盛り上がってまいりましょう～！多くの皆様方のご参加をお待ちしております！！！！！！！！！お酒お酒お酒お酒！！！！！！！！！",
+                  "遅れて参加してもOK!!眠くなったら先に眠ってもOK!!の飲み会です！気持ちアゲていきましょう！！！！ぶいぶい！！！！！！お酒お酒お酒お酒!!!!!!",
+                  "遅れて参加してもOK,眠くなったら先に上がってもOKの飲み会です、気ままに楽しみましょう！！！どしどしご参加くださいーーーー！！！！！お酒お酒お酒!!!"
+                ];
         
-                let text = "@everyone\n日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n";
+                text += text_1[Math.floor(Math.random() * text_1.length)];
         
                 for(let member of birthday.data){
                   if(member.month === month){
                     text += "**" + member.date + "日..." + member.name + "さん**\n";
                   }
                 }
+
+                text += text_2[Math.floor(Math.random() * text_2.length)];
         
-                text += "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)";
+                text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+
+                text += text_3[Math.floor(Math.random() * text_3.length)];
         
                 message.channel.send(text);
                 setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
-                setTimeout(function(){message.delete();}, 3_500);
+                setTimeout(function(){message.delete();}, 5_000);
   
   
               }else{
@@ -950,20 +976,32 @@ client.on("messageCreate", function(message) {
               // 昇順にする
               data.sort(def.compareFunc);
   
-              let text = "@everyone\nふみこ男子の皆様方～～～～～～～～～～～！" + month + "月期の235士官学校開校日を決めたいと思いますわ～～～～～！！！日程なんですけど、\n\n";
+              let text = "@everyone\n";
+
+              let text_1 = [
+                "ふみこ男子の皆様方～～～～～～～～～～～！" + month + "月期の235士官学校開校日を決めたいと思いますわ～～～～～！！！日程なんですけど、\n\n",
+                "ふみこ男子の皆様方～～～～～～～～～！" + month + "月期の235士官学校開校日を決めたいと思います！その日程なんですけど、\n\n"
+              ];
+
+              let text_2 = [
+                "\n誠に勝手ながらこのいずれかの日程でやろうと思いますので、スタンプで反応を頂けると嬉しいです～～～～ふみこ男子の皆様方！よろしくおねがいしますわね！！！！！！！！！ﾍｹｯ!!!!!!!!",
+                "\n真に勝手ながらこのいずれかにしようと思いますので、2~3日中にスタンプで反応を頂けると幸いです！よろしくお願いしま～～～～～～～す🙏"
+              ];
+
+              text += text_1[Math.floor(Math.random() * text_1.length)];
   
               // 日程一覧
               for(let i = 0; i < data.length; i++){
                 text += "**" + month + "月" + data[i] + "日 （" + dayArray[dayIndexs[i]] + "）…　" + emojis[i] + "**\n";
               }
   
-              text += "\n誠に勝手ながらこのいずれかの日程でやろうと思いますので、スタンプで反応を頂けると嬉しいです～～～～ふみこ男子の皆様方！よろしくおねがいしますわね！！！！！！！！！ﾍｹｯ!!!!!!!!";
+              text += text_2[Math.floor(Math.random() * text_2.length)];;
   
               message.channel.send(text);
               db.run("insert into emojis(count) values(?)", data.length);
-              setTimeout(function(){message.delete();}, 3_000);
+              setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
+              setTimeout(function(){message.delete();}, 5_000);
   
-              setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 2_500);
   
             }
   
@@ -1078,6 +1116,5 @@ client.on("messageCreate", function(message) {
 
   }
 });
-
 
 client.login(token.BOT_TOKEN);
