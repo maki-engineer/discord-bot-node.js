@@ -166,12 +166,12 @@ client.on("interactionCreate", function(interaction) {
 
   }else if(interaction.commandName === "235apall"){
 
-    interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプで、APしてきた曲数を知ることが出来ます。\n（ 235apall All Princess Angel のように**半角スペース**で区切って複数入力することによって、複数のタイプで絞ることも出来ます。絞ることが出来るタイプの数は**3つ**までです！）\n※タイプを入力する時は、all や angel のように書くのではなく、All や Angel などと書くようにお願いします。");
+    interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプで、APしてきた曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**までです！）");
     setTimeout(function(){ interaction.deleteReply() }, 180_000);
 
   }else if(interaction.commandName === "235notap"){
 
-    interaction.reply("235notapコマンドを使用することで、" + interaction.user.username + "さんがまだAP出来ていない曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプで、AP出来ていない曲数を知ることが出来ます。\n（ 235apall All Princess Angel のように**半角スペース**で区切って複数入力することによって、複数のタイプで絞ることも出来ます。絞ることが出来るタイプの数は**3つ**までです！）\n※タイプを入力する時は、all や angel のように書くのではなく、All や Angel などと書くようにお願いします。");
+    interaction.reply("235notapコマンドを使用することで、" + interaction.user.username + "さんがまだAP出来ていない曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプで、AP出来ていない曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**までです！）");
     setTimeout(function(){ interaction.deleteReply() }, 180_000);
 
   }else if(interaction.commandName === "235apsearch"){
@@ -395,7 +395,8 @@ client.on("messageCreate", function(message) {
           }
         }
       });
-    }else if((data.length >= 1) && (data.length <= 3)){
+
+    }else if(data.length === 1){
 
       let names = message.author.username.split("");
       
@@ -408,123 +409,52 @@ client.on("messageCreate", function(message) {
       // タイプ以外の文字が入力されてたら警告
       let check             = false;
 
-      for(let data_index = 0; data_index < data.length; data_index++){
-        for(let type_index = 0; type_index < types.length; type_index++){
-          if(data[data_index].toUpperCase().startsWith(check_types[type_index])){
-            data[data_index] = types[type_index];
-          }
+      for(let i = 0; i < types.length; i++){
+        if(data[0].toUpperCase().startsWith(check_types[i])){
+          data[0] = types[i];
         }
       }
 
-      for(let type of data){
-        if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], type)){
-          check = true;
-        }
+      if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], data[0])){
+        check = true;
       }
 
       if(check){
 
-        message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名を入力してください！\n\n235apall All Fairy");
+        message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名(All, Princess, Fairy, Angel)を入力してください！\n\n235apall All");
         setTimeout(function(){message.delete();}, 1_000);
 
       }else{
 
-        if(def.existsSameValue(data)){
-
-          message.reply("同じタイプ名が入力されています。\nタイプを入力する場合は被りの内容に気をつけてください！");
-          setTimeout(function(){message.delete();}, 1_000);
-
-        }else{
-          if(data.length === 1){
-
-            db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 1 and type = ?", data[0], (err, rows) => {
-              // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-              if(err){
-      
-                message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-                setTimeout(function(){message.delete();}, 1_000);
-      
-              }else{
-      
-                // まだ1曲もAPしてないかどうか
-                if(rows.length === 0){
-      
-                  message.reply(message.author.username + "さんはまだ" + data[0] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }else{
-      
-                  let text = "AP曲数：" + rows.length + "曲";
-      
-                  message.reply(text);
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }
-              }
-            });
-
-          }else if(data.length === 2){
-
-            db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 1 and type in (?, ?)", data[0], data[1], (err, rows) => {
-              // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-              if(err){
-      
-                message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-                setTimeout(function(){message.delete();}, 1_000);
-      
-              }else{
-      
-                // まだ1曲もAPしてないかどうか
-                if(rows.length === 0){
-      
-                  message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }else{
-      
-                  let text = "AP曲数：" + rows.length + "曲";
-      
-                  message.reply(text);
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }
-              }
-            });
-
+        db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 1 and type = ?", data[0], (err, rows) => {
+          // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+          if(err){
+  
+            message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+            setTimeout(function(){message.delete();}, 1_000);
+  
           }else{
-
-            db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 1 and type in (?, ?, ?)", data[0], data[1], data[2], (err, rows) => {
-              // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-              if(err){
-      
-                message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-                setTimeout(function(){message.delete();}, 1_000);
-      
-              }else{
-      
-                // まだ1曲もAPしてないかどうか
-                if(rows.length === 0){
-      
-                  message.reply(message.author.username + "さんはまだ" + data[0] + "，" + data[1] + "，" + data[2] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録することが出来ていない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }else{
-      
-                  let text = "AP曲数：" + rows.length + "曲";
-      
-                  message.reply(text);
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }
-              }
-            });
-
+  
+            // まだ1曲もAPしてないかどうか
+            if(rows.length === 0){
+  
+              message.reply(message.author.username + "さんはまだ" + data[0] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
+              setTimeout(function(){message.delete();}, 1_000);
+  
+            }else{
+  
+              let text = data[0] + " AP曲数：" + rows.length + "曲";
+  
+              message.reply(text);
+              setTimeout(function(){message.delete();}, 1_000);
+  
+            }
           }
-        }
+        });
 
       }
     }else{
-      message.reply("入力された内容が多すぎます！ 入力できる数は最大**3つまで**です！\n\n235apall Angel Fairy Princess");
+      message.reply("入力された内容が多すぎます！ 絞ることができるタイプの数は**1つだけ**です！\n\n235apall Angel");
       setTimeout(function(){message.delete();}, 1_000);
     }
 
@@ -565,7 +495,7 @@ client.on("messageCreate", function(message) {
           }
         }
       });
-    }else if((data.length >= 1) && (data.length <= 3)){
+    }else if(data.length === 1){
 
       let names = message.author.username.split("");
       
@@ -578,123 +508,52 @@ client.on("messageCreate", function(message) {
       // タイプ以外の文字が入力されてたら警告
       let check             = false;
 
-      for(let data_index = 0; data_index < data.length; data_index++){
-        for(let type_index = 0; type_index < types.length; type_index++){
-          if(data[data_index].toUpperCase().startsWith(check_types[type_index])){
-            data[data_index] = types[type_index];
-          }
+      for(let i = 0; i < types.length; i++){
+        if(data[0].toUpperCase().startsWith(check_types[i])){
+          data[0] = types[i];
         }
       }
 
-      for(let type of data){
-        if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], type)){
-          check = true;
-        }
+      if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], data[0])){
+        check = true;
       }
 
       if(check){
 
-        message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名を入力してください！\n\n235apall All Fairy");
+        message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名(All, Princess, Fairy, Angel)を入力してください！\n\n235apall All");
         setTimeout(function(){message.delete();}, 1_000);
 
       }else{
 
-        if(def.existsSameValue(data)){
-
-          message.reply("同じタイプ名が入力されています。\nタイプを入力する場合は被りの内容に気をつけてください！");
-          setTimeout(function(){message.delete();}, 1_000);
-
-        }else{
-          if(data.length === 1){
-
-            db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 0 and type = ?", data[0], (err, rows) => {
-              // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-              if(err){
-      
-                message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-                setTimeout(function(){message.delete();}, 1_000);
-      
-              }else{
-      
-                // まだ1曲もAPしてないかどうか
-                if(rows.length === 0){
-      
-                  message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }else{
-      
-                  let text = "AP未達成数：" + rows.length + "曲";
-      
-                  message.reply(text);
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }
-              }
-            });
-
-          }else if(data.length === 2){
-
-            db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 0 and type in (?, ?)", data[0], data[1], (err, rows) => {
-              // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-              if(err){
-      
-                message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-                setTimeout(function(){message.delete();}, 1_000);
-      
-              }else{
-      
-                // まだ1曲もAPしてないかどうか
-                if(rows.length === 0){
-      
-                  message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }else{
-      
-                  let text = "AP未達成数：" + rows.length + "曲";
-      
-                  message.reply(text);
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }
-              }
-            });
-
+        db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 0 and type = ?", data[0], (err, rows) => {
+          // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+          if(err){
+  
+            message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+            setTimeout(function(){message.delete();}, 1_000);
+  
           }else{
-
-            db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 0 and type in (?, ?, ?)", data[0], data[1], data[2], (err, rows) => {
-              // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-              if(err){
-      
-                message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-                setTimeout(function(){message.delete();}, 1_000);
-      
-              }else{
-      
-                // まだ1曲もAPしてないかどうか
-                if(rows.length === 0){
-      
-                  message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
-                  setTimeout(function(){message.delete();}, 1_000);
-      
-                }else{
-      
-                  let text = "AP未達成数：" + rows.length + "曲";
-
-                  message.reply(text);
-                  setTimeout(function(){message.delete();}, 1_000);
-
-                }
-              }
-            });
-
+  
+            // まだ1曲もAPしてないかどうか
+            if(rows.length === 0){
+  
+              message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
+              setTimeout(function(){message.delete();}, 1_000);
+  
+            }else{
+  
+              let text = data[0] + " AP未達成数：" + rows.length + "曲";
+  
+              message.reply(text);
+              setTimeout(function(){message.delete();}, 1_000);
+  
+            }
           }
-        }
+        });
 
       }
     }else{
-      message.reply("入力された内容が多すぎます！ 入力できる数は最大**3つまで**です！\n\n235notap Angel Fairy Princess");
+      message.reply("入力された内容が多すぎます！ 絞ることができるタイプの数は**1つだけ**です！\n\n235apall Angel");
       setTimeout(function(){message.delete();}, 1_000);
     }
 
