@@ -1016,14 +1016,85 @@ client.on("messageCreate", function(message) {
     }
 
   }else if(command === "men"){       // menコマンド 男子会の企画文章を作成
-    //
+
+    // うたたねさん以外は使えないように
+    if(message.author.username !== "うたたねさん"){
+
+      message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。");
+      setTimeout(() => message.delete(), 500);
+
+    }else{
+
+      if(data.length === 0){        // 当日の文章作成
+  
+        message.reply("@everyone\n235青年団の皆様方～～～～～!!!\n本日夜、235士官学校開校日…もとい男子会が開かれます！~~教練の時間だ！~~\nどしどしご参加くだーーーーい！");
+        setTimeout(() => message.delete(), 500);
+  
+      }else if(data.length === 1){  // 入力された日の文章作成
+  
+        let int_check = true;
+    
+        if(!Number.isInteger(Number(data[0]))){
+          int_check = false;
+        }
+  
+        if(!int_check){
+  
+          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
+          setTimeout(function(){message.delete();}, 500);
+  
+        }else{
+  
+          let date_check      = true;
+          let last_date_check = new Date();
+          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
+          let last_date       = last_date_month.getDate();                                                   // 今月末日
+  
+          if((Number(data[0]) < 1) || (Number(data[0]) > last_date)){
+            date_check = false;
+          }
+  
+          if(!date_check){
+  
+            message.reply("日は1～" + last_date + "の間で入力してください！");
+            setTimeout(function(){message.delete();}, 500);
+  
+          }else{
+  
+            const dayArray = ["日", "月", "火", "水", "木", "金", "土"];
+          
+            // 指定された日の曜日を取得
+            let now      = new Date();
+            let year     = now.getFullYear();
+            let month    = now.getMonth() + 1;
+            let eventDay = new Date(year, month - 1, Number(data[0]));
+            let dayIndex = eventDay.getDay();
+  
+            let text = "@everyone\n235青年団の皆様～！！今月の235士官学校開校日は" + month + "月" + data[0] + "日（" + dayArray[dayIndex] + "）に決まりました～！！\n235士官学校に集まってもろてやいやいやりましょう！よろしくお願いしま～～～す🌹";
+  
+            message.channel.send(text);
+            setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
+            setTimeout(function(){message.delete();}, 3_500);
+  
+          }
+  
+        }
+  
+      }else{
+        
+        message.reply("指定出来る日程は**1つだけ**です！\n\n235men 12");
+        setTimeout(() => message.delete(), 500);
+  
+      }
+
+    }
 
   }else if(command === "women"){     // womenコマンド 女子会の企画文章を作成
 
     // きなくるさん以外は使えないように
     if(message.author.username !== "きなくる"){
 
-      message.reply("235women コマンドは、聖235女学園🌸の担当者である**うたたねさん**が使用することが出来るコマンドです。");
+      message.reply("235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**が使用することが出来るコマンドです。");
       setTimeout(() => message.delete(), 500);
 
     }else{
