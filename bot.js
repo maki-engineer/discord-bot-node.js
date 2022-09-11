@@ -162,42 +162,42 @@ client.on("interactionCreate", function(interaction) {
   if(interaction.commandName === "235ap"){
 
     interaction.reply("235apコマンドを使用することで、" + interaction.user.username + "さんがAPすることが出来た曲を登録することが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }else if(interaction.commandName === "235apall"){
 
     interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプで、APしてきた曲数を知ることが出来ます。\n（ 235apall All Princess Angel のように**半角スペース**で区切って複数入力することによって、複数のタイプで絞ることも出来ます。絞ることが出来るタイプの数は**3つ**までです！）\n※タイプを入力する時は、all や angel のように書くのではなく、All や Angel などと書くようにお願いします。");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }else if(interaction.commandName === "235notap"){
 
     interaction.reply("235notapコマンドを使用することで、" + interaction.user.username + "さんがまだAP出来ていない曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプで、AP出来ていない曲数を知ることが出来ます。\n（ 235apall All Princess Angel のように**半角スペース**で区切って複数入力することによって、複数のタイプで絞ることも出来ます。絞ることが出来るタイプの数は**3つ**までです！）\n※タイプを入力する時は、all や angel のように書くのではなく、All や Angel などと書くようにお願いします。");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }else if(interaction.commandName === "235apsearch"){
 
     interaction.reply("235apsearchコマンドを使用することで、" + interaction.user.username + "さんが入力した曲が既にAP出来ているか知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }else if(interaction.commandName === "235birthday"){
 
-    interaction.reply("235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n※235birthday コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235birthday 12 14 21");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    interaction.reply("235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n※235birthday コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。\n\n235birthday 12 14 21");
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }else if(interaction.commandName === "235mendate"){
 
-    interaction.reply("235mendateコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n※235mendate コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235mendate 12 14 16 17");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    interaction.reply("235mendateコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n※235mendate コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。\n\n235mendate 12 14 16 17");
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }else if(interaction.commandName === "235men"){
 
-    interaction.reply("235menコマンドを使用することで、毎月開催される235士官学校🌹の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n※235men コマンドは、ラウンジマスターである**うたたねさん**が使用することが出来るコマンドです。\n\n235men 23");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    interaction.reply("235menコマンドを使用することで、毎月開催される235士官学校🌹の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n※235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。\n\n235men 23");
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }else if(interaction.commandName === "235women"){
 
-    interaction.reply("235womenコマンドを使用することで、毎月開催される聖235女学園🌸の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n※235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**が使用することが出来るコマンドです。\n\n235women 12");
-    setTimeout(function(){ interaction.deleteReply() }, 60_000);
+    interaction.reply("235womenコマンドを使用することで、毎月開催される聖235女学園🌸の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n※235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**だけが使用出来るコマンドです。\n\n235women 12");
+    setTimeout(function(){ interaction.deleteReply() }, 300_000);
 
   }
 
@@ -783,7 +783,7 @@ client.on("messageCreate", function(message) {
 
   }else if(command === "help"){      // helpコマンド 235botの機能一覧を教える。
 
-    message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n・235apall\n・235notap\n・235apsearch\n・235birthday　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n・235mendate　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n・235men　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n・235women　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの詳細な機能について知りたい場合は、スラッシュコマンドの235help を使用してください。");
+    message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235mendate　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235men　　　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235women　　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
     setTimeout(function(){message.delete();}, 500);
 
   }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
