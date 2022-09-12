@@ -166,12 +166,12 @@ client.on("interactionCreate", function(interaction) {
 
   }else if(interaction.commandName === "235apall"){
 
-    interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAPしてきた曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
+    interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲と曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAPしてきた曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
     setTimeout(function(){ interaction.deleteReply() }, 180_000);
 
   }else if(interaction.commandName === "235notap"){
 
-    interaction.reply("235notapコマンドを使用することで、" + interaction.user.username + "さんがまだAP出来ていない曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAP出来ていない曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
+    interaction.reply("235notapコマンドを使用することで、" + interaction.user.username + "さんがまだAP出来ていない曲と曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAP出来ていない曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
     setTimeout(function(){ interaction.deleteReply() }, 180_000);
 
   }else if(interaction.commandName === "235apsearch"){
@@ -387,10 +387,48 @@ client.on("messageCreate", function(message) {
 
           }else{
 
-            let text = "AP曲数：" + rows.length + "曲";
+            let musicNames  = rows.map((item) => {return item.name});
+            let sliceMusics = def.sliceByNumber(musicNames, 100);
+            let count       = 0;
+            let text        = "";
 
-            message.reply(text);
-            setTimeout(function(){message.delete();}, 1_000);
+            if(sliceMusics.length === 1){
+
+              text = sliceMusics[count].join("\n");
+              message.reply("AP曲\n\n" + text + "\n\n合計" + rows.length + "曲");
+              setTimeout(() => message.delete(), 1_000);
+
+            }else{
+              
+              let text_timer = setInterval(() => {
+                if(count === sliceMusics.length){
+
+                  message.delete();
+                  clearInterval(text_timer);
+
+                }else{
+
+                  text = sliceMusics[count].join("\n");
+
+                  if(count === 0){
+
+                    message.reply("AP曲数\n\n" + text);
+
+                  }else if(count === sliceMusics.length - 1){
+
+                    message.reply(text + "\n\n合計" + rows.length + "曲");
+
+                  }else{
+
+                    message.reply(text);
+
+                  }
+
+                  count++;
+                }
+              }, 3_000);
+
+            }
 
           }
         }
@@ -442,11 +480,49 @@ client.on("messageCreate", function(message) {
               setTimeout(function(){message.delete();}, 1_000);
   
             }else{
-  
-              let text = data[0] + " AP曲数：" + rows.length + "曲";
-  
-              message.reply(text);
-              setTimeout(function(){message.delete();}, 1_000);
+
+              let musicNames  = rows.map((item) => {return item.name});
+              let sliceMusics = def.sliceByNumber(musicNames, 100);
+              let count       = 0;
+              let text        = "";
+
+              if(sliceMusics.length === 1){
+
+                text = sliceMusics[count].join("\n");
+                message.reply(data[0] + " AP曲\n\n" + text + "\n\n合計" + rows.length + "曲");
+                setTimeout(() => message.delete(), 1_000);
+
+              }else{
+
+                let text_timer = setInterval(() => {
+                  if(count === sliceMusics.length){
+
+                    message.delete();
+                    clearInterval(text_timer);
+
+                  }else{
+
+                    text = sliceMusics[count].join("\n");
+
+                    if(count === 0){
+
+                      message.reply(data[0] + " AP曲\n\n" + text);
+
+                    }else if(count === sliceMusics.length - 1){
+
+                      message.reply(text + "\n\n合計" + rows.length + "曲");
+
+                    }else{
+
+                      message.reply(text);
+
+                    }
+
+                    count++;
+                  }
+                }, 3_000);
+
+              }
   
             }
           }
@@ -487,10 +563,48 @@ client.on("messageCreate", function(message) {
 
           }else{
 
-            let text = "AP未達成数：" + rows.length + "曲";
+            let musicNames  = rows.map((item) => {return item.name});
+            let sliceMusics = def.sliceByNumber(musicNames, 100);
+            let count       = 0;
+            let text        = "";
 
-            message.reply(text);
-            setTimeout(function(){message.delete();}, 1_000);
+            if(sliceMusics.length === 1){
+
+              text = sliceMusics[count].join("\n");
+              message.reply("AP未達成曲\n\n" + text + "\n\n合計" + rows.length + "曲");
+              setTimeout(() => message.delete(), 1_000);
+
+            }else{
+
+              let text_timer = setInterval(() => {
+                if(count === sliceMusics.length){
+
+                  message.delete();
+                  clearInterval(text_timer);
+
+                }else{
+
+                  text = sliceMusics[count].join("\n");
+
+                  if(count === 0){
+
+                    message.reply("AP未達成曲\n\n" + text);
+
+                  }else if(count === sliceMusics.length - 1){
+
+                    message.reply(text + "\n\n合計" + rows.length + "曲");
+
+                  }else{
+
+                    message.reply(text);
+
+                  }
+
+                  count++;
+                }
+              }, 3_000);
+
+            }
 
           }
         }
@@ -541,11 +655,49 @@ client.on("messageCreate", function(message) {
               setTimeout(function(){message.delete();}, 1_000);
   
             }else{
-  
-              let text = data[0] + " AP未達成数：" + rows.length + "曲";
-  
-              message.reply(text);
-              setTimeout(function(){message.delete();}, 1_000);
+
+              let musicNames  = rows.map((item) => {return item.name});
+              let sliceMusics = def.sliceByNumber(musicNames, 100);
+              let count       = 0;
+              let text        = "";
+
+              if(sliceMusics.length === 1){
+
+                text = sliceMusics[count].join("\n");
+                message.reply(data[0] + " AP未達成曲\n\n" + text + "\n\n合計" + rows.length + "曲");
+                setTimeout(() => message.delete(), 1_000);
+
+              }else{
+
+                let text_timer = setInterval(() => {
+                  if(count === sliceMusics.length){
+
+                    message.delete();
+                    clearInterval(text_timer);
+
+                  }else{
+
+                    text = sliceMusics[count].join("\n");
+
+                    if(count === 0){
+
+                      message.reply(data[0] + " AP未達成曲\n\n" + text);
+
+                    }else if(count === sliceMusics.length - 1){
+
+                      message.reply(text + "\n\n合計" + rows.length + "曲");
+
+                    }else{
+
+                      message.reply(text);
+
+                    }
+
+                    count++;
+                  }
+                }, 3_000);
+
+              }
   
             }
           }
