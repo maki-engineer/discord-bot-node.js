@@ -399,7 +399,11 @@ client.on("messageCreate", function(message) {
               setTimeout(() => message.delete(), 1_000);
 
             }else{
-              
+
+              text = sliceMusics[count].join("\n");
+              message.reply("AP曲数\n\n" + text);
+              count++;
+
               let text_timer = setInterval(() => {
                 if(count === sliceMusics.length){
 
@@ -410,11 +414,7 @@ client.on("messageCreate", function(message) {
 
                   text = sliceMusics[count].join("\n");
 
-                  if(count === 0){
-
-                    message.reply("AP曲数\n\n" + text);
-
-                  }else if(count === sliceMusics.length - 1){
+                  if(count === sliceMusics.length - 1){
 
                     message.reply(text + "\n\n合計" + rows.length + "曲");
 
@@ -426,7 +426,7 @@ client.on("messageCreate", function(message) {
 
                   count++;
                 }
-              }, 3_000);
+              }, 2_000);
 
             }
 
@@ -494,6 +494,10 @@ client.on("messageCreate", function(message) {
 
               }else{
 
+                text = sliceMusics[count].join("\n");
+                message.reply(data[0] + " AP曲\n\n" + text);
+                count++;
+
                 let text_timer = setInterval(() => {
                   if(count === sliceMusics.length){
 
@@ -504,11 +508,7 @@ client.on("messageCreate", function(message) {
 
                     text = sliceMusics[count].join("\n");
 
-                    if(count === 0){
-
-                      message.reply(data[0] + " AP曲\n\n" + text);
-
-                    }else if(count === sliceMusics.length - 1){
+                    if(count === sliceMusics.length - 1){
 
                       message.reply(text + "\n\n合計" + rows.length + "曲");
 
@@ -520,7 +520,7 @@ client.on("messageCreate", function(message) {
 
                     count++;
                   }
-                }, 3_000);
+                }, 2_000);
 
               }
   
@@ -576,6 +576,10 @@ client.on("messageCreate", function(message) {
 
             }else{
 
+              text = sliceMusics[count].join("\n");
+              message.reply("AP未達成曲\n\n" + text);
+              count++;
+
               let text_timer = setInterval(() => {
                 if(count === sliceMusics.length){
 
@@ -586,11 +590,7 @@ client.on("messageCreate", function(message) {
 
                   text = sliceMusics[count].join("\n");
 
-                  if(count === 0){
-
-                    message.reply("AP未達成曲\n\n" + text);
-
-                  }else if(count === sliceMusics.length - 1){
+                  if(count === sliceMusics.length - 1){
 
                     message.reply(text + "\n\n合計" + rows.length + "曲");
 
@@ -602,7 +602,7 @@ client.on("messageCreate", function(message) {
 
                   count++;
                 }
-              }, 3_000);
+              }, 2_000);
 
             }
 
@@ -669,6 +669,10 @@ client.on("messageCreate", function(message) {
 
               }else{
 
+                text = sliceMusics[count].join("\n");
+                message.reply(data[0] + " AP未達成曲\n\n" + text);
+                count++;
+
                 let text_timer = setInterval(() => {
                   if(count === sliceMusics.length){
 
@@ -679,11 +683,7 @@ client.on("messageCreate", function(message) {
 
                     text = sliceMusics[count].join("\n");
 
-                    if(count === 0){
-
-                      message.reply(data[0] + " AP未達成曲\n\n" + text);
-
-                    }else if(count === sliceMusics.length - 1){
+                    if(count === sliceMusics.length - 1){
 
                       message.reply(text + "\n\n合計" + rows.length + "曲");
 
@@ -695,7 +695,7 @@ client.on("messageCreate", function(message) {
 
                     count++;
                   }
-                }, 3_000);
+                }, 2_000);
 
               }
   
