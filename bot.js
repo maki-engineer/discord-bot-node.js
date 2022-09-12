@@ -1173,11 +1173,11 @@ client.on("messageCreate", function(message) {
   }else if(command === "test"){      // testコマンド テスト用 メンバーのみんなにはこのコマンドは教えないようにする。
 
     message.reply("テスト用コマンド");
-    setTimeout(function(){message.delete();}, 1_000);
+    setTimeout(() => message.delete(), 1_000);
 
   }else{                             // コマンドを間違って打っちゃってた時の処理
 
-    const commands     = ["ap", "apall", "notap", "apsearch", "help", "birthday", "mendate", "men", "women", "lunch"];
+    const commands     = ["ap", "apall", "notap", "apsearch", "help", "birthday", "mendate", "men", "women"];
     let command_min    = 0xFFFF;
     let result_command = "";
 
@@ -1189,8 +1189,10 @@ client.on("messageCreate", function(message) {
     }
 
     if(command_min <= 3){
+
       message.reply("コマンド名が間違っているようです。\n\nもしかして　235" + result_command + "？");
-      setTimeout(function(){message.delete();}, 1_000);
+      setTimeout(() => message.delete(), 1_000);
+
     }
 
   }
