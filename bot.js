@@ -32,47 +32,56 @@ const client                        = new Client({
   ]
 });
 
-const channel_for_235_chat_place  = "791397952090275900";
-const channel_for_test_chat_place = "1017805557354205194";
-const prefix                      = "235";
-const emojis                      = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
-const types                       = ["All", "Princess", "Angel", "Fairy"];
-const check_types                 = ["AL", "PR", "AN", "FA"];
-const escapes                     = ["!", "∨", "@", "/", "#", "$", "%", "&", "(", ")", "=", "-", "_", "~", "^", "|", "[", "]", "{", "}", "*", "+", "д", "?", "<", ">", ".", ",", ":", ";"];
+const channel_for_235_chat_place       = "791397952090275900";
+const channel_for_test_solo_chat_place = "1017805557354205194";
+const channel_for_test_chat_place      = "1016885483516727376";
+const server_for_235                   = "783686370925084672";
+const server_for_test_solo             = "1017347780647325696";
+const server_for_test                  = "1016543616090517515";
+const prefix                           = "235";
+const message_delete_time              = 3_000;
+const emojis                           = ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟"];
+const types                            = ["All", "Princess", "Angel", "Fairy"];
+const check_types                      = ["AL", "PR", "AN", "FA"];
+const commands                         = [
+  {name: "235ap", description: "AP曲データを登録するときや、APすることが出来た曲を登録するときに使用するコマンドです。"},
+  {name: "235apall", description: "これまでAPしてきた曲数が知りたいときに使用するコマンドです。"},
+  {name: "235notap", description: "まだAPすることが出来ていない曲数が知りたいときに使用するコマンドです。"},
+  {name: "235apsearch", description: "入力した曲がAP出来ているか知りたいときに使用するコマンドです。"},
+  {name: "235birthday", description: "毎月開催されるオンライン飲み会の企画文章を作成したいときに使用するコマンドです。"},
+  {name: "235mendate", description: "毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。"},
+  {name: "235men", description: "毎月開催される235士官学校🌹の企画文章を作成したいときに使用するコマンドです。"},
+  {name: "235women", description: "毎月開催される聖235女学園🌸の企画文章を作成したいときに使用するコマンドです。"}
+];
+const escapes                          = [
+  "!", "∨", "@", "/", "#", "$", "%", "&", "(", ")",
+  "=", "-", "_", "~", "^", "|", "[", "]", "{", "}",
+  "*", "+", "д", "?", "<", ">", ".", ",", ":", ";"
+];
+const anniversary_datas                = [
+  {name: "『アイドルマスター SideM』",                                   year: 2014, month: 2,  date: 28},
+  {name: "『アイドルマスター シャイニーカラーズ』",                      year: 2018, month: 4,  date: 24},
+  {name: "『アイドルマスター ミリオンライブ！ シアターデイズ』",         year: 2017, month: 6,  date: 29},
+  {name: "『アイドルマスター』",                                         year: 2005, month: 7,  date: 26},
+  {name: "『アイドルマスター シンデレラガールズ スターライトステージ』", year: 2015, month: 9,   date: 3},
+  {name: "235プロダクション",                                            year: 2020, month: 12, date: 26}
+];
 
 // 常時行う処理
 client.on("ready", function() {
-  // それ以外の処理機能
-  const server_for_235            = {year: 2020, month: 12, date: 26};
-  const cinderella_girls          = {year: 2015, month: 9, date: 3};
-  const shiny_colors              = {year: 2018, month: 4, date: 24};
-  const side_m                    = {year: 2014, month: 2, date: 28};
-  const million_live_theater_days = {year: 2017, month: 6, date: 29};
-  const idol_master               = {year: 2005, month: 7, date: 26};
   let today_birthday              = [];
   let today_birthday_people       = 0;
 
-  const commands = [
-    {name: "235ap", description: "AP曲データを登録するときや、APすることが出来た曲を登録するときに使用するコマンドです。"},
-    {name: "235apall", description: "これまでAPしてきた曲数が知りたいときに使用するコマンドです。"},
-    {name: "235notap", description: "まだAPすることが出来ていない曲数が知りたいときに使用するコマンドです。"},
-    {name: "235apsearch", description: "入力した曲がAP出来ているか知りたいときに使用するコマンドです。"},
-    {name: "235birthday", description: "毎月開催されるオンライン飲み会の企画文章を作成したいときに使用するコマンドです。"},
-    {name: "235mendate", description: "毎月開催される235士官学校🌹の日程を決めるときに使用するコマンドです。"},
-    {name: "235men", description: "毎月開催される235士官学校🌹の企画文章を作成したいときに使用するコマンドです。"},
-    {name: "235women", description: "毎月開催される聖235女学園🌸の企画文章を作成したいときに使用するコマンドです。"}
-  ];
-
-  if(client.guilds.cache.get("783686370925084672") !== undefined){
-    client.application.commands.set(commands, "783686370925084672");
+  if(client.guilds.cache.get(server_for_235) !== undefined){
+    client.application.commands.set(commands, server_for_235);
   }
 
-  if(client.guilds.cache.get("1017347780647325696") !== undefined){
-    client.application.commands.set(commands, "1017347780647325696");
+  if(client.guilds.cache.get(server_for_test_solo) !== undefined){
+    client.application.commands.set(commands, server_for_test_solo);
   }
 
-  if(client.guilds.cache.get("1016543616090517515") !== undefined){
-    client.application.commands.set(commands, "1016543616090517515");
+  if(client.guilds.cache.get(server_for_test) !== undefined){
+    client.application.commands.set(commands, server_for_test);
   }
 
   client.user.setPresence({
@@ -102,7 +111,17 @@ client.on("ready", function() {
       // 誕生日が1人いた時と複数人いた時
       if(today_birthday.length === 1){
 
-        client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
+        if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+          client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
+        }
+
+        if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+          client.channels.cache.get(channel_for_test_solo_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
+        }
+
+        if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+          client.channels.cache.get(channel_for_test_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
+        }
 
       }else if(today_birthday.length > 1){
 
@@ -111,13 +130,33 @@ client.on("ready", function() {
             clearInterval(birthday_timer);
           }else if(today_birthday_people === 0){
 
-            client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            }
+
+            if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            }
+
+            if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            }
 
             today_birthday_people++;
 
           }else{
 
-            client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日でもあります！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日でもあります！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            }
+
+            if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日でもあります！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            }
+
+            if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日でもあります！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+            }
 
             today_birthday_people++;
 
@@ -126,31 +165,36 @@ client.on("ready", function() {
       }
 
     }else if((today_hour === 12) && (today_min === 0)){
-      if((today_month === side_m.month) && (today_date === side_m.date)){
+      for(let anniversary_data of anniversary_datas){
+        if((today_month === anniversary_data.month) && (today_date === anniversary_data.date)){
+          if(anniversary_data.name === "235プロダクション"){
+            if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**が設立されて**" + Number(today_year - anniversary_data.year) + "年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪");
+            }
 
-        client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター SideM』**は**" + Number(today_year - side_m.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+            if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_test_solo_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**が設立されて**" + Number(today_year - anniversary_data.year) + "年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪");
+            }
 
-      }else if((today_month === shiny_colors.month) && (today_date === shiny_colors.date)){
+            if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_test_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**が設立されて**" + Number(today_year - anniversary_data.year) + "年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪");
+            }
+          }else{
+            if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**は**" + Number(today_year - anniversary_data.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+            }
 
-        client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター シャイニーカラーズ』**は**" + Number(today_year - shiny_colors.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+            if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_test_solo_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**は**" + Number(today_year - anniversary_data.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+            }
 
-      }else if((today_month === million_live_theater_days.month) && (today_date === million_live_theater_days.date)){
-
-        client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター ミリオンライブ！ シアターデイズ』**は**" + Number(today_year - million_live_theater_days.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
-
-      }else if((today_month === idol_master.month) && (today_date === idol_master.date)){
-
-        client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター』**は**" + Number(today_year - idol_master.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
-
-      }else if((today_month === cinderella_girls.month) && (today_date === cinderella_girls.date)){
-
-        client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**『アイドルマスター シンデレラガールズ スターライトステージ』**は**" + Number(today_year - cinderella_girls.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
-
-      }else if((today_month === server_for_235.month) && (today_date === server_for_235.date)){
-
-        client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**235プロダクション**が設立されて**" + Number(today_year - server_for_235.year) + "年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪");
-
+            if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+              client.channels.cache.get(channel_for_test_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**は**" + Number(today_year - anniversary_data.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
+            }
+          }
+        }
       }
+
     }
   }, 60_000);  // 1分ごと
 });
@@ -256,12 +300,12 @@ client.on("messageCreate", function(message) {
           db.run("alter table APmusics add column " + names + "_flg default 0");
 
           message.reply("今回" + message.author.username + "さんは初めて235apコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、235ap DIAMOND のようにコマンドを使って、どんどんAPすることが出来た曲を登録していきましょう！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
 
         }else{
 
           message.reply(message.author.username + "さんは既にAP曲データが登録されています！ APすることが出来た曲を登録したい場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
 
         }
       });
@@ -283,7 +327,7 @@ client.on("messageCreate", function(message) {
         if(err){
 
           message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
 
         }else{
 
@@ -291,8 +335,8 @@ client.on("messageCreate", function(message) {
           let suggest_music = "";
 
           for(let row of rows){
-              if(min > def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase())){
-                  min   = def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase());
+              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
+                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
                   suggest_music = row.name;
               }
           }
@@ -310,13 +354,13 @@ client.on("messageCreate", function(message) {
                       if(results[0][names + "_flg"] === 1){
 
                         message.reply(results[0].name + " は既に登録されています！");
-                        setTimeout(function(){message.delete();}, 1_000);
+                        setTimeout(function(){message.delete();}, message_delete_time);
 
                       }else{
 
                         db.run("update APmusics set " + names + "_flg = 1 where name = ?", suggest_music);
                         message.reply("登録成功：" + suggest_music + "\nAPおめでとうございます♪");
-                        setTimeout(function(){message.delete();}, 1_000);
+                        setTimeout(function(){message.delete();}, message_delete_time);
 
                       }
                     });
@@ -324,12 +368,12 @@ client.on("messageCreate", function(message) {
                   }else if((min > 1) && (min < 6)){
 
                     message.reply("登録に失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
-                    setTimeout(function(){message.delete();}, 1_000);
+                    setTimeout(function(){message.delete();}, message_delete_time);
 
                   }else{
 
                     message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
-                    setTimeout(function(){message.delete();}, 1_000);
+                    setTimeout(function(){message.delete();}, message_delete_time);
 
                   }
                 }else{
@@ -337,13 +381,13 @@ client.on("messageCreate", function(message) {
                   if(rows[0][names + "_flg"] === 1){
 
                     message.reply(rows[0].name + " は既に登録されています！");
-                    setTimeout(function(){message.delete();}, 1_000);
+                    setTimeout(function(){message.delete();}, message_delete_time);
 
                   }else{
 
                     db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
                     message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
-                    setTimeout(function(){message.delete();}, 1_000);
+                    setTimeout(function(){message.delete();}, message_delete_time);
 
                   }
 
@@ -375,7 +419,7 @@ client.on("messageCreate", function(message) {
         if(err){
 
           message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
 
         }else{
 
@@ -383,7 +427,7 @@ client.on("messageCreate", function(message) {
           if(rows.length === 0){
 
             message.reply(message.author.username + "さんはまだ今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
 
           }else{
 
@@ -396,12 +440,12 @@ client.on("messageCreate", function(message) {
 
               text = sliceMusics[count].join("\n");
               message.reply("AP曲\n\n" + text + "\n\n合計" + rows.length + "曲");
-              setTimeout(() => message.delete(), 1_000);
+              setTimeout(() => message.delete(), message_delete_time);
 
             }else{
 
               text = sliceMusics[count].join("\n");
-              message.reply("AP曲数\n\n" + text);
+              message.reply("AP曲\n\n" + text);
               count++;
 
               let text_timer = setInterval(() => {
@@ -426,7 +470,7 @@ client.on("messageCreate", function(message) {
 
                   count++;
                 }
-              }, 2_000);
+              }, 3_000);
 
             }
 
@@ -460,7 +504,7 @@ client.on("messageCreate", function(message) {
       if(check){
 
         message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名(All, Princess, Fairy, Angel)を入力してください！\n\n235apall All");
-        setTimeout(function(){message.delete();}, 1_000);
+        setTimeout(function(){message.delete();}, message_delete_time);
 
       }else{
 
@@ -469,7 +513,7 @@ client.on("messageCreate", function(message) {
           if(err){
   
             message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
   
           }else{
   
@@ -477,7 +521,7 @@ client.on("messageCreate", function(message) {
             if(rows.length === 0){
   
               message.reply(message.author.username + "さんはまだ" + data[0] + "曲で今までAPしてきた曲はないようです。\nもしまだAPした曲を登録していない場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
-              setTimeout(function(){message.delete();}, 1_000);
+              setTimeout(function(){message.delete();}, message_delete_time);
   
             }else{
 
@@ -490,7 +534,7 @@ client.on("messageCreate", function(message) {
 
                 text = sliceMusics[count].join("\n");
                 message.reply(data[0] + " AP曲\n\n" + text + "\n\n合計" + rows.length + "曲");
-                setTimeout(() => message.delete(), 1_000);
+                setTimeout(() => message.delete(), message_delete_time);
 
               }else{
 
@@ -520,7 +564,7 @@ client.on("messageCreate", function(message) {
 
                     count++;
                   }
-                }, 2_000);
+                }, 3_000);
 
               }
   
@@ -531,7 +575,7 @@ client.on("messageCreate", function(message) {
       }
     }else{
       message.reply("入力された内容が多すぎます！ 絞ることができるタイプの数は**1つだけ**です！\n\n235apall Angel");
-      setTimeout(function(){message.delete();}, 1_000);
+      setTimeout(function(){message.delete();}, message_delete_time);
     }
 
   }else if(command === "notap"){     // notapコマンド まだAPしてない曲一覧を教える。
@@ -551,7 +595,7 @@ client.on("messageCreate", function(message) {
         if(err){
 
           message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
 
         }else{
 
@@ -559,7 +603,7 @@ client.on("messageCreate", function(message) {
           if(rows.length === 0){
 
             message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
 
           }else{
 
@@ -572,7 +616,7 @@ client.on("messageCreate", function(message) {
 
               text = sliceMusics[count].join("\n");
               message.reply("AP未達成曲\n\n" + text + "\n\n合計" + rows.length + "曲");
-              setTimeout(() => message.delete(), 1_000);
+              setTimeout(() => message.delete(), message_delete_time);
 
             }else{
 
@@ -602,7 +646,7 @@ client.on("messageCreate", function(message) {
 
                   count++;
                 }
-              }, 2_000);
+              }, 3_000);
 
             }
 
@@ -635,7 +679,7 @@ client.on("messageCreate", function(message) {
       if(check){
 
         message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名(All, Princess, Fairy, Angel)を入力してください！\n\n235apall All");
-        setTimeout(function(){message.delete();}, 1_000);
+        setTimeout(function(){message.delete();}, message_delete_time);
 
       }else{
 
@@ -644,7 +688,7 @@ client.on("messageCreate", function(message) {
           if(err){
   
             message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
   
           }else{
   
@@ -652,7 +696,7 @@ client.on("messageCreate", function(message) {
             if(rows.length === 0){
   
               message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
-              setTimeout(function(){message.delete();}, 1_000);
+              setTimeout(function(){message.delete();}, message_delete_time);
   
             }else{
 
@@ -665,7 +709,7 @@ client.on("messageCreate", function(message) {
 
                 text = sliceMusics[count].join("\n");
                 message.reply(data[0] + " AP未達成曲\n\n" + text + "\n\n合計" + rows.length + "曲");
-                setTimeout(() => message.delete(), 1_000);
+                setTimeout(() => message.delete(), message_delete_time);
 
               }else{
 
@@ -695,7 +739,7 @@ client.on("messageCreate", function(message) {
 
                     count++;
                   }
-                }, 2_000);
+                }, 3_000);
 
               }
   
@@ -706,7 +750,7 @@ client.on("messageCreate", function(message) {
       }
     }else{
       message.reply("入力された内容が多すぎます！ 絞ることができるタイプの数は**1つだけ**です！\n\n235apall Angel");
-      setTimeout(function(){message.delete();}, 1_000);
+      setTimeout(function(){message.delete();}, message_delete_time);
     }
 
   }else if(command === "apsearch"){  // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
@@ -714,7 +758,7 @@ client.on("messageCreate", function(message) {
     if(data.length === 0){
 
       message.reply("曲名が入力されていません！ 235apsearch DIAMOND のように曲名を入力してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、見つけることが出来ません。）");
-      setTimeout(function(){message.delete();}, 1_000);
+      setTimeout(function(){message.delete();}, message_delete_time);
 
     }else{
 
@@ -736,7 +780,7 @@ client.on("messageCreate", function(message) {
           text += "まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！";
 
           message.reply(text);
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
 
         }else{
 
@@ -744,8 +788,8 @@ client.on("messageCreate", function(message) {
           let suggest_music = "";
 
           for(let row of rows){
-              if(min > def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase())){
-                  min   = def.levenshteinDistance(musics[0].toUpperCase(), row.name.toUpperCase());
+              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
+                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
                   suggest_music = row.name;
               }
           }
@@ -757,17 +801,17 @@ client.on("messageCreate", function(message) {
                 if(min <= 1){
 
                   message.reply(suggest_music + " は既にAPすることが出来ています！");
-                  setTimeout(function(){message.delete();}, 1_000);
+                  setTimeout(function(){message.delete();}, message_delete_time);
 
                 }else if((min > 1) && (min < 6)){
 
                   message.reply("曲名を見つけることが出来ませんでした......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235apsearch " + suggest_music);
-                  setTimeout(function(){message.delete();}, 1_000);
+                  setTimeout(function(){message.delete();}, message_delete_time);
 
                 }else{
 
                   message.reply("曲名を見つけることが出来ませんでした......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
-                  setTimeout(function(){message.delete();}, 1_000);
+                  setTimeout(function(){message.delete();}, message_delete_time);
 
                 }
 
@@ -775,12 +819,12 @@ client.on("messageCreate", function(message) {
                 if(rows[0][names + "_flg"] === 1){
 
                   message.reply(rows[0].name + " は既にAPすることが出来ています！");
-                  setTimeout(function(){message.delete();}, 1_000);
+                  setTimeout(function(){message.delete();}, message_delete_time);
 
                 }else{
 
                   message.reply(rows[0].name + " はまだAP出来ていません！");
-                  setTimeout(function(){message.delete();}, 1_000);
+                  setTimeout(function(){message.delete();}, message_delete_time);
 
                 }
               }
@@ -795,7 +839,7 @@ client.on("messageCreate", function(message) {
   }else if(command === "help"){      // helpコマンド 235botの機能一覧を教える。
 
     message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235mendate　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235men　　　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235women　　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
-    setTimeout(function(){message.delete();}, 1_000);
+    setTimeout(function(){message.delete();}, message_delete_time);
 
   }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
 
@@ -803,14 +847,14 @@ client.on("messageCreate", function(message) {
     if(message.author.username !== "うたたねさん"){
 
       message.reply("235birthday コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
-      setTimeout(() => message.delete(), 1_000);
+      setTimeout(() => message.delete(), message_delete_time);
 
     }else{
 
       if((data.length < 3) || (data.length > 3)){
   
         message.reply("235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
-        setTimeout(function(){message.delete();}, 1_000);
+        setTimeout(function(){message.delete();}, message_delete_time);
   
       }else{
   
@@ -825,7 +869,7 @@ client.on("messageCreate", function(message) {
         if(!int_check){
   
           message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
   
         }else{
           if((Number(data[0]) >= 1) && (Number(data[0]) <= 12)){
@@ -881,21 +925,21 @@ client.on("messageCreate", function(message) {
                 text += text_3[Math.floor(Math.random() * text_3.length)];
         
                 message.channel.send(text);
-                setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 5_000);
+                setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
                 setTimeout(function(){message.delete();}, 10_000);
   
   
               }else{
                 message.reply("時間は0～23の間で入力してください！");
-                setTimeout(function(){message.delete();}, 1_000);
+                setTimeout(function(){message.delete();}, message_delete_time);
               }
             }else{
               message.reply("日は1～" + last_date + "の間で入力してください！");
-              setTimeout(function(){message.delete();}, 1_000);
+              setTimeout(function(){message.delete();}, message_delete_time);
             }
           }else{
             message.reply("月は1～12の間で入力してください！");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
           }
         }
   
@@ -910,19 +954,19 @@ client.on("messageCreate", function(message) {
     if(message.author.username !== "うたたねさん"){
 
       message.reply("235mendate コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
-      setTimeout(() => message.delete(), 1_000);
+      setTimeout(() => message.delete(), message_delete_time);
 
     }else{
 
       if(data.length === 0){
         
         message.reply("235mendateコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235mendate 8 12 15 21");
-        setTimeout(function(){message.delete();}, 1_000);
+        setTimeout(function(){message.delete();}, message_delete_time);
   
       }else if((data.length > 10) || (data.length === 1)){
         
         message.reply("235mendateコマンドで入力することができる日程の数は**2～10個まで**です！");
-        setTimeout(function(){message.delete();}, 1_000);
+        setTimeout(function(){message.delete();}, message_delete_time);
   
       }else{
         
@@ -937,14 +981,14 @@ client.on("messageCreate", function(message) {
         if(!int_check){
   
           message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
   
         }else{
           
           if(def.existsSameValue(data)){
   
             message.reply("同じ日程が入力されています！\n日程を入力するときは同じ日程を入力しないように気をつけてください！");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
   
           }else{
   
@@ -962,7 +1006,7 @@ client.on("messageCreate", function(message) {
             if(!date_check){
   
               message.reply("日は1～" + last_date + "の間で入力してください！");
-              setTimeout(function(){message.delete();}, 1_000);
+              setTimeout(function(){message.delete();}, message_delete_time);
   
             }else{
   
@@ -1007,7 +1051,7 @@ client.on("messageCreate", function(message) {
   
               message.channel.send(text);
               db.run("insert into emojis(count) values(?)", data.length);
-              setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 5_000);
+              setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
               setTimeout(function(){message.delete();}, 10_000);
   
   
@@ -1027,14 +1071,14 @@ client.on("messageCreate", function(message) {
     if(message.author.username !== "うたたねさん"){
 
       message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
-      setTimeout(() => message.delete(), 1_000);
+      setTimeout(() => message.delete(), message_delete_time);
 
     }else{
 
       if(data.length === 0){        // 当日の文章作成
   
         message.reply("@everyone\n235青年団の皆様方～～～～～!!!\n本日夜、235士官学校開校日…もとい男子会が開かれます！~~教練の時間だ！~~\nどしどしご参加くだーーーーい！");
-        setTimeout(() => message.delete(), 1_000);
+        setTimeout(() => message.delete(), message_delete_time);
   
       }else if(data.length === 1){  // 入力された日の文章作成
   
@@ -1047,7 +1091,7 @@ client.on("messageCreate", function(message) {
         if(!int_check){
   
           message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
   
         }else{
   
@@ -1063,7 +1107,7 @@ client.on("messageCreate", function(message) {
           if(!date_check){
   
             message.reply("日は1～" + last_date + "の間で入力してください！");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
   
           }else{
   
@@ -1079,7 +1123,7 @@ client.on("messageCreate", function(message) {
             let text = "@everyone\n235青年団の皆様～！！今月の235士官学校開校日は" + month + "月" + data[0] + "日（" + dayArray[dayIndex] + "）に決まりました～！！\n235士官学校に集まってもろてやいやいやりましょう！よろしくお願いしま～～～す🌹";
   
             message.channel.send(text);
-            setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 5_000);
+            setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
             setTimeout(function(){message.delete();}, 10_000);
   
           }
@@ -1089,7 +1133,7 @@ client.on("messageCreate", function(message) {
       }else{
         
         message.reply("指定出来る日程は**1つだけ**です！\n\n235men 12");
-        setTimeout(() => message.delete(), 1_000);
+        setTimeout(() => message.delete(), message_delete_time);
   
       }
 
@@ -1101,14 +1145,14 @@ client.on("messageCreate", function(message) {
     if(message.author.username !== "きなくる"){
 
       message.reply("235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**だけが使用出来るコマンドです。");
-      setTimeout(() => message.delete(), 1_000);
+      setTimeout(() => message.delete(), message_delete_time);
 
     }else{
 
       if(data.length === 0){        // 当日の文章作成
   
         message.reply("@everyone\n本日23女🌸です🍾\nよろしくおねがいします🌙🌙");
-        setTimeout(() => message.delete(), 1_000);
+        setTimeout(() => message.delete(), message_delete_time);
   
       }else if(data.length === 1){  // 入力された日の文章作成
   
@@ -1121,7 +1165,7 @@ client.on("messageCreate", function(message) {
         if(!int_check){
   
           message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
-          setTimeout(function(){message.delete();}, 1_000);
+          setTimeout(function(){message.delete();}, message_delete_time);
   
         }else{
   
@@ -1137,7 +1181,7 @@ client.on("messageCreate", function(message) {
           if(!date_check){
   
             message.reply("日は1～" + last_date + "の間で入力してください！");
-            setTimeout(function(){message.delete();}, 1_000);
+            setTimeout(function(){message.delete();}, message_delete_time);
   
           }else{
   
@@ -1153,7 +1197,7 @@ client.on("messageCreate", function(message) {
             let text = "@everyone\n女子の皆様！今月の23女🌸開催は" + month + "/" + data[0] + "（" + dayArray[dayIndex] + "）です。\n\nよろしくお願いします🙇‍♀️";
   
             message.channel.send(text);
-            setTimeout(() => message.reply("きなくるさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 5_000);
+            setTimeout(() => message.reply("きなくるさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 3_000);
             setTimeout(function(){message.delete();}, 10_000);
   
           }
@@ -1163,7 +1207,7 @@ client.on("messageCreate", function(message) {
       }else{
         
         message.reply("指定出来る日程は**1つだけ**です！\n\n235women 12");
-        setTimeout(() => message.delete(), 1_000);
+        setTimeout(() => message.delete(), message_delete_time);
   
       }
 
@@ -1173,7 +1217,7 @@ client.on("messageCreate", function(message) {
   }else if(command === "test"){      // testコマンド テスト用 メンバーのみんなにはこのコマンドは教えないようにする。
 
     message.reply("テスト用コマンド");
-    setTimeout(() => message.delete(), 1_000);
+    setTimeout(() => message.delete(), message_delete_time);
 
   }else{                             // コマンドを間違って打っちゃってた時の処理
 
@@ -1191,7 +1235,7 @@ client.on("messageCreate", function(message) {
     if(command_min <= 3){
 
       message.reply("コマンド名が間違っているようです。\n\nもしかして　235" + result_command + "？");
-      setTimeout(() => message.delete(), 1_000);
+      setTimeout(() => message.delete(), message_delete_time);
 
     }
 
