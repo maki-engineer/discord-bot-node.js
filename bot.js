@@ -71,8 +71,10 @@ const anniversary_datas                = [
 
 // 常時行う処理
 client.on("ready", function() {
-  let today_birthday              = [];
-  let today_birthday_people       = 0;
+  let today_birthday_for_235_member            = [];
+  let today_birthday_for_million_member        = [];
+  let today_birthday_people_for_235_member     = 0;
+  let today_birthday_people_for_million_member = 0;
 
   if(client.guilds.cache.get(server_for_235) !== undefined){
     client.application.commands.set(commands, server_for_235);
@@ -101,72 +103,188 @@ client.on("ready", function() {
     let today_hour  = today.getHours();
     let today_min   = today.getMinutes();
 
-    // 9時にメンバーの誕生日を祝い、12時にミリシタ、235プロラウンジの周年祝い
+    // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     if((today_hour === 9) && (today_min === 0)){
 
       for(let member of birthday_for_235_member.data){
         if((today_month === member.month) && (today_date === member.date)){
-          today_birthday.push(member.name);
+          today_birthday_for_235_member.push(member.name);
         }
       }
 
       // 誕生日が1人いた時と複数人いた時
-      if(today_birthday.length === 1){
+      if(today_birthday_for_235_member.length === 1){
 
         if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
-          client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
+          client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_235_member[0] + "さん**のお誕生日です！！\n" + today_birthday_for_235_member[0] + "さん、お誕生日おめでとうございます♪");
         }
 
         if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
-          client.channels.cache.get(channel_for_test_solo_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
+          client.channels.cache.get(channel_for_test_solo_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_235_member[0] + "さん**のお誕生日です！！\n" + today_birthday_for_235_member[0] + "さん、お誕生日おめでとうございます♪");
         }
 
         if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
-          client.channels.cache.get(channel_for_test_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[0] + "さん**のお誕生日です！！\n" + today_birthday[0] + "さん、お誕生日おめでとうございます♪");
+          client.channels.cache.get(channel_for_test_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_235_member[0] + "さん**のお誕生日です！！\n" + today_birthday_for_235_member[0] + "さん、お誕生日おめでとうございます♪");
         }
 
-      }else if(today_birthday.length > 1){
+      }else if(today_birthday_for_235_member.length > 1){
 
         let birthday_timer = setInterval(function(){
-          if(today_birthday_people === today_birthday.length){
+          if(today_birthday_people_for_235_member === today_birthday_for_235_member.length){
             clearInterval(birthday_timer);
-          }else if(today_birthday_people === 0){
+          }else if(today_birthday_people_for_235_member === 0){
 
             if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
-              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん**のお誕生日です！！\n" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
             }
 
             if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
-              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+              client.channels.cache.get(channel_for_test_solo_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん**のお誕生日です！！\n" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
             }
 
             if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
-              client.channels.cache.get(channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日です！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+              client.channels.cache.get(channel_for_test_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん**のお誕生日です！！\n" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
             }
 
-            today_birthday_people++;
+            today_birthday_people_for_235_member++;
 
           }else{
 
             if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
-              client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日でもあります！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+              client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん**のお誕生日でもあります！！\n" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
             }
 
             if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
-              client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日でもあります！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+              client.channels.cache.get(channel_for_test_solo_chat_place).send("さらに！！　本日は**" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん**のお誕生日でもあります！！\n" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
             }
 
             if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
-              client.channels.cache.get(channel_for_235_chat_place).send("さらに！！　本日は**" + today_birthday[today_birthday_people] + "さん**のお誕生日でもあります！！\n" + today_birthday[today_birthday_people] + "さん、お誕生日おめでとうございます♪");
+              client.channels.cache.get(channel_for_test_chat_place).send("さらに！！　本日は**" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん**のお誕生日でもあります！！\n" + today_birthday_for_235_member[today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
             }
 
-            today_birthday_people++;
+            today_birthday_people_for_235_member++;
 
           }
         }, 4_000)  // 4秒ごと
       }
 
-    }else if((today_hour === 12) && (today_min === 0)){
+    }else if((today_hour === 9) && (today_min === 30)){
+
+      for(let member of birthday_for_million_member.data){
+        if((today_month === member.month) && (today_date === member.date)){
+          today_birthday_for_million_member.push(member);
+        }
+      }
+
+      if(today_birthday_for_million_member.length === 1){
+
+        if(birthday_for_million_member.validation.includes(today_birthday_for_million_member[0].name)){
+          if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[0].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[0].img]});
+          }
+  
+          if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(channel_for_test_solo_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[0].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[0].img]});
+          }
+  
+          if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(channel_for_test_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[0].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[0].img]});
+          }
+        }else{
+          if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[0].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[0].img]});
+          }
+  
+          if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(channel_for_test_solo_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[0].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[0].img]});
+          }
+  
+          if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(channel_for_test_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[0].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[0].img]});
+          }
+        }
+
+
+      }else if(today_birthday_for_million_member.length > 1){
+
+        let birthday_timer = setInterval(function(){
+          if(today_birthday_people_for_million_member === today_birthday_for_million_member.length){
+            clearInterval(birthday_timer);
+          }else if(today_birthday_people_for_million_member === 0){
+
+            if(birthday_for_million_member.validation.includes(today_birthday_for_million_member[today_birthday_people_for_million_member].name)){
+
+              if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_test_solo_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_test_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+
+            }else{
+
+              if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+
+            }
+
+            today_birthday_people_for_million_member++;
+
+          }else{
+
+            if(birthday_for_million_member.validation.includes(today_birthday_for_million_member[today_birthday_people_for_million_member].name)){
+
+              if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_235_chat_place).send({content: "さらに！！　本日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_test_solo_chat_place).send({content: "さらに！！　本日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_test_chat_place).send({content: "さらに！！　本日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+
+            }else{
+
+              if(client.channels.cache.get(channel_for_235_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_235_chat_place).send({content: "さらに！！　本日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_test_solo_chat_place).send({content: "さらに！！　本日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+  
+              if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
+                client.channels.cache.get(channel_for_test_chat_place).send({content: "さらに！！　本日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+              }
+
+            }
+
+            today_birthday_people_for_million_member++;
+
+          }
+        }, 4_000)  // 4秒ごと
+
+      }
+
+    }else if((today_hour === 10) && (today_min === 0)){
+
       for(let anniversary_data of anniversary_datas){
         if((today_month === anniversary_data.month) && (today_date === anniversary_data.date)){
           if(anniversary_data.name === "235プロダクション"){
