@@ -5,8 +5,9 @@ const sqlite3 = require("sqlite3");
 const db      = new sqlite3.Database("235data.db");
 
 // 別ファイル導入
-const birthday = require("./birthdays");
-const def      = require("./function");
+const birthday_for_235_member     = require("./birthday-for-235-member");
+const birthday_for_million_member = require("./birthday-for-million-member");
+const def                         = require("./function");
 
 const { Client, GatewayIntentBits } = require("discord.js");
 const token                         = require("./discord-token.json");
@@ -102,7 +103,7 @@ client.on("ready", function() {
     // 9時にメンバーの誕生日を祝い、12時にミリシタ、235プロラウンジの周年祝い
     if((today_hour === 9) && (today_min === 0)){
 
-      for(let member of birthday.data){
+      for(let member of birthday_for_235_member.data){
         if((today_month === member.month) && (today_date === member.date)){
           today_birthday.push(member.name);
         }
@@ -912,7 +913,7 @@ client.on("messageCreate", function(message) {
         
                 text += text_1[Math.floor(Math.random() * text_1.length)];
         
-                for(let member of birthday.data){
+                for(let member of birthday_for_235_member.data){
                   if(member.month === month){
                     text += "**" + member.date + "日..." + member.name + "さん**\n";
                   }
@@ -1214,10 +1215,19 @@ client.on("messageCreate", function(message) {
     }
 
 
-  }else if(command === "test"){      // testコマンド テスト用 メンバーのみんなにはこのコマンドは教えないようにする。
+  }else if(command === "test"){      // testコマンド テスト用 俺以外は打てないようにする。
 
-    message.reply("テスト用コマンド");
-    setTimeout(() => message.delete(), message_delete_time);
+    if(message.author.username === "まき"){
+
+      message.reply("テスト用コマンド");
+      setTimeout(() => message.delete(), message_delete_time);
+
+    }else{
+
+      message.reply("このコマンドは開発者だけが使えるコマンドです。");
+      setTimeout(() => message.delete(), message_delete_time);
+
+    }
 
   }else{                             // コマンドを間違って打っちゃってた時の処理
 

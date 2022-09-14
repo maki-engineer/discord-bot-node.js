@@ -2,6 +2,7 @@
 discord-token.json
 node_modules
 package-lock.json
-birthdays.js
+birthday-for-235-member.js
+birthday-for-million-member.js
 function.js
 test.js
