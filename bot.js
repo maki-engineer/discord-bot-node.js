@@ -9,6 +9,7 @@ const birthday_for_235_member     = require("./birthday-for-235-member");
 const birthday_for_million_member = require("./birthday-for-million-member");
 const def                         = require("./function");
 
+// discord.js導入
 const { Client, GatewayIntentBits } = require("discord.js");
 const token                         = require("./discord-token.json");
 const client                        = new Client({

@@ -1,6 +1,7 @@
+node_modules
+img
 235data.db
 discord-token.json
-node_modules
 package-lock.json
 birthday-for-235-member.js
 birthday-for-million-member.js
