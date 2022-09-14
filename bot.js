@@ -61,12 +61,8 @@ const escapes                          = [
   "*", "+", "д", "?", "<", ">", ".", ",", ":", ";"
 ];
 const anniversary_datas                = [
-  {name: "『アイドルマスター SideM』",                                   year: 2014, month: 2,  date: 28},
-  {name: "『アイドルマスター シャイニーカラーズ』",                      year: 2018, month: 4,  date: 24},
-  {name: "『アイドルマスター ミリオンライブ！ シアターデイズ』",         year: 2017, month: 6,  date: 29},
-  {name: "『アイドルマスター』",                                         year: 2005, month: 7,  date: 26},
-  {name: "『アイドルマスター シンデレラガールズ スターライトステージ』", year: 2015, month: 9,   date: 3},
-  {name: "235プロダクション",                                            year: 2020, month: 12, date: 26}
+  {name: "『アイドルマスター ミリオンライブ！ シアターデイズ』", year: 2017, month: 6,  date: 29},
+  {name: "235プロダクション",                                    year: 2020, month: 12, date: 26}
 ];
 
 // 常時行う処理
@@ -233,11 +229,11 @@ client.on("ready", function() {
               }
   
               if(client.channels.cache.get(channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+                client.channels.cache.get(channel_for_test_solo_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
               }
   
               if(client.channels.cache.get(channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
+                client.channels.cache.get(channel_for_test_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + today_birthday_for_million_member[today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [today_birthday_for_million_member[today_birthday_people_for_million_member].img]});
               }
 
             }
