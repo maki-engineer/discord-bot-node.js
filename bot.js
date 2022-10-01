@@ -254,6 +254,11 @@ client.on("interactionCreate", function(interaction) {
     interaction.reply("235apコマンドを使用することで、" + interaction.user.username + "さんがAPすることが出来た曲を登録することが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
     setTimeout(function(){ interaction.deleteReply() }, 180_000);
 
+  }else if(interaction.commandName === "235apremove"){
+
+    interaction.reply("235apremoveコマンドを使用することで、間違ってAP曲データに登録してしまった曲を取り消すことが出来ます。\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
+    setTimeout(function(){ interaction.deleteReply() }, 180_000);
+
   }else if(interaction.commandName === "235apall"){
 
     interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲と曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAPしてきた曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
