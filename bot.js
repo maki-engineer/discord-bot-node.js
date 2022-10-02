@@ -950,8 +950,21 @@ client.on("messageCreate", function(message) {
 
                 if(min <= 1){
 
-                  message.reply(suggest_music + " は既にAPすることが出来ています！");
-                  setTimeout(function(){message.delete();}, information.message_delete_time);
+                  db.all("select * from APmusics where name = ?", suggest_music, (err, rows) => {
+
+                    if(rows[0][names + "_flg"] === 1){
+  
+                      message.reply(suggest_music + " は既にAPすることが出来ています！");
+                      setTimeout(function(){message.delete();}, information.message_delete_time);
+    
+                    }else{
+    
+                      message.reply(suggest_music + " はまだAP出来ていません！");
+                      setTimeout(function(){message.delete();}, information.message_delete_time);
+    
+                    }
+
+                  });
 
                 }else if((min > 1) && (min < 6)){
 
