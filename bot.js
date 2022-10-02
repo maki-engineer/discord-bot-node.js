@@ -423,7 +423,7 @@ client.on("messageCreate", function(message) {
 
                   }else{
 
-                    message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
+                    message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
                     setTimeout(function(){message.delete();}, information.message_delete_time);
 
                   }
@@ -438,6 +438,105 @@ client.on("messageCreate", function(message) {
 
                     db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
                     message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }
+
+                }
+              }
+            });
+          }
+
+        }
+
+      });
+
+    }
+
+  }else if(command === "apremove"){  // apremoveコマンド 間違ってAP曲データに登録してしまった曲を取り消す。
+
+    if(data.length === 0){
+
+      message.reply("235apremoveコマンドを使用する場合は、曲名を1曲フルで入力してください！");
+      setTimeout(() => message.delete(), information.message_delete_time);
+
+    }else{
+
+      let names = message.author.username.split("");
+      
+      for(let i = 0; i < names.length; i++){
+        if(information.escapes.includes(names[i])) names[i] = "";
+      }
+
+      names = names.join("");
+
+      const musics    = msg.slice(9).split("^");
+
+      db.all("select name, " + names + "_flg" + " from APmusics", (err, rows) => {
+        // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+        if(err){
+
+          message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+          setTimeout(function(){message.delete();}, information.message_delete_time);
+
+        }else{
+
+          let min   = 0xFFFF;
+          let suggest_music = "";
+
+          for(let row of rows){
+              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
+                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
+                  suggest_music = row.name;
+              }
+          }
+
+          for(let music of musics){
+            db.all("select * from APmusics where name = ?", music, (err, rows) => {
+              if(err){
+                console.log(err);
+              }else{
+                if(rows.length === 0){
+
+                  if(min <= 1){
+
+                    db.all("select * from APmusics where name = ?", suggest_music, (err, results) => {
+                      if(results[0][names + "_flg"] === 0){
+
+                        message.reply(results[0].name + " はまだAP曲データに登録されていないようです。");
+                        setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                      }else{
+
+                        db.run("update APmusics set " + names + "_flg = 0 where name = ?", suggest_music);
+                        message.reply("取り消し成功：" + suggest_music);
+                        setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                      }
+                    });
+
+                  }else if((min > 1) && (min < 6)){
+
+                    message.reply("取り消しに失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }else{
+
+                    message.reply("取り消しに失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }
+                }else{
+
+                  if(rows[0][names + "_flg"] === 0){
+
+                    message.reply(rows[0].name + " はまだAP曲データに登録されていないようです。");
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }else{
+
+                    db.run("update APmusics set " + names + "_flg = 0 where name = ?", music);
+                    message.reply("取り消し成功：" + music);
                     setTimeout(function(){message.delete();}, information.message_delete_time);
 
                   }
