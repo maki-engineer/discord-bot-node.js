@@ -988,7 +988,7 @@ client.on("messageCreate", function(message) {
 
   }else if(command === "help"){      // helpコマンド 235botの機能一覧を教える。
 
-    message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235mendate　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235men　　　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235women　　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+    message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235mendate　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235men　　　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235women　　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
     setTimeout(function(){message.delete();}, information.message_delete_time);
 
   }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
