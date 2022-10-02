@@ -254,6 +254,11 @@ client.on("interactionCreate", function(interaction) {
     interaction.reply("235apコマンドを使用することで、" + interaction.user.username + "さんがAPすることが出来た曲を登録することが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
     setTimeout(function(){ interaction.deleteReply() }, 180_000);
 
+  }else if(interaction.commandName === "235apremove"){
+
+    interaction.reply("235apremoveコマンドを使用することで、間違ってAP曲データに登録してしまった曲を取り消すことが出来ます。\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
+    setTimeout(function(){ interaction.deleteReply() }, 180_000);
+
   }else if(interaction.commandName === "235apall"){
 
     interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲と曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAPしてきた曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
@@ -418,7 +423,7 @@ client.on("messageCreate", function(message) {
 
                   }else{
 
-                    message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
+                    message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
                     setTimeout(function(){message.delete();}, information.message_delete_time);
 
                   }
@@ -433,6 +438,105 @@ client.on("messageCreate", function(message) {
 
                     db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
                     message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }
+
+                }
+              }
+            });
+          }
+
+        }
+
+      });
+
+    }
+
+  }else if(command === "apremove"){  // apremoveコマンド 間違ってAP曲データに登録してしまった曲を取り消す。
+
+    if(data.length === 0){
+
+      message.reply("235apremoveコマンドを使用する場合は、曲名を1曲フルで入力してください！");
+      setTimeout(() => message.delete(), information.message_delete_time);
+
+    }else{
+
+      let names = message.author.username.split("");
+      
+      for(let i = 0; i < names.length; i++){
+        if(information.escapes.includes(names[i])) names[i] = "";
+      }
+
+      names = names.join("");
+
+      const musics    = msg.slice(9).split("^");
+
+      db.all("select name, " + names + "_flg" + " from APmusics", (err, rows) => {
+        // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+        if(err){
+
+          message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+          setTimeout(function(){message.delete();}, information.message_delete_time);
+
+        }else{
+
+          let min   = 0xFFFF;
+          let suggest_music = "";
+
+          for(let row of rows){
+              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
+                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
+                  suggest_music = row.name;
+              }
+          }
+
+          for(let music of musics){
+            db.all("select * from APmusics where name = ?", music, (err, rows) => {
+              if(err){
+                console.log(err);
+              }else{
+                if(rows.length === 0){
+
+                  if(min <= 1){
+
+                    db.all("select * from APmusics where name = ?", suggest_music, (err, results) => {
+                      if(results[0][names + "_flg"] === 0){
+
+                        message.reply(results[0].name + " はまだAP曲データに登録されていないようです。");
+                        setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                      }else{
+
+                        db.run("update APmusics set " + names + "_flg = 0 where name = ?", suggest_music);
+                        message.reply("取り消し成功：" + suggest_music);
+                        setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                      }
+                    });
+
+                  }else if((min > 1) && (min < 6)){
+
+                    message.reply("取り消しに失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }else{
+
+                    message.reply("取り消しに失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }
+                }else{
+
+                  if(rows[0][names + "_flg"] === 0){
+
+                    message.reply(rows[0].name + " はまだAP曲データに登録されていないようです。");
+                    setTimeout(function(){message.delete();}, information.message_delete_time);
+
+                  }else{
+
+                    db.run("update APmusics set " + names + "_flg = 0 where name = ?", music);
+                    message.reply("取り消し成功：" + music);
                     setTimeout(function(){message.delete();}, information.message_delete_time);
 
                   }
@@ -846,8 +950,21 @@ client.on("messageCreate", function(message) {
 
                 if(min <= 1){
 
-                  message.reply(suggest_music + " は既にAPすることが出来ています！");
-                  setTimeout(function(){message.delete();}, information.message_delete_time);
+                  db.all("select * from APmusics where name = ?", suggest_music, (err, rows) => {
+
+                    if(rows[0][names + "_flg"] === 1){
+  
+                      message.reply(suggest_music + " は既にAPすることが出来ています！");
+                      setTimeout(function(){message.delete();}, information.message_delete_time);
+    
+                    }else{
+    
+                      message.reply(suggest_music + " はまだAP出来ていません！");
+                      setTimeout(function(){message.delete();}, information.message_delete_time);
+    
+                    }
+
+                  });
 
                 }else if((min > 1) && (min < 6)){
 
@@ -884,7 +1001,7 @@ client.on("messageCreate", function(message) {
 
   }else if(command === "help"){      // helpコマンド 235botの機能一覧を教える。
 
-    message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235mendate　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235men　　　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235women　　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+    message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235mendate　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235men　　　　このコマンドはラウンジマスターである**うたたねさん**だけが使用出来ます。\n\n・235women　　このコマンドは聖235女学園🌸の担当者である**きなくるさん**だけが使用出来ます。\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
     setTimeout(function(){message.delete();}, information.message_delete_time);
 
   }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
