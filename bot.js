@@ -78,9 +78,40 @@ client.on("ready", function() {
     let today_hour  = today.getHours();
     let today_min   = today.getMinutes();
 
+
+    // 雑談場（通話外）でメッセージ送信して1週間経ったメッセージは削除する
+    let setTime = new Date();
+    setTime.setDate(setTime.getDate() - 7);
+    let dateSevenDaysAgo = setTime.getDate();
+
+    db.all("select * from delete_messages where date = ?", dateSevenDaysAgo, (err, rows) => {
+      if(rows.length > 0){
+        let deleteIndex = 0;
+        let deleteTimer = setInterval(() => {
+          switch(deleteIndex){
+            case rows.length:
+
+              clearInterval(deleteTimer);
+              break;
+
+            default:
+
+              client.channels.cache.get("791397952090275900").messages.fetch(rows[deleteIndex].message_id)
+              .then((message) => message.delete())
+              .catch((error)  => error);
+              db.run("delete from delete_messages where message_id = ?", rows[deleteIndex].message_id);
+              deleteIndex++;
+              break;
+
+          }
+        }, 5_000);
+      }
+    });
+
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
-    // 15時にイベントの開催お知らせ、ブーストのお知らせ、終了日時のお知らせなど
-    // 21時に当日スタミナドリンクが配られるイベントのドリンクを使ったかの告知など
+    // 15時にイベントの開催お知らせ、ブーストのお知らせなど
+    // 21時にイベントの終了のお知らせ
+    // 22時に当日スタミナドリンクが配られるイベントのドリンクを使ったかの告知など
     if((today_hour === 9) && (today_min === 0)){
 
       for(let member of birthday_for_235_member.data){
@@ -264,7 +295,7 @@ client.on("ready", function() {
           method: "GET",
           json: true
         };
-        
+
         request(options, (error, response, body) => {
           if(body.schedule){
             // イベント開始日
@@ -342,20 +373,6 @@ client.on("ready", function() {
                 client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント終了まで**後1日**です！");
               }
 
-            }else if((endMonth === today_month) && (endDate === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
             }
 
             // 後半戦があるイベントなら後半戦開始時にメッセージ送信
@@ -384,6 +401,46 @@ client.on("ready", function() {
       });
 
     }else if((today_hour === 21) && (today_min === 0)){
+
+      db.all("select * from eventIndex", (err, rows) => {
+        const options = {
+          url: "https://api.matsurihi.me/mltd/v1/events/" + rows[0].num,
+          method: "GET",
+          json: true
+        };
+        
+        request(options, (error, response, body) => {
+          if(body.schedule){
+            // イベント終了日
+            const eventEnd     = body.schedule.endDate.slice(0, -6);
+            const eventEndTime = new Date(eventEnd);
+            const endMonth     = eventEndTime.getMonth() + 1;
+            const endDate      = eventEndTime.getDate();
+
+            // イベント終了時にメッセージ送信
+            if((endMonth === today_month) && (endDate === today_date)){
+
+              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+                client.channels.cache.get(information.channel_for_235_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
+              }
+
+              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
+                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
+              }
+
+              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
+                client.channels.cache.get(information.channel_for_test_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
+              }
+
+            }
+
+          }else{
+            return;
+          }
+        });
+      });
+
+    }else if((today_hour === 22) && (today_min === 0)){
 
       db.all("select * from eventIndex", (err, rows) => {
         const options = {
@@ -614,16 +671,13 @@ client.on("messageCreate", function(message) {
     setTimeout(function(){message.delete();}, 60_000);
   };
 
-  // 雑談場（通話外）の235botのリプライじゃないメッセージなら1週間後に削除する
-  // 本番用
-  /*if((message.channelId === "791397952090275900") && (message.author.bot) && (message.mentions.repliedUser === null)){
-    console.log(message.content);
-  }
+  // 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
+  if((message.channelId === "791397952090275900") && (message.author.bot) && (message.mentions.repliedUser === null)){
+    const now  = new Date();
+    const date = now.getDate();
 
-  // テスト用
-  if((message.channelId === "1017805557354205194") && (message.author.bot) && (message.mentions.repliedUser === null)){
-    console.log(message.content);
-  }*/
+    db.run("insert into delete_messages(message_id, date) values(?, ?)", message.id, date);
+  }
 
   // botからのメッセージは無視
   if(message.author.bot) return;
