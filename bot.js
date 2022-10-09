@@ -80,33 +80,37 @@ client.on("ready", function() {
 
 
     // 雑談場（通話外）でメッセージ送信して1週間経ったメッセージは削除する
-    let setTime = new Date();
-    setTime.setDate(setTime.getDate() - 7);
-    let dateSevenDaysAgo = setTime.getDate();
+    if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
 
-    db.all("select * from delete_messages where date = ?", dateSevenDaysAgo, (err, rows) => {
-      if(rows.length > 0){
-        let deleteIndex = 0;
-        let deleteTimer = setInterval(() => {
-          switch(deleteIndex){
-            case rows.length:
+      let setTime = new Date();
+      setTime.setDate(setTime.getDate() - 7);
+      let dateSevenDaysAgo = setTime.getDate();
 
-              clearInterval(deleteTimer);
-              break;
+      db.all("select * from delete_messages where date = ?", dateSevenDaysAgo, (err, rows) => {
+        if(rows.length > 0){
+          let deleteIndex = 0;
+          let deleteTimer = setInterval(() => {
+            switch(deleteIndex){
+              case rows.length:
+  
+                clearInterval(deleteTimer);
+                break;
+  
+              default:
+  
+                client.channels.cache.get(information.channel_for_235_chat_place).messages.fetch(rows[deleteIndex].message_id)
+                .then((message) => message.delete())
+                .catch((error)  => error);
+                db.run("delete from delete_messages where message_id = ?", rows[deleteIndex].message_id);
+                deleteIndex++;
+                break;
+  
+            }
+          }, 5_000);
+        }
+      });
 
-            default:
-
-              client.channels.cache.get("791397952090275900").messages.fetch(rows[deleteIndex].message_id)
-              .then((message) => message.delete())
-              .catch((error)  => error);
-              db.run("delete from delete_messages where message_id = ?", rows[deleteIndex].message_id);
-              deleteIndex++;
-              break;
-
-          }
-        }, 5_000);
-      }
-    });
+    }
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     // 15時にイベントの開催お知らせ、ブーストのお知らせなど
@@ -672,11 +676,15 @@ client.on("messageCreate", function(message) {
   };
 
   // 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
-  if((message.channelId === "791397952090275900") && (message.author.bot) && (message.mentions.repliedUser === null)){
-    const now  = new Date();
-    const date = now.getDate();
+  if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
 
-    db.run("insert into delete_messages(message_id, date) values(?, ?)", message.id, date);
+    if((message.channelId === information.channel_for_235_chat_place) && (message.author.bot) && (message.mentions.repliedUser === null)){
+      const now  = new Date();
+      const date = now.getDate();
+
+      db.run("insert into delete_messages(message_id, date) values(?, ?)", message.id, date);
+    }
+
   }
 
   // botからのメッセージは無視
