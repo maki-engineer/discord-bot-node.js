@@ -13,6 +13,16 @@ const birthday_for_million_member = require("./birthday-for-million-member");
 const information                 = require("./information-for-235");
 const def                         = require("./function");
 
+// twitter導入
+let twitter      = require("twitter");
+let twitterToken = require("./twitter-token.json");
+let bot          = new twitter({
+  consumer_key       : twitterToken.consumer_key,
+  consumer_secret    : twitterToken.consumer_secret,
+  access_token_key   : twitterToken.access_token_key,
+  access_token_secret: twitterToken.access_token_secret
+});
+
 // discord.js導入
 const { Client, GatewayIntentBits } = require("discord.js");
 const token                         = require("./discord-token.json");
@@ -603,6 +613,17 @@ client.on("messageCreate", function(message) {
   if((message.author.bot) && (message.mentions.repliedUser)){
     setTimeout(function(){message.delete();}, 60_000);
   };
+
+  // 雑談場（通話外）の235botのリプライじゃないメッセージなら1週間後に削除する
+  // 本番用
+  /*if((message.channelId === "791397952090275900") && (message.author.bot) && (message.mentions.repliedUser === null)){
+    console.log(message.content);
+  }
+
+  // テスト用
+  if((message.channelId === "1017805557354205194") && (message.author.bot) && (message.mentions.repliedUser === null)){
+    console.log(message.content);
+  }*/
 
   // botからのメッセージは無視
   if(message.author.bot) return;
