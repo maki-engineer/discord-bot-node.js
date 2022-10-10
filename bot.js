@@ -49,7 +49,7 @@ const client                        = new Client({
 });
 
 // 常時行う処理
-client.on("ready", function() {
+client.on("ready", () => {
 
   if(client.guilds.cache.get(information.server_for_235) !== undefined){
     client.application.commands.set(information.commands, information.server_for_235);
@@ -552,7 +552,7 @@ client.on("ready", function() {
 });
 
 // スラッシュコマンドが使われた時に行う処理
-client.on("interactionCreate", function(interaction) {
+client.on("interactionCreate", (interaction) => {
   if(!interaction.isCommand()) return;
 
   if(interaction.commandName === "235ap"){
@@ -653,7 +653,7 @@ client.on("interactionCreate", function(interaction) {
 });
 
 // メッセージが送信された時に行う処理
-client.on("messageCreate", function(message) {
+client.on("messageCreate", (message) => {
   // イベント企画の文章作成機能でアクションを付ける必要がある235botのメッセージだけは反応する
   db.all("select * from emojis", (err, rows) => {
     if(err){
