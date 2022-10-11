@@ -2076,6 +2076,7 @@ client.on("messageCreate", (message) => {
       }else{
 
         let divisionCount    = 0;
+        let duplicationCount = 100;
         let halfMembersName1 = [];
         let halfMembersName2 = [];
         let halfMembersId1   = [];
@@ -2083,9 +2084,94 @@ client.on("messageCreate", (message) => {
         let halfIndex1       = 0;
         let halfIndex2       = 0;
 
+        // この処理が失敗したら2,079行目と2,088～2,169行目を削除し、コメントアウトしている処理に直すこと
+        while(duplicationCount >= 3){
+          duplicationCount = 0;
+
+          if(membersName.length % 2 === 0){
+
+            halfIndex1 = Math.floor(membersName.length / 2) - 1;
+            halfIndex2 = membersName.length - halfIndex1 - 1;
+
+          }else{
+
+            halfIndex1  = Math.floor(membersName.length / 2);
+            halfIndex2  = membersName.length - halfIndex1;
+
+          }
+  
+          for(let i = 0; i <= halfIndex1; i++){
+
+            halfMembersName1.push(membersName[i]);
+            halfMembersId1.push(membersId[i]);
+
+          }
+  
+          for(let i = halfIndex2; i < membersName.length; i++){
+
+            halfMembersName2.push(membersName[i]);
+            halfMembersId2.push(membersId[i]);
+
+          }
+
+          db.all("select * from half_members", (err, rows) => {
+            for(let oi = 0; oi < halfMembersId2.length; oi++){
+              for(let ii = 0; ii < rows.length; ii++){
+                if(halfMembersId2[oi] === rows[ii].id){
+
+                  count++;
+                  break;
+
+                }
+              }
+            }
+          });
+
+          if(count < 3){
+
+            db.run("delete from half_members");
+
+            message.channel.sendTyping();
+            setTimeout(() => message.reply("このような結果になりました！\n\n**雑談**\n------------------------------------------------------------\n" + halfMembersName1.join("\n") + "\n------------------------------------------------------------\n\n**雑談その2**\n------------------------------------------------------------\n" + halfMembersName2.join("\n") + "\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。"), 2_000);
+
+            setTimeout(() => {
+
+              let roomDivisionTimer = setInterval(() => {
+                if(divisionCount === halfMembersName2.length){
+
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
+                  clearInterval(roomDivisionTimer);
+
+                }else{
+
+                  db.run("insert into half_members(id) values(?)", halfMembersId2[divisionCount]);
+                  client.guilds.cache.get(information.server_for_235).members.fetch(halfMembersId2[divisionCount]).then((user) => user.voice.setChannel(information.voice_channel_for_235_chat_place_2));
+                  divisionCount++;
+
+                }
+              }, 1_000);
+
+            }, 9_000);
+
+            break;
+
+          }
+
+          members          = def.shuffle(members);
+          membersName      = members.map(name => name.username);
+          membersId        = members.map(id => id.id);
+          halfMembersName1 = [];
+          halfMembersName2 = [];
+          halfMembersId1   = [];
+          halfMembersId2   = [];
+        }
+
+        /*
         if(membersName.length % 2 === 0){
-          halfIndex1 = Math.floor(membersName.length / 2);
-          halfIndex2 = membersName.length - halfIndex1 + 1;
+          halfIndex1 = Math.floor(membersName.length / 2) - 1;
+          halfIndex2 = membersName.length - halfIndex1 - 1;
         }else{
           halfIndex1  = Math.floor(membersName.length / 2);
           halfIndex2  = membersName.length - halfIndex1;
@@ -2123,6 +2209,7 @@ client.on("messageCreate", (message) => {
           }, 1_000);
 
         }, 9_000);
+        */
 
       }
 
