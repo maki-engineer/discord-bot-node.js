@@ -68,7 +68,7 @@ client.on("ready", () => {
     status: "online"
   });
 
-  setInterval(function(){
+  setInterval(() => {
     // 日付設定
     let today       = new Date();
     let today_year  = today.getFullYear();
@@ -698,7 +698,7 @@ client.on("messageCreate", (message) => {
   const command = data.shift().toLowerCase();                        // コマンド内容を小文字で取得
 
 
-  if(command === "ap"){              // apコマンド このコマンドを初めて使った人のAP曲データ登録、APした曲をデータに登録する。
+  if(command === "ap"){                  // apコマンド このコマンドを初めて使った人のAP曲データ登録、APした曲をデータに登録する。
     // apコマンドのみの場合 初めて使った人ならAP曲データ登録、2度目以降なら曲名入れてね警告する。
     if(data.length === 0){
 
@@ -855,7 +855,7 @@ client.on("messageCreate", (message) => {
 
     }
 
-  }else if(command === "apremove"){  // apremoveコマンド 間違ってAP曲データに登録してしまった曲を取り消す。
+  }else if(command === "apremove"){      // apremoveコマンド 間違ってAP曲データに登録してしまった曲を取り消す。
 
     if(data.length === 0){
 
@@ -986,7 +986,7 @@ client.on("messageCreate", (message) => {
 
     }
 
-  }else if(command === "apall"){     // apallコマンド 今までAPしてきた曲一覧を教える。
+  }else if(command === "apall"){         // apallコマンド 今までAPしてきた曲一覧を教える。
 
     if(data.length === 0){
 
@@ -1194,7 +1194,7 @@ client.on("messageCreate", (message) => {
       }, information.message_delete_time);
     }
 
-  }else if(command === "notap"){     // notapコマンド まだAPしてない曲一覧を教える。
+  }else if(command === "notap"){         // notapコマンド まだAPしてない曲一覧を教える。
 
     if(data.length === 0){
 
@@ -1401,7 +1401,7 @@ client.on("messageCreate", (message) => {
       }, information.message_delete_time);
     }
 
-  }else if(command === "apsearch"){  // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
+  }else if(command === "apsearch"){      // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
 
     if(data.length === 0){
 
@@ -1529,7 +1529,7 @@ client.on("messageCreate", (message) => {
 
     }
 
-  }else if(command === "help"){      // helpコマンド 235botの機能一覧を教える。
+  }else if(command === "help"){          // helpコマンド 235botの機能一覧を教える。
 
     switch(message.author.username){
       case "うたたねさん":
@@ -1564,7 +1564,7 @@ client.on("messageCreate", (message) => {
 
     }
 
-  }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
+  }else if(command === "birthday"){      // birthdayコマンド 毎月の誕生日祝い企画文章を作成
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
@@ -1699,7 +1699,7 @@ client.on("messageCreate", (message) => {
 
     }
 
-  }else if(command === "mendate"){   // mendateコマンド 男子会の日程を決めるためのコマンド
+  }else if(command === "mendate"){       // mendateコマンド 男子会の日程を決めるためのコマンド
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
@@ -1844,7 +1844,7 @@ client.on("messageCreate", (message) => {
 
     }
 
-  }else if(command === "men"){       // menコマンド 男子会の企画文章を作成
+  }else if(command === "men"){           // menコマンド 男子会の企画文章を作成
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
@@ -1942,7 +1942,7 @@ client.on("messageCreate", (message) => {
 
     }
 
-  }else if(command === "women"){     // womenコマンド 女子会の企画文章を作成
+  }else if(command === "women"){         // womenコマンド 女子会の企画文章を作成
 
     // きなくるさん以外は使えないように
     if(message.author.username !== "きなくる"){
@@ -2040,6 +2040,49 @@ client.on("messageCreate", (message) => {
 
     }
 
+
+  }else if(command === "roomdivision"){  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
+
+    // client.guilds.cache.get("1017347780647325696").members.fetch("525200443735932959").then((user) => user.voice.setChannel("814930046267031592"););
+
+    // client.guilds.cache.get("783686370925084672").members.fetch({query: "まき"}).then((user) => console.log(user));
+
+    // メッセージを投稿した人を雑談2に移動させる
+    // message.member.voice.setChannel("814930046267031592");
+    // ↓のようにすることで、指定したボイスチャンネルにいるメンバーを取得することが出来る。.size をつければ人数だけ取得できる。2047行目は235プロの雑談ボイスチャンネルのID
+    // console.log(client.voice.client.channels.cache.get("791562964708753429").members);
+    const members     = client.voice.client.channels.cache.get("1017347780647325700").members.map(member => member.user);
+    const membersName = members.map(name => name.username);
+    const membersId   = members.map(id => id.id);
+
+    //ボイスチャンネルに参加していない人は打てないように そして参加している人が10人未満の時も打てないように
+    if(membersId.includes(message.author.id)){
+
+      if(client.voice.client.channels.cache.get("1017347780647325700").members.size < 10){
+
+        message.reply("分けることが出来る人数に達していないため、分けることが出来ません！");
+        setTimeout(() => {
+          message.delete()
+          .then((data) => data)
+          .catch((err) => err);
+        }, information.message_delete_time);
+
+      }else{
+
+        //
+
+      }
+
+    }else{
+
+      message.reply("235roomdivision コマンドは、雑談ボイスチャンネルに参加しているメンバーが使用出来るコマンドです。");
+      setTimeout(() => {
+        message.delete()
+        .then((data) => data)
+        .catch((err) => err);
+      }, information.message_delete_time);
+
+    }
 
   }else if(command === "test"){      // testコマンド テスト用 俺以外は打てないようにする。
 
