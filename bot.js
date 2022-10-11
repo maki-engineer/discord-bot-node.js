@@ -1052,7 +1052,9 @@ client.on("messageCreate", (message) => {
               let text_timer = setInterval(() => {
                 if(count === sliceMusics.length){
 
-                  message.delete();
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
                   clearInterval(text_timer);
 
                 }else{
@@ -1162,7 +1164,9 @@ client.on("messageCreate", (message) => {
                 let text_timer = setInterval(() => {
                   if(count === sliceMusics.length){
 
-                    message.delete();
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
                     clearInterval(text_timer);
 
                   }else{
@@ -1260,7 +1264,9 @@ client.on("messageCreate", (message) => {
               let text_timer = setInterval(() => {
                 if(count === sliceMusics.length){
 
-                  message.delete();
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
                   clearInterval(text_timer);
 
                 }else{
@@ -1369,7 +1375,9 @@ client.on("messageCreate", (message) => {
                 let text_timer = setInterval(() => {
                   if(count === sliceMusics.length){
 
-                    message.delete();
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
                     clearInterval(text_timer);
 
                   }else{
@@ -2048,24 +2056,17 @@ client.on("messageCreate", (message) => {
 
   }else if(command === "roomdivision"){  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
 
-    // client.guilds.cache.get("1017347780647325696").members.fetch("525200443735932959").then((user) => user.voice.setChannel("814930046267031592"););
-
-    // client.guilds.cache.get("783686370925084672").members.fetch({query: "まき"}).then((user) => console.log(user));
-
-    // メッセージを投稿した人を雑談2に移動させる
-    // message.member.voice.setChannel("814930046267031592");
-    // ↓のようにすることで、指定したボイスチャンネルにいるメンバーを取得することが出来る。.size をつければ人数だけ取得できる。2047行目は235プロの雑談ボイスチャンネルのID
-    // console.log(client.voice.client.channels.cache.get("791562964708753429").members);
-    const members     = client.voice.client.channels.cache.get("1017347780647325700").members.map(member => member.user);
-    const membersName = members.map(name => name.username);
-    const membersId   = members.map(id => id.id);
+    let members     = client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.map(member => member.user);
+    members         = def.shuffle(members);
+    let membersName = members.map(name => name.username);
+    let membersId   = members.map(id => id.id);
 
     //ボイスチャンネルに参加していない人は打てないように そして参加している人が10人未満の時も打てないように
     if(membersId.includes(message.author.id)){
 
-      if(client.voice.client.channels.cache.get("1017347780647325700").members.size < 10){
+      if(client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.size < 10){
 
-        message.reply("分けることが出来る人数に達していないため、分けることが出来ません！");
+        message.reply("雑談ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -2074,7 +2075,54 @@ client.on("messageCreate", (message) => {
 
       }else{
 
-        //
+        let divisionCount    = 0;
+        let halfMembersName1 = [];
+        let halfMembersName2 = [];
+        let halfMembersId1   = [];
+        let halfMembersId2   = [];
+        let halfIndex1       = 0;
+        let halfIndex2       = 0;
+
+        if(membersName.length % 2 === 0){
+          halfIndex1 = Math.floor(membersName.length / 2);
+          halfIndex2 = membersName.length - halfIndex1 + 1;
+        }else{
+          halfIndex1  = Math.floor(membersName.length / 2);
+          halfIndex2  = membersName.length - halfIndex1;
+        }
+
+        for(let i = 0; i <= halfIndex1; i++){
+          halfMembersName1.push(membersName[i]);
+          halfMembersId1.push(membersId[i]);
+        }
+
+        for(let i = halfIndex2; i < membersName.length; i++){
+          halfMembersName2.push(membersName[i]);
+          halfMembersId2.push(membersId[i]);
+        }
+
+        message.channel.sendTyping();
+        setTimeout(() => message.reply("このような結果になりました！\n\n**雑談**\n------------------------------------------------------------\n" + halfMembersName1.join("\n") + "\n------------------------------------------------------------\n\n**雑談その2**\n------------------------------------------------------------\n" + halfMembersName2.join("\n") + "\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。"), 2_000);
+
+        setTimeout(() => {
+
+          let roomDivisionTimer = setInterval(() => {
+            if(divisionCount === halfMembersName2.length){
+
+              message.delete()
+              .then((data) => data)
+              .catch((err) => err);
+              clearInterval(roomDivisionTimer);
+
+            }else{
+
+              client.guilds.cache.get(information.server_for_235).members.fetch(halfMembersId2[divisionCount]).then((user) => user.voice.setChannel(information.voice_channel_for_235_chat_place_2));
+              divisionCount++;
+
+            }
+          }, 1_000);
+
+        }, 9_000);
 
       }
 
