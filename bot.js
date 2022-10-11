@@ -648,6 +648,11 @@ client.on("interactionCreate", (interaction) => {
 
     }
 
+  }else if(interaction.commandName === "235roomdivision"){
+
+    interaction.reply("235roomdivisionコマンドを使用することで、雑談ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、雑談ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、雑談ボイスチャンネルに参加しているメンバーのみが使用できます。");
+    setTimeout(() => interaction.deleteReply() , 180_000);
+
   }
 
 });
@@ -1534,7 +1539,7 @@ client.on("messageCreate", (message) => {
     switch(message.author.username){
       case "うたたねさん":
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235men\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1544,7 +1549,7 @@ client.on("messageCreate", (message) => {
 
       case "きなくる":
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235women\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235women\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1554,7 +1559,7 @@ client.on("messageCreate", (message) => {
 
       default:
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -2075,7 +2080,7 @@ client.on("messageCreate", (message) => {
 
     }else{
 
-      message.reply("235roomdivision コマンドは、雑談ボイスチャンネルに参加しているメンバーが使用出来るコマンドです。");
+      message.reply("235roomdivision コマンドは、雑談ボイスチャンネルに参加しているメンバーが使用できるコマンドです。");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
