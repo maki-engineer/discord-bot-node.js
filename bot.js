@@ -112,6 +112,32 @@ client.on("ready", () => {
 
     }
 
+    // プラチナスターツアー 開演
+    bot.get("search/tweets", {q: "プラチナスターツアー 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
+      db.all("select * from tweet_id_for_star_tour", (err, rows) => {
+        if(tweets.statuses[0].id !== rows[0].id){
+
+          const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
+          const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
+          const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
+          const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
+          const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
+
+          const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
+          const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
+
+          client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+        }
+      });
+    });
+
+    // プラチナスターツアー 折り返し
+
+    // プラチナスターツアー 終了
+
+    // プラチナスターシアター
+
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     // 15時にイベントの開催お知らせ、ブーストのお知らせなど
     // 21時にイベントの終了のお知らせ
@@ -2135,10 +2161,10 @@ client.on("messageCreate", message => {
             }
 
             // 3人以上被ってないかチェック
-            count = halfIds2.filter(x => dataIds.indexOf(x) !== -1).length;
+            duplicationCount = halfMembersId2.filter(x => dataIds.indexOf(x) !== -1).length;
 
             // 2個目の配列の人達を雑談その2に移動させる
-            if(count < 3){
+            if(duplicationCount < 3){
 
               db.run("delete from half_members");
 
