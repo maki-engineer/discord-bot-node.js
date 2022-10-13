@@ -552,7 +552,7 @@ client.on("ready", () => {
 });
 
 // スラッシュコマンドが使われた時に行う処理
-client.on("interactionCreate", (interaction) => {
+client.on("interactionCreate", interaction => {
   if(!interaction.isCommand()) return;
 
   if(interaction.commandName === "235ap"){
@@ -658,7 +658,7 @@ client.on("interactionCreate", (interaction) => {
 });
 
 // メッセージが送信された時に行う処理
-client.on("messageCreate", (message) => {
+client.on("messageCreate", message => {
   // イベント企画の文章作成機能でアクションを付ける必要がある235botのメッセージだけは反応する
   db.all("select * from emojis", (err, rows) => {
     if(err){
@@ -2057,10 +2057,22 @@ client.on("messageCreate", (message) => {
   }else if(command === "roomdivision"){  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
 
     // 雑談チャンネルに参加しているメンバー一覧をシャッフル
-    let members     = client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.map(member => member.user);
+    let members     = client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.map(member => member);
     members         = def.shuffle(members);
-    let membersName = members.map(name => name.username);
-    let membersId   = members.map(id => id.id);
+
+    let membersName = members.map(data => {
+      switch(data.nickname){
+        case null:
+
+          return data.user.username;
+
+        default:
+
+          return data.nickname;
+      }
+    });
+
+    let membersId = members.map(data => data.user.id);
 
     //ボイスチャンネルに参加していない人は打てないように そして参加している人が10人未満の時も打てないように
     if(membersId.includes(message.author.id)){
@@ -2088,7 +2100,7 @@ client.on("messageCreate", (message) => {
         let halfIndex2       = 0;
 
 
-        // この処理が失敗したら2,081行目と2,092～2,170行目を削除し、コメントアウトしている処理に直すこと
+        // この処理が失敗したら削除し、コメントアウトしている処理に直すこと
         db.all("select * from half_members", (err, rows) => {
           let dataIds = rows.map(data => data.id);
           while(duplicationCount >= 3){
@@ -2159,8 +2171,20 @@ client.on("messageCreate", (message) => {
 
             // 初期化
             members          = def.shuffle(members);
-            membersName      = members.map(name => name.username);
-            membersId        = members.map(id => id.id);
+
+            membersName      = members.map(data => {
+              switch(data.nickname){
+                case null:
+
+                  return data.user.username;
+
+                default:
+
+                  return data.nickname;
+              }
+            });
+
+            membersId        = members.map(data => data.user.id);
             halfMembersName1 = [];
             halfMembersName2 = [];
             halfMembersId1   = [];
