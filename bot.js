@@ -139,7 +139,7 @@ client.on("ready", () => {
     // プラチナスターシアター
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
-    // 15時にイベントの開催お知らせ、ブーストのお知らせなど
+    // 15時にイベント終了までのカウントをお知らせ
     // 21時にイベントの終了のお知らせ
     // 22時に当日スタミナドリンクが配られるイベントのドリンクを使ったかの告知など
     if((today_hour === 9) && (today_min === 0)){
@@ -319,155 +319,73 @@ client.on("ready", () => {
 
     }else if((today_hour === 15) && (today_min === 0)){
 
-      db.all("select * from eventIndex", (err, rows) => {
-        const options = {
-          url: "https://api.matsurihi.me/mltd/v1/events/" + rows[0].num,
-          method: "GET",
-          json: true
-        };
+      const options = {
+        url: "https://api.matsurihi.me/mltd/v1/events/",
+        method: "GET",
+        json: true
+      };
 
-        request(options, (error, response, body) => {
-          if(body.schedule){
-            // イベント開始日
-            const eventBegin     = body.schedule.beginDate.slice(0, -6);
-            const eventBeginTime = new Date(eventBegin);
-            const beginMonth     = eventBeginTime.getMonth() + 1;
-            const beginDate      = eventBeginTime.getDate();
+      request(options, (error, response, body) => {
+        // イベント終了日
+        const eventEnd     = body.schedule.endDate.slice(0, -6);
+        const eventEndTime = new Date(eventEnd);
+        const endMonth     = eventEndTime.getMonth() + 1;
+        const endDate      = eventEndTime.getDate();
 
-            // イベント終了日
-            const eventEnd     = body.schedule.endDate.slice(0, -6);
-            const eventEndTime = new Date(eventEnd);
-            const endMonth     = eventEndTime.getMonth() + 1;
-            let endDate        = eventEndTime.getDate();
-
-            // イベント後半戦開始日
-            const eventBoostBegin     = body.schedule.boostBeginDate.slice(0, -6);
-            const eventBoostBeginTime = new Date(eventBoostBegin);
-            const boostBeginMonth     = eventBoostBeginTime.getMonth() + 1;
-            const boostBeginDate      = eventBoostBeginTime.getDate();
-
-            // イベント開催時、イベント終了まで3日前から、イベント終了時にメッセージ送信
-            if((beginMonth === today_month) && (beginDate === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("本日から『" + body.name + "』のイベントが始まりました！");
-              }
-  
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("本日から『" + body.name + "』のイベントが始まりました！");
-              }
-  
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("本日から『" + body.name + "』のイベントが始まりました！");
-              }
-
-            }else if((endMonth === today_month) && ((endDate - 3) === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント終了まで**後3日**です！");
-              }
-  
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント終了まで**後3日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント終了まで**後3日**です！");
-              }
-
-            }else if((endMonth === today_month) && ((endDate - 2) === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント終了まで**後2日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント終了まで**後2日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント終了まで**後2日**です！");
-              }
-
-            }else if((endMonth === today_month) && ((endDate - 1) === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント終了まで**後1日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント終了まで**後1日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント終了まで**後1日**です！");
-              }
-
-            }
-
-            // 後半戦があるイベントなら後半戦開始時にメッセージ送信
-            if(body.schedule.boostBeginDate){
-              if((boostBeginMonth === today_month) && (boostBeginDate === today_date)){
-
-                if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                  client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント後半戦が始まりました！");
-                }
-
-                if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                  client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント後半戦が始まりました！");
-                }
-
-                if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                  client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント後半戦が始まりました！");
-                }
-
-              }
-            }
-
+        // 最新イベント取得
+        const latestEvent = body.sort((a, b) => {
+          if(a.id < b.id){
+            return 1;
           }else{
-            return;
+            return -1;
           }
-        });
-      });
+        })[0];
 
-    }else if((today_hour === 21) && (today_min === 0)){
 
-      db.all("select * from eventIndex", (err, rows) => {
-        const options = {
-          url: "https://api.matsurihi.me/mltd/v1/events/" + rows[0].num,
-          method: "GET",
-          json: true
-        };
-        
-        request(options, (error, response, body) => {
-          if(body.schedule){
-            // イベント終了日
-            const eventEnd     = body.schedule.endDate.slice(0, -6);
-            const eventEndTime = new Date(eventEnd);
-            const endMonth     = eventEndTime.getMonth() + 1;
-            const endDate      = eventEndTime.getDate();
+        // イベント終了まで3日前からメッセージ送信
+        if((endMonth === today_month) && ((endDate - 3) === today_date)){
 
-            // イベント終了時にメッセージ送信
-            if((endMonth === today_month) && (endDate === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-            }
-
-          }else{
-            return;
+          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後3日**です！");
           }
-        });
+
+          if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後3日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後3日**です！");
+          }
+
+        }else if((endMonth === today_month) && ((endDate - 2) === today_date)){
+
+          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後2日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後2日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後2日**です！");
+          }
+
+        }else if((endMonth === today_month) && ((endDate - 1) === today_date)){
+
+          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後1日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後1日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後1日**です！");
+          }
+
+        }
       });
 
     }else if((today_hour === 22) && (today_min === 0)){
