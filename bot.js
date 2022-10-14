@@ -49,7 +49,7 @@ const client                        = new Client({
 });
 
 // 常時行う処理
-client.on("ready", function() {
+client.on("ready", () => {
 
   if(client.guilds.cache.get(information.server_for_235) !== undefined){
     client.application.commands.set(information.commands, information.server_for_235);
@@ -68,7 +68,7 @@ client.on("ready", function() {
     status: "online"
   });
 
-  setInterval(function(){
+  setInterval(() => {
     // 日付設定
     let today       = new Date();
     let today_year  = today.getFullYear();
@@ -80,36 +80,100 @@ client.on("ready", function() {
 
 
     // 雑談場（通話外）でメッセージ送信して1週間経ったメッセージは削除する
-    let setTime = new Date();
-    setTime.setDate(setTime.getDate() - 7);
-    let dateSevenDaysAgo = setTime.getDate();
+    if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
 
-    db.all("select * from delete_messages where date = ?", dateSevenDaysAgo, (err, rows) => {
-      if(rows.length > 0){
-        let deleteIndex = 0;
-        let deleteTimer = setInterval(() => {
-          switch(deleteIndex){
-            case rows.length:
+      let setTime = new Date();
+      setTime.setDate(setTime.getDate() - 7);
+      let dateSevenDaysAgo = setTime.getDate();
 
-              clearInterval(deleteTimer);
-              break;
+      db.all("select * from delete_messages where date = ?", dateSevenDaysAgo, (err, rows) => {
+        if(rows.length > 0){
+          let deleteIndex = 0;
+          let deleteTimer = setInterval(() => {
+            switch(deleteIndex){
+              case rows.length:
+  
+                clearInterval(deleteTimer);
+                break;
+  
+              default:
+  
+                client.channels.cache.get(information.channel_for_235_chat_place).messages.fetch(rows[deleteIndex].message_id)
+                .then((message) => message.delete())
+                .catch((error)  => error);
+                db.run("delete from delete_messages where message_id = ?", rows[deleteIndex].message_id);
+                deleteIndex++;
+                break;
+  
+            }
+          }, 5_000);
+        }
+      });
 
-            default:
+    }
 
-              client.channels.cache.get("791397952090275900").messages.fetch(rows[deleteIndex].message_id)
-              .then((message) => message.delete())
-              .catch((error)  => error);
-              db.run("delete from delete_messages where message_id = ?", rows[deleteIndex].message_id);
-              deleteIndex++;
-              break;
+    // プラチナスターツアー 開演
+    bot.get("search/tweets", {q: "プラチナスターツアー 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
+      if(tweets.statuses[0]){
+
+        db.all("select * from tweet_id_for_star_tour", (err, rows) => {
+          if(tweets.statuses[0].id !== rows[0].id){
+
+            const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
+            const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
+            const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
+            const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
+            const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
+
+            const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
+            const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
+
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
           }
-        }, 5_000);
+        });
+
       }
     });
 
+    // プラチナスターツアー 折り返し
+
+    // プラチナスターツアー 終了
+
+    // プラチナスターシアター 開演
+    bot.get("search/tweets", {q: "プラチナスターシアター 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
+      if(tweets.statuses[0]){
+
+        db.all("select * from tweet_id_for_star_theater", (err, rows) => {
+          if(tweets.statuses[0].id !== rows[0].id){
+
+            const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
+            const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
+            const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
+            const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
+            const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
+
+            const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
+            const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
+
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+          }
+        });
+
+      }
+    });
+
+    // プラチナスターシアター 折り返し
+
+    // プラチナスターシアター 終了
+
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
-    // 15時にイベントの開催お知らせ、ブーストのお知らせなど
+    // 15時にイベント終了までのカウントをお知らせ
     // 21時にイベントの終了のお知らせ
     // 22時に当日スタミナドリンクが配られるイベントのドリンクを使ったかの告知など
     if((today_hour === 9) && (today_min === 0)){
@@ -289,155 +353,73 @@ client.on("ready", function() {
 
     }else if((today_hour === 15) && (today_min === 0)){
 
-      db.all("select * from eventIndex", (err, rows) => {
-        const options = {
-          url: "https://api.matsurihi.me/mltd/v1/events/" + rows[0].num,
-          method: "GET",
-          json: true
-        };
+      const options = {
+        url: "https://api.matsurihi.me/mltd/v1/events/",
+        method: "GET",
+        json: true
+      };
 
-        request(options, (error, response, body) => {
-          if(body.schedule){
-            // イベント開始日
-            const eventBegin     = body.schedule.beginDate.slice(0, -6);
-            const eventBeginTime = new Date(eventBegin);
-            const beginMonth     = eventBeginTime.getMonth() + 1;
-            const beginDate      = eventBeginTime.getDate();
+      request(options, (error, response, body) => {
+        // イベント終了日
+        const eventEnd     = body.schedule.endDate.slice(0, -6);
+        const eventEndTime = new Date(eventEnd);
+        const endMonth     = eventEndTime.getMonth() + 1;
+        const endDate      = eventEndTime.getDate();
 
-            // イベント終了日
-            const eventEnd     = body.schedule.endDate.slice(0, -6);
-            const eventEndTime = new Date(eventEnd);
-            const endMonth     = eventEndTime.getMonth() + 1;
-            let endDate        = eventEndTime.getDate();
-
-            // イベント後半戦開始日
-            const eventBoostBegin     = body.schedule.boostBeginDate.slice(0, -6);
-            const eventBoostBeginTime = new Date(eventBoostBegin);
-            const boostBeginMonth     = eventBoostBeginTime.getMonth() + 1;
-            const boostBeginDate      = eventBoostBeginTime.getDate();
-
-            // イベント開催時、イベント終了まで3日前から、イベント終了時にメッセージ送信
-            if((beginMonth === today_month) && (beginDate === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("本日から『" + body.name + "』のイベントが始まりました！");
-              }
-  
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("本日から『" + body.name + "』のイベントが始まりました！");
-              }
-  
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("本日から『" + body.name + "』のイベントが始まりました！");
-              }
-
-            }else if((endMonth === today_month) && ((endDate - 3) === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント終了まで**後3日**です！");
-              }
-  
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント終了まで**後3日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント終了まで**後3日**です！");
-              }
-
-            }else if((endMonth === today_month) && ((endDate - 2) === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント終了まで**後2日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント終了まで**後2日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント終了まで**後2日**です！");
-              }
-
-            }else if((endMonth === today_month) && ((endDate - 1) === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント終了まで**後1日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント終了まで**後1日**です！");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント終了まで**後1日**です！");
-              }
-
-            }
-
-            // 後半戦があるイベントなら後半戦開始時にメッセージ送信
-            if(body.schedule.boostBeginDate){
-              if((boostBeginMonth === today_month) && (boostBeginDate === today_date)){
-
-                if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                  client.channels.cache.get(information.channel_for_235_chat_place).send("『" + body.name + "』のイベント後半戦が始まりました！");
-                }
-
-                if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                  client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + body.name + "』のイベント後半戦が始まりました！");
-                }
-
-                if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                  client.channels.cache.get(information.channel_for_test_chat_place).send("『" + body.name + "』のイベント後半戦が始まりました！");
-                }
-
-              }
-            }
-
+        // 最新イベント取得
+        const latestEvent = body.sort((a, b) => {
+          if(a.id < b.id){
+            return 1;
           }else{
-            return;
+            return -1;
           }
-        });
-      });
+        })[0];
 
-    }else if((today_hour === 21) && (today_min === 0)){
 
-      db.all("select * from eventIndex", (err, rows) => {
-        const options = {
-          url: "https://api.matsurihi.me/mltd/v1/events/" + rows[0].num,
-          method: "GET",
-          json: true
-        };
-        
-        request(options, (error, response, body) => {
-          if(body.schedule){
-            // イベント終了日
-            const eventEnd     = body.schedule.endDate.slice(0, -6);
-            const eventEndTime = new Date(eventEnd);
-            const endMonth     = eventEndTime.getMonth() + 1;
-            const endDate      = eventEndTime.getDate();
+        // イベント終了まで3日前からメッセージ送信
+        if((endMonth === today_month) && ((endDate - 3) === today_date)){
 
-            // イベント終了時にメッセージ送信
-            if((endMonth === today_month) && (endDate === today_date)){
-
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_235_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-              if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
-                client.channels.cache.get(information.channel_for_test_chat_place).send("本日で『" + body.name + "』のイベントが終了しました！\nお疲れ様でした♪");
-              }
-
-            }
-
-          }else{
-            return;
+          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後3日**です！");
           }
-        });
+
+          if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後3日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後3日**です！");
+          }
+
+        }else if((endMonth === today_month) && ((endDate - 2) === today_date)){
+
+          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後2日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後2日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後2日**です！");
+          }
+
+        }else if((endMonth === today_month) && ((endDate - 1) === today_date)){
+
+          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後1日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_solo_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後1日**です！");
+          }
+
+          if(client.channels.cache.get(information.channel_for_test_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_test_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後1日**です！");
+          }
+
+        }
       });
 
     }else if((today_hour === 22) && (today_min === 0)){
@@ -548,7 +530,7 @@ client.on("ready", function() {
 });
 
 // スラッシュコマンドが使われた時に行う処理
-client.on("interactionCreate", function(interaction) {
+client.on("interactionCreate", interaction => {
   if(!interaction.isCommand()) return;
 
   if(interaction.commandName === "235ap"){
@@ -644,12 +626,17 @@ client.on("interactionCreate", function(interaction) {
 
     }
 
+  }else if(interaction.commandName === "235roomdivision"){
+
+    interaction.reply("235roomdivisionコマンドを使用することで、雑談ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、雑談ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、雑談ボイスチャンネルに参加しているメンバーのみが使用できます。");
+    setTimeout(() => interaction.deleteReply() , 180_000);
+
   }
 
 });
 
 // メッセージが送信された時に行う処理
-client.on("messageCreate", function(message) {
+client.on("messageCreate", message => {
   // イベント企画の文章作成機能でアクションを付ける必要がある235botのメッセージだけは反応する
   db.all("select * from emojis", (err, rows) => {
     if(err){
@@ -672,11 +659,15 @@ client.on("messageCreate", function(message) {
   };
 
   // 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
-  if((message.channelId === "791397952090275900") && (message.author.bot) && (message.mentions.repliedUser === null)){
-    const now  = new Date();
-    const date = now.getDate();
+  if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
 
-    db.run("insert into delete_messages(message_id, date) values(?, ?)", message.id, date);
+    if((message.channelId === information.channel_for_235_chat_place) && (message.author.bot) && (message.mentions.repliedUser === null)){
+      const now  = new Date();
+      const date = now.getDate();
+
+      db.run("insert into delete_messages(message_id, date) values(?, ?)", message.id, date);
+    }
+
   }
 
   // botからのメッセージは無視
@@ -690,7 +681,7 @@ client.on("messageCreate", function(message) {
   const command = data.shift().toLowerCase();                        // コマンド内容を小文字で取得
 
 
-  if(command === "ap"){              // apコマンド このコマンドを初めて使った人のAP曲データ登録、APした曲をデータに登録する。
+  if(command === "ap"){                  // apコマンド このコマンドを初めて使った人のAP曲データ登録、APした曲をデータに登録する。
     // apコマンドのみの場合 初めて使った人ならAP曲データ登録、2度目以降なら曲名入れてね警告する。
     if(data.length === 0){
 
@@ -847,7 +838,7 @@ client.on("messageCreate", function(message) {
 
     }
 
-  }else if(command === "apremove"){  // apremoveコマンド 間違ってAP曲データに登録してしまった曲を取り消す。
+  }else if(command === "apremove"){      // apremoveコマンド 間違ってAP曲データに登録してしまった曲を取り消す。
 
     if(data.length === 0){
 
@@ -978,7 +969,7 @@ client.on("messageCreate", function(message) {
 
     }
 
-  }else if(command === "apall"){     // apallコマンド 今までAPしてきた曲一覧を教える。
+  }else if(command === "apall"){         // apallコマンド 今までAPしてきた曲一覧を教える。
 
     if(data.length === 0){
 
@@ -1039,7 +1030,9 @@ client.on("messageCreate", function(message) {
               let text_timer = setInterval(() => {
                 if(count === sliceMusics.length){
 
-                  message.delete();
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
                   clearInterval(text_timer);
 
                 }else{
@@ -1149,7 +1142,9 @@ client.on("messageCreate", function(message) {
                 let text_timer = setInterval(() => {
                   if(count === sliceMusics.length){
 
-                    message.delete();
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
                     clearInterval(text_timer);
 
                   }else{
@@ -1186,7 +1181,7 @@ client.on("messageCreate", function(message) {
       }, information.message_delete_time);
     }
 
-  }else if(command === "notap"){     // notapコマンド まだAPしてない曲一覧を教える。
+  }else if(command === "notap"){         // notapコマンド まだAPしてない曲一覧を教える。
 
     if(data.length === 0){
 
@@ -1247,7 +1242,9 @@ client.on("messageCreate", function(message) {
               let text_timer = setInterval(() => {
                 if(count === sliceMusics.length){
 
-                  message.delete();
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
                   clearInterval(text_timer);
 
                 }else{
@@ -1356,7 +1353,9 @@ client.on("messageCreate", function(message) {
                 let text_timer = setInterval(() => {
                   if(count === sliceMusics.length){
 
-                    message.delete();
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
                     clearInterval(text_timer);
 
                   }else{
@@ -1393,7 +1392,7 @@ client.on("messageCreate", function(message) {
       }, information.message_delete_time);
     }
 
-  }else if(command === "apsearch"){  // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
+  }else if(command === "apsearch"){      // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
 
     if(data.length === 0){
 
@@ -1521,12 +1520,12 @@ client.on("messageCreate", function(message) {
 
     }
 
-  }else if(command === "help"){      // helpコマンド 235botの機能一覧を教える。
+  }else if(command === "help"){          // helpコマンド 235botの機能一覧を教える。
 
     switch(message.author.username){
       case "うたたねさん":
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235men\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1536,7 +1535,7 @@ client.on("messageCreate", function(message) {
 
       case "きなくる":
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235women\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235women\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1546,7 +1545,7 @@ client.on("messageCreate", function(message) {
 
       default:
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1556,7 +1555,7 @@ client.on("messageCreate", function(message) {
 
     }
 
-  }else if(command === "birthday"){  // birthdayコマンド 毎月の誕生日祝い企画文章を作成
+  }else if(command === "birthday"){      // birthdayコマンド 毎月の誕生日祝い企画文章を作成
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
@@ -1691,7 +1690,7 @@ client.on("messageCreate", function(message) {
 
     }
 
-  }else if(command === "mendate"){   // mendateコマンド 男子会の日程を決めるためのコマンド
+  }else if(command === "mendate"){       // mendateコマンド 男子会の日程を決めるためのコマンド
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
@@ -1836,7 +1835,7 @@ client.on("messageCreate", function(message) {
 
     }
 
-  }else if(command === "men"){       // menコマンド 男子会の企画文章を作成
+  }else if(command === "men"){           // menコマンド 男子会の企画文章を作成
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
@@ -1934,7 +1933,7 @@ client.on("messageCreate", function(message) {
 
     }
 
-  }else if(command === "women"){     // womenコマンド 女子会の企画文章を作成
+  }else if(command === "women"){         // womenコマンド 女子会の企画文章を作成
 
     // きなくるさん以外は使えないように
     if(message.author.username !== "きなくる"){
@@ -2032,6 +2031,157 @@ client.on("messageCreate", function(message) {
 
     }
 
+
+  }else if(command === "roomdivision"){  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
+
+    // 雑談チャンネルに参加しているメンバー一覧をシャッフル
+    let members     = client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.map(member => member);
+    members         = def.shuffle(members);
+
+    let membersName = members.map(data => {
+      switch(data.nickname){
+        case null:
+
+          return data.user.username;
+
+        default:
+
+          return data.nickname;
+      }
+    });
+
+    let membersId = members.map(data => data.user.id);
+
+    //ボイスチャンネルに参加していない人は打てないように そして参加している人が10人未満の時も打てないように
+    if(membersId.includes(message.author.id)){
+
+      if(client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.size < 10){
+
+        message.reply("雑談ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！");
+        setTimeout(() => {
+          message.delete()
+          .then((data) => data)
+          .catch((err) => err);
+        }, information.message_delete_time);
+
+      }else{
+
+        message.channel.sendTyping();
+
+        let divisionCount    = 0;
+        let duplicationCount = 100;
+        let halfMembersName1 = [];
+        let halfMembersName2 = [];
+        let halfMembersId1   = [];
+        let halfMembersId2   = [];
+        let halfIndex1       = 0;
+        let halfIndex2       = 0;
+
+
+        db.all("select * from half_members", (err, rows) => {
+          let dataIds = rows.map(data => data.id);
+          while(duplicationCount >= 3){
+            // 初期化
+            duplicationCount = 0;
+
+            // 配列を2個の配列に分ける
+            if(membersName.length % 2 === 0){
+
+              halfIndex1 = Math.floor(membersName.length / 2) - 1;
+              halfIndex2 = membersName.length - halfIndex1 - 1;
+
+            }else{
+
+              halfIndex1  = Math.floor(membersName.length / 2);
+              halfIndex2  = membersName.length - halfIndex1;
+
+            }
+
+            for(let i = 0; i <= halfIndex1; i++){
+
+              halfMembersName1.push(membersName[i]);
+              halfMembersId1.push(membersId[i]);
+
+            }
+
+            for(let i = halfIndex2; i < membersName.length; i++){
+
+              halfMembersName2.push(membersName[i]);
+              halfMembersId2.push(membersId[i]);
+
+            }
+
+            // 3人以上被ってないかチェック
+            duplicationCount = halfMembersId2.filter(x => dataIds.indexOf(x) !== -1).length;
+
+            // 2個目の配列の人達を雑談その2に移動させる
+            if(duplicationCount < 3){
+
+              db.run("delete from half_members");
+
+              setTimeout(() => message.reply("このような結果になりました！\n\n**雑談**\n------------------------------------------------------------\n" + halfMembersName1.join("\n") + "\n------------------------------------------------------------\n\n**雑談その2**\n------------------------------------------------------------\n" + halfMembersName2.join("\n") + "\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。"), 2_000);
+
+              setTimeout(() => {
+
+                let roomDivisionTimer = setInterval(() => {
+                  if(divisionCount === halfMembersName2.length){
+
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
+                    clearInterval(roomDivisionTimer);
+
+                  }else{
+
+                    db.run("insert into half_members(id) values(?)", halfMembersId2[divisionCount]);
+                    client.guilds.cache.get(information.server_for_235).members.fetch(halfMembersId2[divisionCount]).then((user) => user.voice.setChannel(information.voice_channel_for_235_chat_place_2));
+                    divisionCount++;
+
+                  }
+                }, 1_000);
+
+              }, 9_000);
+
+              break;
+
+            }
+
+            // 初期化
+            members          = def.shuffle(members);
+
+            membersName      = members.map(data => {
+              switch(data.nickname){
+                case null:
+
+                  return data.user.username;
+
+                default:
+
+                  return data.nickname;
+              }
+            });
+
+            membersId        = members.map(data => data.user.id);
+            halfMembersName1 = [];
+            halfMembersName2 = [];
+            halfMembersId1   = [];
+            halfMembersId2   = [];
+
+          }
+        });
+
+      }
+
+    }else{
+
+      message.reply("235roomdivision コマンドは、雑談ボイスチャンネルに参加しているメンバーが使用できるコマンドです。");
+      setTimeout(() => {
+        message.delete()
+        .then((data) => data)
+        .catch((err) => err);
+      }, information.message_delete_time);
+
+    }
 
   }else if(command === "test"){      // testコマンド テスト用 俺以外は打てないようにする。
 
