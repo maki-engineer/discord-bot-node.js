@@ -128,7 +128,9 @@ client.on("ready", () => {
             const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
             const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
 
-            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
           }
         });
@@ -156,7 +158,9 @@ client.on("ready", () => {
             const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
             const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
 
-            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
           }
         });
