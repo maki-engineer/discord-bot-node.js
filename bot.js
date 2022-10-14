@@ -2126,7 +2126,6 @@ client.on("messageCreate", message => {
         let halfIndex2       = 0;
 
 
-        // この処理が失敗したら削除し、コメントアウトしている処理に直すこと
         db.all("select * from half_members", (err, rows) => {
           let dataIds = rows.map(data => data.id);
           while(duplicationCount >= 3){
@@ -2218,50 +2217,6 @@ client.on("messageCreate", message => {
 
           }
         });
-
-
-        /*
-        if(membersName.length % 2 === 0){
-          halfIndex1 = Math.floor(membersName.length / 2) - 1;
-          halfIndex2 = membersName.length - halfIndex1 - 1;
-        }else{
-          halfIndex1  = Math.floor(membersName.length / 2);
-          halfIndex2  = membersName.length - halfIndex1;
-        }
-
-        for(let i = 0; i <= halfIndex1; i++){
-          halfMembersName1.push(membersName[i]);
-          halfMembersId1.push(membersId[i]);
-        }
-
-        for(let i = halfIndex2; i < membersName.length; i++){
-          halfMembersName2.push(membersName[i]);
-          halfMembersId2.push(membersId[i]);
-        }
-
-        message.channel.sendTyping();
-        setTimeout(() => message.reply("このような結果になりました！\n\n**雑談**\n------------------------------------------------------------\n" + halfMembersName1.join("\n") + "\n------------------------------------------------------------\n\n**雑談その2**\n------------------------------------------------------------\n" + halfMembersName2.join("\n") + "\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。"), 2_000);
-
-        setTimeout(() => {
-
-          let roomDivisionTimer = setInterval(() => {
-            if(divisionCount === halfMembersName2.length){
-
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-              clearInterval(roomDivisionTimer);
-
-            }else{
-
-              client.guilds.cache.get(information.server_for_235).members.fetch(halfMembersId2[divisionCount]).then((user) => user.voice.setChannel(information.voice_channel_for_235_chat_place_2));
-              divisionCount++;
-
-            }
-          }, 1_000);
-
-        }, 9_000);
-        */
 
       }
 
