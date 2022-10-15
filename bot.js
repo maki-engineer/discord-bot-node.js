@@ -114,63 +114,63 @@ client.on("ready", () => {
 
     // プラチナスターツアー 開演
     bot.get("search/tweets", {q: "プラチナスターツアー 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets.statuses[0]){
+      if(tweets){
+        if(tweets.statuses[0]){
 
-        db.all("select * from tweet_id_for_star_tour", (err, rows) => {
-          if(tweets.statuses[0].id !== rows[0].id){
+          db.all("select * from tweet_id_for_star_tour_start", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
 
-            const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
-            const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
-            const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
-            const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
-            const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
+              const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
+              const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
+              const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
+              const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
+              const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
 
-            const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
-            const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
+              const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
+              const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
 
-            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
-            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
-          }
-        });
+            }
+          });
 
+        }
       }
     });
 
     // プラチナスターツアー 折り返し
 
-    // プラチナスターツアー 終了
-
     // プラチナスターシアター 開演
     bot.get("search/tweets", {q: "プラチナスターシアター 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets.statuses[0]){
+      if(tweets){
+        if(tweets.statuses[0]){
 
-        db.all("select * from tweet_id_for_star_theater", (err, rows) => {
-          if(tweets.statuses[0].id !== rows[0].id){
+          db.all("select * from tweet_id_for_star_theater_start", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
 
-            const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
-            const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
-            const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
-            const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
-            const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
+              const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
+              const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
+              const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
+              const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
+              const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
 
-            const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
-            const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
+              const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
+              const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
 
-            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
-            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
-          }
-        });
+            }
+          });
 
+        }
       }
     });
 
     // プラチナスターシアター 折り返し
-
-    // プラチナスターシアター 終了
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     // 15時にイベント終了までのカウントをお知らせ
@@ -360,12 +360,6 @@ client.on("ready", () => {
       };
 
       request(options, (error, response, body) => {
-        // イベント終了日
-        const eventEnd     = body.schedule.endDate.slice(0, -6);
-        const eventEndTime = new Date(eventEnd);
-        const endMonth     = eventEndTime.getMonth() + 1;
-        const endDate      = eventEndTime.getDate();
-
         // 最新イベント取得
         const latestEvent = body.sort((a, b) => {
           if(a.id < b.id){
@@ -374,6 +368,12 @@ client.on("ready", () => {
             return -1;
           }
         })[0];
+
+        // イベント終了日
+        const eventEnd     = latestEvent.schedule.endDate.slice(0, -6);
+        const eventEndTime = new Date(eventEnd);
+        const endMonth     = eventEndTime.getMonth() + 1;
+        const endDate      = eventEndTime.getDate();
 
 
         // イベント終了まで3日前からメッセージ送信
