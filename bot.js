@@ -120,6 +120,8 @@ client.on("ready", () => {
           db.all("select * from tweet_id_for_star_tour_start", (err, rows) => {
             if(tweets.statuses[0].id !== rows[0].id){
 
+              db.run("update tweet_id_for_star_tour_start set id = ?", tweets.statuses[0].id);
+
               const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
               const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
               const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
@@ -141,6 +143,34 @@ client.on("ready", () => {
     });
 
     // プラチナスターツアー 折り返し
+    bot.get("search/tweets", {q: "プラチナスターツアー 折り返し from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
+      if(tweets){
+        if(tweets.statuses[0]){
+
+          db.all("select * from tweet_id_for_star_tour_folding", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
+
+              db.run("update tweet_id_for_star_tour_folding set id = ?", tweets.statuses[0].id);
+
+              request(information.events_url, (error, response, body) => {
+                const latestEvent = body.sort((a, b) => {
+                  if(a.id < b.id){
+                    return 1;
+                  }else{
+                    return -1;
+                  }
+                })[0];
+
+                client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "『" + latestEvent.name + "』イベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+                client.channels.cache.get(information.channel_for_235_chat_place).send({content: "『" + latestEvent.name + "』のイベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              });
+            }
+          });
+
+        }
+      }
+    });
 
     // プラチナスターシアター 開演
     bot.get("search/tweets", {q: "プラチナスターシアター 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
@@ -149,6 +179,8 @@ client.on("ready", () => {
 
           db.all("select * from tweet_id_for_star_theater_start", (err, rows) => {
             if(tweets.statuses[0].id !== rows[0].id){
+
+              db.run("update tweet_id_for_star_theater_start set id = ?", tweets.statuses[0].id);
 
               const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
               const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
@@ -171,6 +203,34 @@ client.on("ready", () => {
     });
 
     // プラチナスターシアター 折り返し
+    bot.get("search/tweets", {q: "プラチナスターシアター 折り返し from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
+      if(tweets){
+        if(tweets.statuses[0]){
+
+          db.all("select * from tweet_id_for_star_theater_folding", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
+
+              db.run("update tweet_id_for_star_theater_folding set id = ?", tweets.statuses[0].id);
+
+              request(information.events_url, (error, response, body) => {
+                const latestEvent = body.sort((a, b) => {
+                  if(a.id < b.id){
+                    return 1;
+                  }else{
+                    return -1;
+                  }
+                })[0];
+
+                client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "『" + latestEvent.name + "』イベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+                client.channels.cache.get(information.channel_for_235_chat_place).send({content: "『" + latestEvent.name + "』のイベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              });
+            }
+          });
+
+        }
+      }
+    });
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     // 15時にイベント終了までのカウントをお知らせ
@@ -353,13 +413,7 @@ client.on("ready", () => {
 
     }else if((today_hour === 15) && (today_min === 0)){
 
-      const options = {
-        url: "https://api.matsurihi.me/mltd/v1/events/",
-        method: "GET",
-        json: true
-      };
-
-      request(options, (error, response, body) => {
+      request(information.events_url, (error, response, body) => {
         // 最新イベント取得
         const latestEvent = body.sort((a, b) => {
           if(a.id < b.id){
@@ -423,106 +477,102 @@ client.on("ready", () => {
       });
 
     }else if((today_hour === 22) && (today_min === 0)){
-
-      db.all("select * from eventIndex", (err, rows) => {
-        const options = {
-          url: "https://api.matsurihi.me/mltd/v1/events/" + rows[0].num,
-          method: "GET",
-          json: true
-        };
-        
-        request(options, (error, response, body) => {
-          if(body.schedule){
-            // イベント開始日
-            const eventBegin     = body.schedule.beginDate.slice(0, -6);
-            const eventBeginTime = new Date(eventBegin);
-            const beginMonth     = eventBeginTime.getMonth() + 1;
-            const beginDate      = eventBeginTime.getDate();
-
-            // イベント終了日
-            const eventEnd     = body.schedule.endDate.slice(0, -6);
-            const eventEndTime = new Date(eventEnd);
-            const endMonth     = eventEndTime.getMonth() + 1;
-            const endDate      = eventEndTime.getDate();
-
-            switch(body.type){
-
-              case 1:  // THEATER SHOW TIME☆
       
-                //
-                break;
-      
-              case 2:  // ミリコレ！
-      
-                //
-                break;
-      
-              case 3:  // プラチナスターシアター・トラスト
-      
-                //
-                break;
-      
-              case 4:  // プラチナスターツアー
-      
-                //
-                break;
-      
-              case 5:  // 周年記念イベント
-      
-                //
-                break;
-      
-              case 6:  // MILLION LIVE WORKING☆
-      
-                //
-                break;
-      
-              case 7:  // エイプリルフール
-      
-                //
-                break;
-      
-              case 9:  // ミリコレ！（ボックスガシャ）
-      
-                //
-                break;
-      
-              case 10:  // ツインステージ
-      
-                //
-                break;
-      
-              case 11:  // プラチナスターチューン
-      
-                //
-                break;
-      
-              case 12:  // ツインステージ2
-      
-                //
-                break;
-      
-              case 13:  // プラチナスターテール
-      
-                //
-                break;
-      
-              case 14:  // THEATER TALK PARTY☆
-      
-                //
-                break;
-      
-              case 16:  // プラチナスタートレジャー
-      
-                //
-                break;
-      
-            }
-
+      request(information.events_url, (error, response, body) => {
+        // 最新イベント取得
+        const latestEvent = body.sort((a, b) => {
+          if(a.id < b.id){
+            return 1;
           }else{
-            return;
+            return -1;
           }
-        });
+        })[0];
+
+        // イベント開始日
+        const eventBegin     = latestEvent.schedule.beginDate.slice(0, -6);
+        const eventBeginTime = new Date(eventBegin);
+        const beginMonth     = eventBeginTime.getMonth() + 1;
+        const beginDate      = eventBeginTime.getDate();
+
+        // イベント終了日
+        const eventEnd     = latestEvent.schedule.endDate.slice(0, -6);
+        const eventEndTime = new Date(eventEnd);
+        const endMonth     = eventEndTime.getMonth() + 1;
+        const endDate      = eventEndTime.getDate();
+
+        switch(latestEvent.type){
+
+          case 1:  // THEATER SHOW TIME☆
+  
+            //
+            break;
+  
+          case 2:  // ミリコレ！
+  
+            //
+            break;
+  
+          case 3:  // プラチナスターシアター・トラスト
+  
+            //
+            break;
+  
+          case 4:  // プラチナスターツアー
+  
+            //
+            break;
+  
+          case 5:  // 周年記念イベント
+  
+            //
+            break;
+  
+          case 6:  // MILLION LIVE WORKING☆
+  
+            //
+            break;
+  
+          case 7:  // エイプリルフール
+  
+            //
+            break;
+  
+          case 9:  // ミリコレ！（ボックスガシャ）
+  
+            //
+            break;
+  
+          case 10:  // ツインステージ
+  
+            //
+            break;
+  
+          case 11:  // プラチナスターチューン
+  
+            //
+            break;
+  
+          case 12:  // ツインステージ2
+  
+            //
+            break;
+  
+          case 13:  // プラチナスターテール
+  
+            //
+            break;
+  
+          case 14:  // THEATER TALK PARTY☆
+  
+            //
+            break;
+  
+          case 16:  // プラチナスタートレジャー
+  
+            //
+            break;
+  
+        }
       });
 
     }
