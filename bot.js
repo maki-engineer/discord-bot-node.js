@@ -1491,7 +1491,7 @@ client.on("messageCreate", message => {
     switch(message.author.username){
       case "うたたねさん":
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1966,7 +1966,7 @@ client.on("messageCreate", message => {
 
   }else{                             // コマンドを間違って打っちゃってた時の処理
 
-    const commands     = ["ap", "apall", "notap", "apsearch", "help", "birthday", "mendate", "men", "women"];
+    const commands     = ["ap", "apall", "notap", "apsearch", "help", "birthday", "men", "roomdivision"];
     let command_min    = 0xFFFF;
     let result_command = "";
 
