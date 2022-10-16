@@ -1491,17 +1491,7 @@ client.on("messageCreate", message => {
     switch(message.author.username){
       case "うたたねさん":
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-        break;
-
-      case "きなくる":
-
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235women\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1656,12 +1646,12 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "mendate"){       // mendateコマンド 男子会の日程を決めるためのコマンド
+  }else if(command === "men"){           // mendateコマンド 男子会の日程を決めるためのコマンド
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
 
-      message.reply("235mendate コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
+      message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
@@ -1672,7 +1662,7 @@ client.on("messageCreate", message => {
 
       if(data.length === 0){
         
-        message.reply("235mendateコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235mendate 8 12 15 21");
+        message.reply("235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1681,7 +1671,7 @@ client.on("messageCreate", message => {
   
       }else if((data.length > 10) || (data.length === 1)){
         
-        message.reply("235mendateコマンドで入力することができる日程の数は**2～10個まで**です！");
+        message.reply("235menコマンドで入力することができる日程の数は**2～10個まで**です！");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1800,203 +1790,6 @@ client.on("messageCreate", message => {
       }
 
     }
-
-  }else if(command === "men"){           // menコマンド 男子会の企画文章を作成
-
-    // うたたねさん以外は使えないように
-    if(message.author.username !== "うたたねさん"){
-
-      message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
-      setTimeout(() => {
-        message.delete()
-        .then((data) => data)
-        .catch((err) => err);
-      }, information.message_delete_time);
-
-    }else{
-
-      if(data.length === 0){        // 当日の文章作成
-  
-        message.reply("@everyone\n235青年団の皆様方～～～～～!!!\n本日夜、235士官学校開校日…もとい男子会が開かれます！~~教練の時間だ！~~\nどしどしご参加くだーーーーい！");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }else if(data.length === 1){  // 入力された日の文章作成
-  
-        let int_check = true;
-    
-        if(!Number.isInteger(Number(data[0]))){
-          int_check = false;
-        }
-  
-        if(!int_check){
-  
-          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
-          setTimeout(() => {
-            message.delete()
-            .then((data) => data)
-            .catch((err) => err);
-          }, information.message_delete_time);
-  
-        }else{
-  
-          let date_check      = true;
-          let last_date_check = new Date();
-          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-          let last_date       = last_date_month.getDate();                                                   // 今月末日
-  
-          if((Number(data[0]) < 1) || (Number(data[0]) > last_date)){
-            date_check = false;
-          }
-  
-          if(!date_check){
-  
-            message.reply("日は1～" + last_date + "の間で入力してください！");
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }else{
-  
-            const dayArray = ["日", "月", "火", "水", "木", "金", "土"];
-          
-            // 指定された日の曜日を取得
-            let now      = new Date();
-            let year     = now.getFullYear();
-            let month    = now.getMonth() + 1;
-            let eventDay = new Date(year, month - 1, Number(data[0]));
-            let dayIndex = eventDay.getDay();
-  
-            let text = "@everyone\n235青年団の皆様～！！今月の235士官学校開校日は" + month + "月" + data[0] + "日（" + dayArray[dayIndex] + "）に決まりました～！！\n235士官学校に集まってもろてやいやいやりましょう！よろしくお願いしま～～～す🌹";
-  
-            message.channel.send(text);
-            setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }
-  
-        }
-  
-      }else{
-        
-        message.reply("指定出来る日程は**1つだけ**です！\n\n235men 12");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }
-
-    }
-
-  }else if(command === "women"){         // womenコマンド 女子会の企画文章を作成
-
-    // きなくるさん以外は使えないように
-    if(message.author.username !== "きなくる"){
-
-      message.reply("235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**だけが使用出来るコマンドです。");
-      setTimeout(() => {
-        message.delete()
-        .then((data) => data)
-        .catch((err) => err);
-      }, information.message_delete_time);
-
-    }else{
-
-      if(data.length === 0){        // 当日の文章作成
-  
-        message.reply("@everyone\n本日23女🌸です🍾\nよろしくおねがいします🌙🌙");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }else if(data.length === 1){  // 入力された日の文章作成
-  
-        let int_check = true;
-    
-        if(!Number.isInteger(Number(data[0]))){
-          int_check = false;
-        }
-  
-        if(!int_check){
-  
-          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
-          setTimeout(() => {
-            message.delete()
-            .then((data) => data)
-            .catch((err) => err);
-          }, information.message_delete_time);
-  
-        }else{
-  
-          let date_check      = true;
-          let last_date_check = new Date();
-          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-          let last_date       = last_date_month.getDate();                                                   // 今月末日
-  
-          if((Number(data[0]) < 1) || (Number(data[0]) > last_date)){
-            date_check = false;
-          }
-  
-          if(!date_check){
-  
-            message.reply("日は1～" + last_date + "の間で入力してください！");
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }else{
-  
-            const dayArray = ["日", "月", "火", "水", "木", "金", "土"];
-          
-            // 指定された日の曜日を取得
-            let now      = new Date();
-            let year     = now.getFullYear();
-            let month    = now.getMonth() + 1;
-            let eventDay = new Date(year, month - 1, Number(data[0]));
-            let dayIndex = eventDay.getDay();
-  
-            let text = "@everyone\n女子の皆様！今月の23女🌸開催は" + month + "/" + data[0] + "（" + dayArray[dayIndex] + "）です。\n\nよろしくお願いします🙇‍♀️";
-  
-            message.channel.send(text);
-            setTimeout(() => message.reply("きなくるさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }
-  
-        }
-  
-      }else{
-        
-        message.reply("指定出来る日程は**1つだけ**です！\n\n235women 12");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }
-
-    }
-
 
   }else if(command === "roomdivision"){  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
 
