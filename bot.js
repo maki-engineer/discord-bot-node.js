@@ -114,63 +114,123 @@ client.on("ready", () => {
 
     // プラチナスターツアー 開演
     bot.get("search/tweets", {q: "プラチナスターツアー 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets.statuses[0]){
+      if(tweets){
+        if(tweets.statuses[0]){
 
-        db.all("select * from tweet_id_for_star_tour", (err, rows) => {
-          if(tweets.statuses[0].id !== rows[0].id){
+          db.all("select * from tweet_id_for_star_tour_start", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
 
-            const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
-            const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
-            const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
-            const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
-            const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
+              db.run("update tweet_id_for_star_tour_start set id = ?", tweets.statuses[0].id);
 
-            const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
-            const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
+              const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
+              const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
+              const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
+              const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
+              const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
 
-            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
+              const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
 
-            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
-          }
-        });
+              client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
+            }
+          });
+
+        }
       }
     });
 
     // プラチナスターツアー 折り返し
+    bot.get("search/tweets", {q: "プラチナスターツアー 折り返し from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
+      if(tweets){
+        if(tweets.statuses[0]){
 
-    // プラチナスターツアー 終了
+          db.all("select * from tweet_id_for_star_tour_folding", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
+
+              db.run("update tweet_id_for_star_tour_folding set id = ?", tweets.statuses[0].id);
+
+              request(information.events_url, (error, response, body) => {
+                const latestEvent = body.sort((a, b) => {
+                  if(a.id < b.id){
+                    return 1;
+                  }else{
+                    return -1;
+                  }
+                })[0];
+
+                client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "『" + latestEvent.name + "』イベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+                client.channels.cache.get(information.channel_for_235_chat_place).send({content: "『" + latestEvent.name + "』のイベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              });
+            }
+          });
+
+        }
+      }
+    });
 
     // プラチナスターシアター 開演
     bot.get("search/tweets", {q: "プラチナスターシアター 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets.statuses[0]){
+      if(tweets){
+        if(tweets.statuses[0]){
 
-        db.all("select * from tweet_id_for_star_theater", (err, rows) => {
-          if(tweets.statuses[0].id !== rows[0].id){
+          db.all("select * from tweet_id_for_star_theater_start", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
 
-            const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
-            const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
-            const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
-            const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
-            const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
+              db.run("update tweet_id_for_star_theater_start set id = ?", tweets.statuses[0].id);
 
-            const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
-            const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
+              const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
+              const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
+              const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
+              const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
+              const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
 
-            client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
+              const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
 
-            client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
-          }
-        });
+              client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
 
+            }
+          });
+
+        }
       }
     });
 
     // プラチナスターシアター 折り返し
+    bot.get("search/tweets", {q: "プラチナスターシアター 折り返し from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
+      if(tweets){
+        if(tweets.statuses[0]){
 
-    // プラチナスターシアター 終了
+          db.all("select * from tweet_id_for_star_theater_folding", (err, rows) => {
+            if(tweets.statuses[0].id !== rows[0].id){
+
+              db.run("update tweet_id_for_star_theater_folding set id = ?", tweets.statuses[0].id);
+
+              request(information.events_url, (error, response, body) => {
+                const latestEvent = body.sort((a, b) => {
+                  if(a.id < b.id){
+                    return 1;
+                  }else{
+                    return -1;
+                  }
+                })[0];
+
+                client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "『" + latestEvent.name + "』イベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+
+                client.channels.cache.get(information.channel_for_235_chat_place).send({content: "『" + latestEvent.name + "』のイベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
+              });
+            }
+          });
+
+        }
+      }
+    });
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     // 15時にイベント終了までのカウントをお知らせ
@@ -353,19 +413,7 @@ client.on("ready", () => {
 
     }else if((today_hour === 15) && (today_min === 0)){
 
-      const options = {
-        url: "https://api.matsurihi.me/mltd/v1/events/",
-        method: "GET",
-        json: true
-      };
-
-      request(options, (error, response, body) => {
-        // イベント終了日
-        const eventEnd     = body.schedule.endDate.slice(0, -6);
-        const eventEndTime = new Date(eventEnd);
-        const endMonth     = eventEndTime.getMonth() + 1;
-        const endDate      = eventEndTime.getDate();
-
+      request(information.events_url, (error, response, body) => {
         // 最新イベント取得
         const latestEvent = body.sort((a, b) => {
           if(a.id < b.id){
@@ -374,6 +422,12 @@ client.on("ready", () => {
             return -1;
           }
         })[0];
+
+        // イベント終了日
+        const eventEnd     = latestEvent.schedule.endDate.slice(0, -6);
+        const eventEndTime = new Date(eventEnd);
+        const endMonth     = eventEndTime.getMonth() + 1;
+        const endDate      = eventEndTime.getDate();
 
 
         // イベント終了まで3日前からメッセージ送信
@@ -423,106 +477,102 @@ client.on("ready", () => {
       });
 
     }else if((today_hour === 22) && (today_min === 0)){
-
-      db.all("select * from eventIndex", (err, rows) => {
-        const options = {
-          url: "https://api.matsurihi.me/mltd/v1/events/" + rows[0].num,
-          method: "GET",
-          json: true
-        };
-        
-        request(options, (error, response, body) => {
-          if(body.schedule){
-            // イベント開始日
-            const eventBegin     = body.schedule.beginDate.slice(0, -6);
-            const eventBeginTime = new Date(eventBegin);
-            const beginMonth     = eventBeginTime.getMonth() + 1;
-            const beginDate      = eventBeginTime.getDate();
-
-            // イベント終了日
-            const eventEnd     = body.schedule.endDate.slice(0, -6);
-            const eventEndTime = new Date(eventEnd);
-            const endMonth     = eventEndTime.getMonth() + 1;
-            const endDate      = eventEndTime.getDate();
-
-            switch(body.type){
-
-              case 1:  // THEATER SHOW TIME☆
       
-                //
-                break;
-      
-              case 2:  // ミリコレ！
-      
-                //
-                break;
-      
-              case 3:  // プラチナスターシアター・トラスト
-      
-                //
-                break;
-      
-              case 4:  // プラチナスターツアー
-      
-                //
-                break;
-      
-              case 5:  // 周年記念イベント
-      
-                //
-                break;
-      
-              case 6:  // MILLION LIVE WORKING☆
-      
-                //
-                break;
-      
-              case 7:  // エイプリルフール
-      
-                //
-                break;
-      
-              case 9:  // ミリコレ！（ボックスガシャ）
-      
-                //
-                break;
-      
-              case 10:  // ツインステージ
-      
-                //
-                break;
-      
-              case 11:  // プラチナスターチューン
-      
-                //
-                break;
-      
-              case 12:  // ツインステージ2
-      
-                //
-                break;
-      
-              case 13:  // プラチナスターテール
-      
-                //
-                break;
-      
-              case 14:  // THEATER TALK PARTY☆
-      
-                //
-                break;
-      
-              case 16:  // プラチナスタートレジャー
-      
-                //
-                break;
-      
-            }
-
+      request(information.events_url, (error, response, body) => {
+        // 最新イベント取得
+        const latestEvent = body.sort((a, b) => {
+          if(a.id < b.id){
+            return 1;
           }else{
-            return;
+            return -1;
           }
-        });
+        })[0];
+
+        // イベント開始日
+        const eventBegin     = latestEvent.schedule.beginDate.slice(0, -6);
+        const eventBeginTime = new Date(eventBegin);
+        const beginMonth     = eventBeginTime.getMonth() + 1;
+        const beginDate      = eventBeginTime.getDate();
+
+        // イベント終了日
+        const eventEnd     = latestEvent.schedule.endDate.slice(0, -6);
+        const eventEndTime = new Date(eventEnd);
+        const endMonth     = eventEndTime.getMonth() + 1;
+        const endDate      = eventEndTime.getDate();
+
+        switch(latestEvent.type){
+
+          case 1:  // THEATER SHOW TIME☆
+  
+            //
+            break;
+  
+          case 2:  // ミリコレ！
+  
+            //
+            break;
+  
+          case 3:  // プラチナスターシアター・トラスト
+  
+            //
+            break;
+  
+          case 4:  // プラチナスターツアー
+  
+            //
+            break;
+  
+          case 5:  // 周年記念イベント
+  
+            //
+            break;
+  
+          case 6:  // MILLION LIVE WORKING☆
+  
+            //
+            break;
+  
+          case 7:  // エイプリルフール
+  
+            //
+            break;
+  
+          case 9:  // ミリコレ！（ボックスガシャ）
+  
+            //
+            break;
+  
+          case 10:  // ツインステージ
+  
+            //
+            break;
+  
+          case 11:  // プラチナスターチューン
+  
+            //
+            break;
+  
+          case 12:  // ツインステージ2
+  
+            //
+            break;
+  
+          case 13:  // プラチナスターテール
+  
+            //
+            break;
+  
+          case 14:  // THEATER TALK PARTY☆
+  
+            //
+            break;
+  
+          case 16:  // プラチナスタートレジャー
+  
+            //
+            break;
+  
+        }
       });
 
     }
@@ -575,52 +625,18 @@ client.on("interactionCreate", interaction => {
 
     }
 
-  }else if(interaction.commandName === "235mendate"){
-
-    switch(interaction.user.username){
-      case "うたたねさん":
-
-        interaction.reply("235mendateコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235mendate 12 14 16 17");
-        setTimeout(() => interaction.deleteReply() , 180_000);
-        break;
-
-      default:
-
-        interaction.reply("235mendate コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
-        setTimeout(() => interaction.deleteReply() , 180_000);
-        break;
-
-    }
-
   }else if(interaction.commandName === "235men"){
 
     switch(interaction.user.username){
       case "うたたねさん":
 
-        interaction.reply("235menコマンドを使用することで、毎月開催される235士官学校🌹の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n\n235men 23");
+        interaction.reply("235menコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235mendate 12 14 16 17");
         setTimeout(() => interaction.deleteReply() , 180_000);
         break;
 
       default:
 
         interaction.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
-        setTimeout(() => interaction.deleteReply() , 180_000);
-        break;
-
-    }
-
-  }else if(interaction.commandName === "235women"){
-
-    switch(interaction.user.username){
-      case "きなくる":
-
-        interaction.reply("235womenコマンドを使用することで、毎月開催される聖235女学園🌸の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**1つ半角数字のみ**で入力してください。なお、日程を入力しなかった場合は、当日の文章が作成されます。\n\n235women 12");
-        setTimeout(() => interaction.deleteReply() , 180_000);
-        break;
-
-      default:
-
-        interaction.reply("235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**だけが使用出来るコマンドです。");
         setTimeout(() => interaction.deleteReply() , 180_000);
         break;
 
@@ -694,7 +710,6 @@ client.on("messageCreate", message => {
       names = names.join("");
 
       db.all("select " + names + "_flg" + " from APmusics where " + names + "_flg = 1", (err, rows) => {
-        // コマンドを打ってきた人がまだカラムを登録してなかったらカラムを登録してから処理を開始
         if(err){
 
           db.run("alter table APmusics add column " + names + "_flg default 0");
@@ -731,15 +746,99 @@ client.on("messageCreate", message => {
       const musics    = msg.slice(3).split("^");
 
       db.all("select name, " + names + "_flg" + " from APmusics", (err, rows) => {
-        // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+        // コマンドを打ってきた人がまだカラムを登録してなかったらカラムを登録して曲を追加
         if(err){
 
-          message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-          setTimeout(() => {
-            message.delete()
-            .then((data) => data)
-            .catch((err) => err);
-          }, information.message_delete_time);
+          db.run("alter table APmusics add column " + names + "_flg default 0");
+
+          let min   = 0xFFFF;
+          let suggest_music = "";
+
+          for(let row of rows){
+              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
+                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
+                  suggest_music = row.name;
+              }
+          }
+
+          for(let music of musics){
+            db.all("select * from APmusics where name = ?", music, (err, rows) => {
+              if(err){
+                console.log(err);
+              }else{
+                if(rows.length === 0){
+
+                  if(min <= 1){
+
+                    db.all("select * from APmusics where name = ?", suggest_music, (err, results) => {
+                      if(results[0][names + "_flg"] === 1){
+
+                        message.reply(results[0].name + " は既に登録されています！");
+                        setTimeout(() => {
+                          message.delete()
+                          .then((data) => data)
+                          .catch((err) => err);
+                        }, information.message_delete_time);
+
+                      }else{
+
+                        db.run("update APmusics set " + names + "_flg = 1 where name = ?", suggest_music);
+                        message.reply("登録成功：" + suggest_music + "\nAPおめでとうございます♪");
+                        setTimeout(() => {
+                          message.delete()
+                          .then((data) => data)
+                          .catch((err) => err);
+                        }, information.message_delete_time);
+
+                      }
+                    });
+
+                  }else if((min > 1) && (min < 6)){
+
+                    message.reply("登録に失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }else{
+
+                    message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }
+                }else{
+
+                  if(rows[0][names + "_flg"] === 1){
+
+                    message.reply(rows[0].name + " は既に登録されています！");
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }else{
+
+                    db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
+                    message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }
+
+                }
+              }
+            });
+          }
 
         }else{
 
@@ -1525,17 +1624,7 @@ client.on("messageCreate", message => {
     switch(message.author.username){
       case "うたたねさん":
 
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235mendate\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-        break;
-
-      case "きなくる":
-
-        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235women\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
+        message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1690,12 +1779,12 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "mendate"){       // mendateコマンド 男子会の日程を決めるためのコマンド
+  }else if(command === "men"){           // mendateコマンド 男子会の日程を決めるためのコマンド
 
     // うたたねさん以外は使えないように
     if(message.author.username !== "うたたねさん"){
 
-      message.reply("235mendate コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
+      message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
@@ -1706,7 +1795,7 @@ client.on("messageCreate", message => {
 
       if(data.length === 0){
         
-        message.reply("235mendateコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235mendate 8 12 15 21");
+        message.reply("235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1715,7 +1804,7 @@ client.on("messageCreate", message => {
   
       }else if((data.length > 10) || (data.length === 1)){
         
-        message.reply("235mendateコマンドで入力することができる日程の数は**2～10個まで**です！");
+        message.reply("235menコマンドで入力することができる日程の数は**2～10個まで**です！");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
@@ -1834,203 +1923,6 @@ client.on("messageCreate", message => {
       }
 
     }
-
-  }else if(command === "men"){           // menコマンド 男子会の企画文章を作成
-
-    // うたたねさん以外は使えないように
-    if(message.author.username !== "うたたねさん"){
-
-      message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
-      setTimeout(() => {
-        message.delete()
-        .then((data) => data)
-        .catch((err) => err);
-      }, information.message_delete_time);
-
-    }else{
-
-      if(data.length === 0){        // 当日の文章作成
-  
-        message.reply("@everyone\n235青年団の皆様方～～～～～!!!\n本日夜、235士官学校開校日…もとい男子会が開かれます！~~教練の時間だ！~~\nどしどしご参加くだーーーーい！");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }else if(data.length === 1){  // 入力された日の文章作成
-  
-        let int_check = true;
-    
-        if(!Number.isInteger(Number(data[0]))){
-          int_check = false;
-        }
-  
-        if(!int_check){
-  
-          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
-          setTimeout(() => {
-            message.delete()
-            .then((data) => data)
-            .catch((err) => err);
-          }, information.message_delete_time);
-  
-        }else{
-  
-          let date_check      = true;
-          let last_date_check = new Date();
-          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-          let last_date       = last_date_month.getDate();                                                   // 今月末日
-  
-          if((Number(data[0]) < 1) || (Number(data[0]) > last_date)){
-            date_check = false;
-          }
-  
-          if(!date_check){
-  
-            message.reply("日は1～" + last_date + "の間で入力してください！");
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }else{
-  
-            const dayArray = ["日", "月", "火", "水", "木", "金", "土"];
-          
-            // 指定された日の曜日を取得
-            let now      = new Date();
-            let year     = now.getFullYear();
-            let month    = now.getMonth() + 1;
-            let eventDay = new Date(year, month - 1, Number(data[0]));
-            let dayIndex = eventDay.getDay();
-  
-            let text = "@everyone\n235青年団の皆様～！！今月の235士官学校開校日は" + month + "月" + data[0] + "日（" + dayArray[dayIndex] + "）に決まりました～！！\n235士官学校に集まってもろてやいやいやりましょう！よろしくお願いしま～～～す🌹";
-  
-            message.channel.send(text);
-            setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }
-  
-        }
-  
-      }else{
-        
-        message.reply("指定出来る日程は**1つだけ**です！\n\n235men 12");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }
-
-    }
-
-  }else if(command === "women"){         // womenコマンド 女子会の企画文章を作成
-
-    // きなくるさん以外は使えないように
-    if(message.author.username !== "きなくる"){
-
-      message.reply("235women コマンドは、聖235女学園🌸の担当者である**きなくるさん**だけが使用出来るコマンドです。");
-      setTimeout(() => {
-        message.delete()
-        .then((data) => data)
-        .catch((err) => err);
-      }, information.message_delete_time);
-
-    }else{
-
-      if(data.length === 0){        // 当日の文章作成
-  
-        message.reply("@everyone\n本日23女🌸です🍾\nよろしくおねがいします🌙🌙");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }else if(data.length === 1){  // 入力された日の文章作成
-  
-        let int_check = true;
-    
-        if(!Number.isInteger(Number(data[0]))){
-          int_check = false;
-        }
-  
-        if(!int_check){
-  
-          message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
-          setTimeout(() => {
-            message.delete()
-            .then((data) => data)
-            .catch((err) => err);
-          }, information.message_delete_time);
-  
-        }else{
-  
-          let date_check      = true;
-          let last_date_check = new Date();
-          let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-          let last_date       = last_date_month.getDate();                                                   // 今月末日
-  
-          if((Number(data[0]) < 1) || (Number(data[0]) > last_date)){
-            date_check = false;
-          }
-  
-          if(!date_check){
-  
-            message.reply("日は1～" + last_date + "の間で入力してください！");
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }else{
-  
-            const dayArray = ["日", "月", "火", "水", "木", "金", "土"];
-          
-            // 指定された日の曜日を取得
-            let now      = new Date();
-            let year     = now.getFullYear();
-            let month    = now.getMonth() + 1;
-            let eventDay = new Date(year, month - 1, Number(data[0]));
-            let dayIndex = eventDay.getDay();
-  
-            let text = "@everyone\n女子の皆様！今月の23女🌸開催は" + month + "/" + data[0] + "（" + dayArray[dayIndex] + "）です。\n\nよろしくお願いします🙇‍♀️";
-  
-            message.channel.send(text);
-            setTimeout(() => message.reply("きなくるさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-  
-          }
-  
-        }
-  
-      }else{
-        
-        message.reply("指定出来る日程は**1つだけ**です！\n\n235women 12");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }
-
-    }
-
 
   }else if(command === "roomdivision"){  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
 
@@ -2207,7 +2099,7 @@ client.on("messageCreate", message => {
 
   }else{                             // コマンドを間違って打っちゃってた時の処理
 
-    const commands     = ["ap", "apall", "notap", "apsearch", "help", "birthday", "mendate", "men", "women"];
+    const commands     = ["ap", "apall", "notap", "apsearch", "help", "birthday", "men", "roomdivision"];
     let command_min    = 0xFFFF;
     let result_command = "";
 
