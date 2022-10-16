@@ -660,7 +660,6 @@ client.on("messageCreate", message => {
       names = names.join("");
 
       db.all("select " + names + "_flg" + " from APmusics where " + names + "_flg = 1", (err, rows) => {
-        // コマンドを打ってきた人がまだカラムを登録してなかったらカラムを登録してから処理を開始
         if(err){
 
           db.run("alter table APmusics add column " + names + "_flg default 0");
@@ -697,15 +696,99 @@ client.on("messageCreate", message => {
       const musics    = msg.slice(3).split("^");
 
       db.all("select name, " + names + "_flg" + " from APmusics", (err, rows) => {
-        // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
+        // コマンドを打ってきた人がまだカラムを登録してなかったらカラムを登録して曲を追加
         if(err){
 
-          message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
-          setTimeout(() => {
-            message.delete()
-            .then((data) => data)
-            .catch((err) => err);
-          }, information.message_delete_time);
+          db.run("alter table APmusics add column " + names + "_flg default 0");
+
+          let min   = 0xFFFF;
+          let suggest_music = "";
+
+          for(let row of rows){
+              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
+                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
+                  suggest_music = row.name;
+              }
+          }
+
+          for(let music of musics){
+            db.all("select * from APmusics where name = ?", music, (err, rows) => {
+              if(err){
+                console.log(err);
+              }else{
+                if(rows.length === 0){
+
+                  if(min <= 1){
+
+                    db.all("select * from APmusics where name = ?", suggest_music, (err, results) => {
+                      if(results[0][names + "_flg"] === 1){
+
+                        message.reply(results[0].name + " は既に登録されています！");
+                        setTimeout(() => {
+                          message.delete()
+                          .then((data) => data)
+                          .catch((err) => err);
+                        }, information.message_delete_time);
+
+                      }else{
+
+                        db.run("update APmusics set " + names + "_flg = 1 where name = ?", suggest_music);
+                        message.reply("登録成功：" + suggest_music + "\nAPおめでとうございます♪");
+                        setTimeout(() => {
+                          message.delete()
+                          .then((data) => data)
+                          .catch((err) => err);
+                        }, information.message_delete_time);
+
+                      }
+                    });
+
+                  }else if((min > 1) && (min < 6)){
+
+                    message.reply("登録に失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }else{
+
+                    message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }
+                }else{
+
+                  if(rows[0][names + "_flg"] === 1){
+
+                    message.reply(rows[0].name + " は既に登録されています！");
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }else{
+
+                    db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
+                    message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+
+                  }
+
+                }
+              }
+            });
+          }
 
         }else{
 
