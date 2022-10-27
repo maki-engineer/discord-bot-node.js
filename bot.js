@@ -225,7 +225,6 @@ client.on("ready", () => {
     });
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
-    // 15時にイベント終了までのカウントをお知らせ
     // 21時にイベントの終了のお知らせ
     // 22時に当日スタミナドリンクが配られるイベントのドリンクを使ったかの告知など
     if((today_hour === 9) && (today_min === 0)){
@@ -330,47 +329,6 @@ client.on("ready", () => {
           }
         }
       }
-
-    }else if((today_hour === 15) && (today_min === 0)){
-
-      request(information.events_url, (error, response, body) => {
-        // 最新イベント取得
-        const latestEvent = body.sort((a, b) => {
-          if(a.id < b.id){
-            return 1;
-          }else{
-            return -1;
-          }
-        })[0];
-
-        // イベント終了日
-        const eventEnd     = latestEvent.schedule.endDate.slice(0, -6);
-        const eventEndTime = new Date(eventEnd);
-        const endMonth     = eventEndTime.getMonth() + 1;
-        const endDate      = eventEndTime.getDate();
-
-
-        // イベント終了まで3日前からメッセージ送信
-        if((endMonth === today_month) && ((endDate - 3) === today_date)){
-
-          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後3日**です！");
-          }
-
-        }else if((endMonth === today_month) && ((endDate - 2) === today_date)){
-
-          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後2日**です！");
-          }
-
-        }else if((endMonth === today_month) && ((endDate - 1) === today_date)){
-
-          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-            client.channels.cache.get(information.channel_for_235_chat_place).send("『" + latestEvent.name + "』のイベント終了まで**後1日**です！");
-          }
-
-        }
-      });
 
     }else if((today_hour === 22) && (today_min === 0)){
       
