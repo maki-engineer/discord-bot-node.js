@@ -104,128 +104,7 @@ client.on("ready", () => {
 
     }
 
-    // プラチナスターツアー 開演
-    bot.get("search/tweets", {q: "プラチナスターツアー 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets){
-        if(tweets.statuses[0]){
-
-          db.all("select * from tweet_id_for_star_tour_start", (err, rows) => {
-            if(tweets.statuses[0].id !== rows[0].id){
-
-              db.run("update tweet_id_for_star_tour_start set id = ?", tweets.statuses[0].id);
-
-              const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
-              const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
-              const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
-              const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
-              const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
-
-              const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
-              const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
-
-              client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
-
-              client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
-
-            }
-          });
-
-        }
-      }
-    });
-
-    // プラチナスターツアー 折り返し
-    bot.get("search/tweets", {q: "プラチナスターツアー 折り返し from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets){
-        if(tweets.statuses[0]){
-
-          db.all("select * from tweet_id_for_star_tour_folding", (err, rows) => {
-            if(tweets.statuses[0].id !== rows[0].id){
-
-              db.run("update tweet_id_for_star_tour_folding set id = ?", tweets.statuses[0].id);
-
-              request(information.events_url, (error, response, body) => {
-                const latestEvent = body.sort((a, b) => {
-                  if(a.id < b.id){
-                    return 1;
-                  }else{
-                    return -1;
-                  }
-                })[0];
-
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "『" + latestEvent.name + "』イベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
-
-                client.channels.cache.get(information.channel_for_235_chat_place).send({content: "『" + latestEvent.name + "』のイベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
-              });
-            }
-          });
-
-        }
-      }
-    });
-
-    // プラチナスターシアター 開演
-    bot.get("search/tweets", {q: "プラチナスターシアター 開演 from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets){
-        if(tweets.statuses[0]){
-
-          db.all("select * from tweet_id_for_star_theater_start", (err, rows) => {
-            if(tweets.statuses[0].id !== rows[0].id){
-
-              db.run("update tweet_id_for_star_theater_start set id = ?", tweets.statuses[0].id);
-
-              const EVENT_BEGIN_INDEX   = tweets.statuses[0].full_text.indexOf("イベント楽曲");
-              const EVENT_BEGIN_NAME    = tweets.statuses[0].full_text.substr(EVENT_BEGIN_INDEX);
-              const EVENT_BEGIN_INDEX_1 = EVENT_BEGIN_NAME.indexOf("『");
-              const EVENT_END_INDEX     = EVENT_BEGIN_NAME.indexOf("』");
-              const EVENT_NAME          = EVENT_BEGIN_NAME.slice(EVENT_BEGIN_INDEX_1, EVENT_END_INDEX + 1);
-
-              const CARD_INDEX = tweets.statuses[0].full_text.indexOf("【イベント限定カード】");
-              const CARD_LIST  = tweets.statuses[0].full_text.substr(CARD_INDEX).slice(0, -6);
-
-              client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
-
-              client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日から" + EVENT_NAME + "のイベントが始まりました！\n\n" + CARD_LIST, files: [tweets.statuses[0].entities.media[0].media_url_https]});
-
-            }
-          });
-
-        }
-      }
-    });
-
-    // プラチナスターシアター 折り返し
-    bot.get("search/tweets", {q: "プラチナスターシアター 折り返し from:imasml_theater -is:retweet -is:reply", count: 1, tweet_mode: "extended"}, (err, tweets, res) => {
-      if(tweets){
-        if(tweets.statuses[0]){
-
-          db.all("select * from tweet_id_for_star_theater_folding", (err, rows) => {
-            if(tweets.statuses[0].id !== rows[0].id){
-
-              db.run("update tweet_id_for_star_theater_folding set id = ?", tweets.statuses[0].id);
-
-              request(information.events_url, (error, response, body) => {
-                const latestEvent = body.sort((a, b) => {
-                  if(a.id < b.id){
-                    return 1;
-                  }else{
-                    return -1;
-                  }
-                })[0];
-
-                client.channels.cache.get(information.channel_for_test_solo_chat_place).send({content: "『" + latestEvent.name + "』イベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
-
-                client.channels.cache.get(information.channel_for_235_chat_place).send({content: "『" + latestEvent.name + "』のイベント後半戦になりました！", files: [tweets.statuses[0].entities.media[0].media_url_https]});
-              });
-            }
-          });
-
-        }
-      }
-    });
-
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
-    // 21時にイベントの終了のお知らせ
     // 22時に当日スタミナドリンクが配られるイベントのドリンクを使ったかの告知など
     if((today_hour === 9) && (today_min === 0)){
 
@@ -329,105 +208,6 @@ client.on("ready", () => {
           }
         }
       }
-
-    }else if((today_hour === 22) && (today_min === 0)){
-      
-      request(information.events_url, (error, response, body) => {
-        // 最新イベント取得
-        const latestEvent = body.sort((a, b) => {
-          if(a.id < b.id){
-            return 1;
-          }else{
-            return -1;
-          }
-        })[0];
-
-        // イベント開始日
-        const eventBegin     = latestEvent.schedule.beginDate.slice(0, -6);
-        const eventBeginTime = new Date(eventBegin);
-        const beginMonth     = eventBeginTime.getMonth() + 1;
-        const beginDate      = eventBeginTime.getDate();
-
-        // イベント終了日
-        const eventEnd     = latestEvent.schedule.endDate.slice(0, -6);
-        const eventEndTime = new Date(eventEnd);
-        const endMonth     = eventEndTime.getMonth() + 1;
-        const endDate      = eventEndTime.getDate();
-
-        switch(latestEvent.type){
-
-          case 1:  // THEATER SHOW TIME☆
-  
-            //
-            break;
-  
-          case 2:  // ミリコレ！
-  
-            //
-            break;
-  
-          case 3:  // プラチナスターシアター・トラスト
-  
-            //
-            break;
-  
-          case 4:  // プラチナスターツアー
-  
-            //
-            break;
-  
-          case 5:  // 周年記念イベント
-  
-            //
-            break;
-  
-          case 6:  // MILLION LIVE WORKING☆
-  
-            //
-            break;
-  
-          case 7:  // エイプリルフール
-  
-            //
-            break;
-  
-          case 9:  // ミリコレ！（ボックスガシャ）
-  
-            //
-            break;
-  
-          case 10:  // ツインステージ
-  
-            //
-            break;
-  
-          case 11:  // プラチナスターチューン
-  
-            //
-            break;
-  
-          case 12:  // ツインステージ2
-  
-            //
-            break;
-  
-          case 13:  // プラチナスターテール
-  
-            //
-            break;
-  
-          case 14:  // THEATER TALK PARTY☆
-  
-            //
-            break;
-  
-          case 16:  // プラチナスタートレジャー
-  
-            //
-            break;
-  
-        }
-      });
 
     }
   }, 60_000);  // 1分ごと
@@ -1562,21 +1342,31 @@ client.on("messageCreate", message => {
                   "日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n",
                   "日々のプロデュース業お疲れ様です！" + month + "月にお誕生日を迎える方々のご案内です！\n" + month + "月に誕生日を迎えるのは～…\n\n",
                   "日々のプロデュース業お疲れ様です！" + month + "月にお誕生日を迎えるメンバーさんの…ご案内です！！\n" + month + "月に誕生日を迎えるのは～…\n\n",
-                  "日々のプロデュース業お疲れ様です！\n" + month + "月期ラウンジオンライン飲み会のご！案！内！です！\n" + month + "月の誕生日は～～～～…\n\n"
+                  "日々のプロデュース業お疲れ様です！\n" + month + "月期ラウンジオンライン飲み会のご！案！内！です！\n" + month + "月の誕生日は～～～～…\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月に誕生日を迎える方々をご紹介します！\n" + month + "月に誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！！！今月お誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月が誕生日のメンバーさんをご紹介します！" + month + "月に誕生日を迎えるのは～…\n\n"
                 ];
 
                 let text_2 = [
                   "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！",
                   "\nです！はっぴばーす！！！いや～めでたいねぇ（ひなた）\nではでは、" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！お酒飲めない子はジュースだね！\n　その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
                   "\nです！！！！！おめでとうございますわ～～～～～～～～！！！！！！\nというわけで！" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！\n　あと、その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
-                  "\nです！！！！！！です！おめでとうございます～～～～～～！！！！！！！"
+                  "\nです！！！！！！です！おめでとうございます～～～～～～！！！！！！！",
+                  "です！おめでとうございま～～～す！！！\nというわけで、毎月恒例のオンライン飲み会のご案内です！！！",
+                  "でぇす！はっぴば～～～す！！！\nということで、月一回、恒例のオンライン飲み会のご案内です！",
+                  "です！！！おめでとうございま～す！！いやぁめでたいねぇ（ひなた）\nということで" + month + "月期のオンライン飲み会のご案内でーす！",
+                  "でーす！はっぴばーす！素敵な一年にしましょうね！\nということで今月もやってきました、" + month + "月期オンライン飲み会のごあんないです！！！"
                 ];
 
                 let text_3 = [
                   "遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)",
                   "遅れて参加してもOK、眠くなったら先に眠ってもOKの飲み会です！周年イベントが明けても次のイベントはすぐに始まるから（遠い目） お疲れ様会も兼ねて盛り上がってまいりましょう～！多くの皆様方のご参加をお待ちしております！！！！！！！！！お酒お酒お酒お酒！！！！！！！！！",
                   "遅れて参加してもOK!!眠くなったら先に眠ってもOK!!の飲み会です！気持ちアゲていきましょう！！！！ぶいぶい！！！！！！お酒お酒お酒お酒!!!!!!",
-                  "遅れて参加してもOK,眠くなったら先に上がってもOKの飲み会です、気ままに楽しみましょう！！！どしどしご参加くださいーーーー！！！！！お酒お酒お酒!!!"
+                  "遅れて参加してもOK,眠くなったら先に上がってもOKの飲み会です、気ままに楽しみましょう！！！どしどしご参加くださいーーーー！！！！！お酒お酒お酒!!!",
+                  "遅れて参加しても良し、眠くなったら先に上がっても寝落ちしてもOKの飲み会です。気軽に和気あいあい楽しみましょう！どしどしご参加くーださい(o・∇・o)",
+                  " 特に時間などに縛りはございません。好きな時間に来て好きなだけ飲んで話して好きな時間に上がれる飲み会です。まったりのんびり楽しく過ごしましょう～！！！\nお酒お酒お酒お酒お酒!!!!!!!!",
+                  "遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！皆さんお気軽にご参加お待ちしてま~~~~す"
                 ];
         
                 text += text_1[Math.floor(Math.random() * text_1.length)];
