@@ -1292,16 +1292,7 @@ client.on("messageCreate", message => {
 
     }else{
 
-      if((data.length < 3) || (data.length > 3)){
-  
-        message.reply("235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-  
-      }else{
+      if(data.length === 3){
   
         let int_check = true;
   
@@ -1353,10 +1344,10 @@ client.on("messageCreate", message => {
                   "\nです！はっぴばーす！！！いや～めでたいねぇ（ひなた）\nではでは、" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！お酒飲めない子はジュースだね！\n　その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
                   "\nです！！！！！おめでとうございますわ～～～～～～～～！！！！！！\nというわけで！" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！\n　あと、その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
                   "\nです！！！！！！です！おめでとうございます～～～～～～！！！！！！！",
-                  "です！おめでとうございま～～～す！！！\nというわけで、毎月恒例のオンライン飲み会のご案内です！！！",
-                  "でぇす！はっぴば～～～す！！！\nということで、月一回、恒例のオンライン飲み会のご案内です！",
-                  "です！！！おめでとうございま～す！！いやぁめでたいねぇ（ひなた）\nということで" + month + "月期のオンライン飲み会のご案内でーす！",
-                  "でーす！はっぴばーす！素敵な一年にしましょうね！\nということで今月もやってきました、" + month + "月期オンライン飲み会のごあんないです！！！"
+                  "\nです！おめでとうございま～～～す！！！\nというわけで、毎月恒例のオンライン飲み会のご案内です！！！",
+                  "\nでぇす！はっぴば～～～す！！！\nということで、月一回、恒例のオンライン飲み会のご案内です！",
+                  "\nです！！！おめでとうございま～す！！いやぁめでたいねぇ（ひなた）\nということで" + month + "月期のオンライン飲み会のご案内でーす！",
+                  "\nでーす！はっぴばーす！素敵な一年にしましょうね！\nということで今月もやってきました、" + month + "月期オンライン飲み会のごあんないです！！！"
                 ];
 
                 let text_3 = [
@@ -1418,7 +1409,132 @@ client.on("messageCreate", message => {
           }
         }
   
+      }else if(data.length === 4){
   
+        let int_check = true;
+
+        for(let i = 0; i < data.length - 1; i++){
+          if(!Number.isInteger(Number(data[i]))) int_check = false;
+        }
+  
+        if(!int_check){
+  
+          message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！");
+          setTimeout(() => {
+            message.delete()
+            .then((data) => data)
+            .catch((err) => err);
+          }, information.message_delete_time);
+  
+        }else{
+          if((Number(data[0]) >= 1) && (Number(data[0]) <= 12)){
+            let last_date_check = new Date();
+            let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
+            let last_date       = last_date_month.getDate();                                // 今月末日
+  
+            if((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)){
+              if((Number(data[2]) >= 0) && (Number(data[2]) <= 23)){
+                const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
+        
+                // 指定された日の曜日を取得
+                let now      = new Date();
+                let year     = now.getFullYear();
+                let month    = Number(data[0]);
+                let eventDay = new Date(year, month - 1, Number(data[1]));
+                let dayIndex = eventDay.getDay();
+                let text     = "@everyone\n";
+
+                let text_1 = [
+                  "日々のプロデュース業お疲れ様です！！！　" + month + "月に誕生日を迎える方々をご紹介します！！！\n" + month + "月に誕生日を迎えるのは～......\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月にお誕生日を迎える方々のご案内です！\n" + month + "月に誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月にお誕生日を迎えるメンバーさんの…ご案内です！！\n" + month + "月に誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！\n" + month + "月期ラウンジオンライン飲み会のご！案！内！です！\n" + month + "月の誕生日は～～～～…\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月に誕生日を迎える方々をご紹介します！\n" + month + "月に誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！！！今月お誕生日を迎えるのは～…\n\n",
+                  "日々のプロデュース業お疲れ様です！" + month + "月が誕生日のメンバーさんをご紹介します！" + month + "月に誕生日を迎えるのは～…\n\n"
+                ];
+
+                let text_2 = [
+                  "\nです！！！はっぴばーす！と、いうわけで" + month + "月期ラウンジオンライン飲み会のご案内でぇす！！！",
+                  "\nです！はっぴばーす！！！いや～めでたいねぇ（ひなた）\nではでは、" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！お酒飲めない子はジュースだね！\n　その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
+                  "\nです！！！！！おめでとうございますわ～～～～～～～～！！！！！！\nというわけで！" + month + "月期ラウンジオンライン飲み会のご案内です！\n\nQ.ラウンジオンライン飲み会ってなんなん？\nA.ラウンジDiscordに集まってオンラインでやる飲み会だよ！まんまだね！\n　あと、その月の誕生日の人が来たらバースデーを歌ってあげる~~奇習~~お祝いがあるよ！",
+                  "\nです！！！！！！です！おめでとうございます～～～～～～！！！！！！！",
+                  "\nです！おめでとうございま～～～す！！！\nというわけで、毎月恒例のオンライン飲み会のご案内です！！！",
+                  "\nでぇす！はっぴば～～～す！！！\nということで、月一回、恒例のオンライン飲み会のご案内です！",
+                  "\nです！！！おめでとうございま～す！！いやぁめでたいねぇ（ひなた）\nということで" + month + "月期のオンライン飲み会のご案内でーす！",
+                  "\nでーす！はっぴばーす！素敵な一年にしましょうね！\nということで今月もやってきました、" + month + "月期オンライン飲み会のごあんないです！！！"
+                ];
+
+                let text_3 = [
+                  "遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！\n皆さんお気軽にご参加お待ちしてま～～～～す(o・∇・o)",
+                  "遅れて参加してもOK、眠くなったら先に眠ってもOKの飲み会です！周年イベントが明けても次のイベントはすぐに始まるから（遠い目） お疲れ様会も兼ねて盛り上がってまいりましょう～！多くの皆様方のご参加をお待ちしております！！！！！！！！！お酒お酒お酒お酒！！！！！！！！！",
+                  "遅れて参加してもOK!!眠くなったら先に眠ってもOK!!の飲み会です！気持ちアゲていきましょう！！！！ぶいぶい！！！！！！お酒お酒お酒お酒!!!!!!",
+                  "遅れて参加してもOK,眠くなったら先に上がってもOKの飲み会です、気ままに楽しみましょう！！！どしどしご参加くださいーーーー！！！！！お酒お酒お酒!!!",
+                  "遅れて参加しても良し、眠くなったら先に上がっても寝落ちしてもOKの飲み会です。気軽に和気あいあい楽しみましょう！どしどしご参加くーださい(o・∇・o)",
+                  " 特に時間などに縛りはございません。好きな時間に来て好きなだけ飲んで話して好きな時間に上がれる飲み会です。まったりのんびり楽しく過ごしましょう～！！！\nお酒お酒お酒お酒お酒!!!!!!!!",
+                  "遅刻OK早上がりOK、お酒やジュースを飲みながらおしゃべりを楽しむ月一の定例飲み会です！皆さんお気軽にご参加お待ちしてま~~~~す"
+                ];
+        
+                text += text_1[Math.floor(Math.random() * text_1.length)];
+        
+                for(let member of birthday_for_235_member.data){
+                  if(member.month === month){
+                    text += "**" + member.date + "日..." + member.name + "さん**\n";
+                  }
+                }
+
+                text += text_2[Math.floor(Math.random() * text_2.length)];
+        
+                text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+
+                text += text_3[Math.floor(Math.random() * text_3.length)];
+
+                text += "\n" + data[3];
+        
+                message.channel.send(text);
+                setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
+                setTimeout(() => {
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
+                }, information.message_delete_time);
+  
+  
+              }else{
+                message.reply("時間は0～23の間で入力してください！");
+                setTimeout(() => {
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
+                }, information.message_delete_time);
+              }
+            }else{
+              message.reply("日は1～" + last_date + "の間で入力してください！");
+              setTimeout(() => {
+                message.delete()
+                .then((data) => data)
+                .catch((err) => err);
+              }, information.message_delete_time);
+            }
+          }else{
+            message.reply("月は1～12の間で入力してください！");
+            setTimeout(() => {
+              message.delete()
+              .then((data) => data)
+              .catch((err) => err);
+            }, information.message_delete_time);
+          }
+        }
+
+      }else{
+
+        message.reply("235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n任意のテキストを追加したい場合は、3つ入力した後に、追加したいテキストを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
+        setTimeout(() => {
+          message.delete()
+          .then((data) => data)
+          .catch((err) => err);
+        }, information.message_delete_time);
+
       }
 
     }
