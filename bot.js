@@ -2008,8 +2008,6 @@ client.on("messageCreate", message => {
             let beforeDay        = beforeMonth + "月" + beforeDate + "日";
             let ratioToDayBefore = 0;
 
-            message.reply("hello");
-
             while(true){
               if(workbook.sheet("百合bot").cell("B" + String(rowIndex)).value()){
                 if(workbook.sheet("百合bot").cell("B" + String(rowIndex)).value() === beforeDay){
