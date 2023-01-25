@@ -1905,6 +1905,50 @@ client.on("messageCreate", message => {
             result;
           });
         });
+      // 最高記録などを出力
+      }else if(data.length === 1){
+        if(data[0] === "wpm"){
+          db.all("select date, max(wpm) from scores", (err, rows) => {
+            message.reply("最速wpm： " + String(rows[0]["max(wpm)"]) + "\n最速wpm更新日時： " + String(rows[0]["date"]));
+            setTimeout(() => {
+              message.delete()
+              .then((data) => data)
+              .catch((err) => err);
+            }, information.message_delete_time);
+          });
+        }else if(data[0] === "miss"){
+          let text = "";
+
+          db.all("select max(wpm), miss from scores where miss = (select min(miss) from scores)", (err, rows1) => {
+            message.reply("最速wpm： " + String(rows[0]["min(miss)"]));
+            text += "最小ミス数： " + String(rows1[0]["miss"]) + "\n\n";
+          });
+        }else if(data[0] === "score"){
+          db.all("select date, max(score) from scores", (err, rows) => {
+            message.reply("最高スコア： " + String(rows[0]["max(score)"]) + "\n最高スコア更新日時： " + String(rows[0]["date"]));
+            setTimeout(() => {
+              message.delete()
+              .then((data) => data)
+              .catch((err) => err);
+            }, information.message_delete_time);
+          });
+        }
+      // 今までのスコア一覧を出力
+      }else if(data.length === 0){
+        let text = "";
+
+        db.all("select * from scores limit 10", (err, rows) => {
+          rows.forEach(row => {
+            text += row.date + "　wpm： " + row.wpm + "　miss： " + row.miss + "　score： " + row.score + "\n";
+          });
+
+          message.reply(text);
+          setTimeout(() => {
+            message.delete()
+            .then((data) => data)
+            .catch((err) => err);
+          }, information.message_delete_time);
+        });
       }
     }
 
