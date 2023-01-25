@@ -1990,6 +1990,47 @@ client.on("messageCreate", message => {
       }
     }
 
+  }else if(command === "lb"){            // lbコマンド 今現在の百合botのフォロワー数と前日比を教えてくれる。 俺以外は打てないようにする。
+
+    if(message.author.username === "まき"){
+      bot.get("users/show", {screen_name: "maki_lily_bot"}, (err, user, res) => {
+        if(err){
+          console.log(err);
+        }else{
+          xlsxPopulate.fromFileAsync(filePath).then(workbook => {
+            let rowIndex         = 3;
+            let dayBefore        = new Date();
+
+            dayBefore.setDate(dayBefore.getDate() - 1);
+
+            let beforeMonth      = dayBefore.getMonth() + 1;
+            let beforeDate       = dayBefore.getDate();
+            let beforeDay        = beforeMonth + "月" + beforeDate + "日";
+            let ratioToDayBefore = 0;
+
+            message.reply("hello");
+
+            while(true){
+              if(workbook.sheet("百合bot").cell("B" + String(rowIndex)).value()){
+                if(workbook.sheet("百合bot").cell("B" + String(rowIndex)).value() === beforeDay){
+                  ratioToDayBefore = user.followers_count - workbook.sheet("百合bot").cell("C" + String(rowIndex)).value();
+                  message.reply("現在の百合botのフォロワー数： " + user.followers_count + "\n前日比： " + ratioToDayBefore);
+                  setTimeout(() => {
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
+                  }, information.message_delete_time);
+                  break;
+                }else{
+                  rowIndex++;
+                }
+              }
+            }
+          });
+        }
+      });
+    }
+
   }else if(command === "test"){          // testコマンド テスト用 俺以外は打てないようにする。
 
     if(message.author.username === "まき"){
