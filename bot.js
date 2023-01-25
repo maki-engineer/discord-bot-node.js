@@ -48,6 +48,10 @@ const client                        = new Client({
   ]
 });
 
+// xlsx-populate導入、対象のエクセルファイル読み込み
+const xlsxPopulate = require("xlsx-populate");
+const filePath     = "../デスクトップ/タイピングデータ/data.xlsx";
+
 // 常時行う処理
 client.on("ready", () => {
 
@@ -1835,26 +1839,84 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "test"){      // testコマンド テスト用 俺以外は打てないようにする。
+  }else if(command === "regisco"){       // regiscoコマンド タイピングのスコアを記録したりするコマンド 俺以外は打てないようにする。
 
     if(message.author.username === "まき"){
 
+      // 日付取得
+      let now   = new Date();
+      let month = now.getMonth() + 1;
+      let date  = now.getDate();
+
+      // 入力したデータを元にスコアをエクセルとテーブルに記録
+      if(data.length === 2){
+        // 入力された値を小数と整数に変換
+        let perSec = parseFloat(data[0]);
+        let miss   = Number(data[1]);
+        let scores = def.scoreCalc(perSec, miss);
+        let today  = month + "月" + date + "日";
+
+        xlsxPopulate.fromFileAsync(filePath).then(workbook => {
+          let rowIndex = 3;
+        
+          while(true){
+            if(workbook.sheet("タイピング").cell("B" + String(rowIndex)).value()){
+              // 同じ日だった場合はその日の記録を更新(row_index の行に結果を記録)
+              if(workbook.sheet("タイピング").cell("B" + String(rowIndex)).value() === today){
+                workbook.sheet("タイピング").cell("C" + String(rowIndex)).value(scores[0]);
+                workbook.sheet("タイピング").cell("D" + String(rowIndex)).value(miss);
+                workbook.sheet("タイピング").cell("E" + String(rowIndex)).value(scores[1]);
+
+                // テーブルのデータ更新
+                db.run("update scores set wpm = ?, miss = ?, score = ? where date = ?", scores[0], miss, scores[1], today);
+
+                message.reply("スコアを更新しました！\n\nwpm： " + scores[0] + "\nmiss： " + miss + "\nscore： " + scores[1]);
+                setTimeout(() => {
+                  message.delete()
+                  .then((data) => data)
+                  .catch((err) => err);
+                }, information.message_delete_time);
+                break;
+              }else{
+                rowIndex++;
+              }
+            }else{
+              // 新しく記録(row_index の行に結果を記録)
+              workbook.sheet("タイピング").cell("B" + String(rowIndex)).value(today);
+              workbook.sheet("タイピング").cell("C" + String(rowIndex)).value(scores[0]);
+              workbook.sheet("タイピング").cell("D" + String(rowIndex)).value(miss);
+              workbook.sheet("タイピング").cell("E" + String(rowIndex)).value(scores[1]);
+
+              // テーブルにデータ追加
+              db.run("insert into scores(date, wpm, miss, score) values(?, ?, ?, ?)", today, scores[0], miss, scores[1]);
+
+              message.reply("スコアを記録しました！\n\nwpm： " + scores[0] + "\nmiss： " + miss + "\nscore： " + scores[1]);
+              setTimeout(() => {
+                message.delete()
+                .then((data) => data)
+                .catch((err) => err);
+              }, information.message_delete_time);
+              break;
+            }
+          }
+        
+          // 上書き保存
+          workbook.toFileAsync(filePath).then(result => {
+            result;
+          });
+        });
+      }
+    }
+
+  }else if(command === "test"){          // testコマンド テスト用 俺以外は打てないようにする。
+
+    if(message.author.username === "まき"){
       message.reply("テスト用コマンド");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
         .catch((err) => err);
       }, information.message_delete_time);
-
-    }else{
-
-      message.reply("このコマンドは開発者だけが使えるコマンドです。");
-      setTimeout(() => {
-        message.delete()
-        .then((data) => data)
-        .catch((err) => err);
-      }, information.message_delete_time);
-
     }
 
   }else{                             // コマンドを間違って打っちゃってた時の処理
