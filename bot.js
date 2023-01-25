@@ -1839,7 +1839,7 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "regisco"){       // regiscoコマンド タイピングのスコアを記録したりするコマンド 俺以外は打てないようにする。
+  }else if(command === "rs"){            // rsコマンド タイピングのスコアを記録したりするコマンド 俺以外は打てないようにする。
 
     if(message.author.username === "まき"){
 
