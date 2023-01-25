@@ -50,7 +50,7 @@ const client                        = new Client({
 
 // xlsx-populate導入、対象のエクセルファイル読み込み
 const xlsxPopulate = require("xlsx-populate");
-const filePath     = "../デスクトップ/タイピングデータ/data.xlsx";
+const filePath     = "../デスクトップ/data.xlsx";
 
 // 常時行う処理
 client.on("ready", () => {
@@ -1917,11 +1917,13 @@ client.on("messageCreate", message => {
             }, information.message_delete_time);
           });
         }else if(data[0] === "miss"){
-          let text = "";
-
-          db.all("select max(wpm), miss from scores where miss = (select min(miss) from scores)", (err, rows1) => {
-            message.reply("最速wpm： " + String(rows[0]["min(miss)"]));
-            text += "最小ミス数： " + String(rows1[0]["miss"]) + "\n\n";
+          db.all("select max(wpm), miss, max(score) from scores where miss = (select min(miss) from scores)", (err, rows1) => {
+            message.reply("最小ミス数： " + String(rows1[0]["miss"]) + "\n最小ミス時最速wpm： " + String(rows1[0]["max(wpm)"]) + "\n最小ミス時最高スコア： " + String(rows1[0]["max(score)"]));
+            setTimeout(() => {
+              message.delete()
+              .then((data) => data)
+              .catch((err) => err);
+            }, information.message_delete_time);
           });
         }else if(data[0] === "score"){
           db.all("select date, max(score) from scores", (err, rows) => {
