@@ -4,8 +4,8 @@
 const sqlite3 = require("sqlite3");
 const db      = new sqlite3.Database("235data.db");
 
-// request モジュール導入
-const request = require("request");
+// fs モジュール導入
+const fs = require("fs");
 
 // 別ファイル導入
 const birthday_for_235_member     = require("./birthday-for-235-member");
@@ -248,7 +248,63 @@ client.on("ready", () => {
       });
 
       // タイピングのスコアをエクセルとテーブルに記録する
-      //
+      let formatYear  = today_year.toString().slice(-2);
+      let formatMonth = today_month.toString().padStart(2, "0");
+      let formatDate  = today_date.toString().padStart(2, "0");
+      let fileName    = formatYear + formatMonth + formatDate + "t.txt";
+
+      fs.readdir("../../../タイプウェル国語R/JR全履歴", (err, files) => {
+        files.forEach(file => {
+            if(file === fileName){
+              let highScores;
+              let highScore  = 0;
+              let text       = fs.readFileSync("../../../タイプウェル国語R/JR全履歴/" + file);
+              let lines      = text.toString().split("\n");
+              lines.pop();
+
+              lines.forEach(line => {
+                let datas  = line.split(",");
+                let miss   = Number(datas[13].trim());
+                let time   = parseFloat(datas[3].trim());
+                let perSec = Math.floor((400 / time) * 100) / 100;
+                let scores = def.scoreCalc(perSec, miss);
+
+                if(highScore < scores[1]){
+                  highScore  = scores[1];
+                  highScores = [scores[0], miss, scores[1]];
+                }
+              });
+
+              // 最高スコアをエクセルとテーブルに記録する
+              let today  = today_month + "月" + today_date + "日";
+
+              xlsxPopulate.fromFileAsync(filePath).then(workbook => {
+                let rowIndex = 3;
+
+                while(true){
+                  if(workbook.sheet("タイピング").cell("B" + String(rowIndex)).value()){
+                    rowIndex++;
+                  }else{
+                    // 新しく記録(row_index の行に結果を記録)
+                    workbook.sheet("タイピング").cell("B" + String(rowIndex)).value(today);
+                    workbook.sheet("タイピング").cell("C" + String(rowIndex)).value(highScores[0]);
+                    workbook.sheet("タイピング").cell("D" + String(rowIndex)).value(highScores[1]);
+                    workbook.sheet("タイピング").cell("E" + String(rowIndex)).value(highScores[2]);
+      
+                    // テーブルにデータ追加
+                    db.run("insert into scores(date, wpm, miss, score) values(?, ?, ?, ?)", today, highScores[0], highScores[1], highScores[2]);
+                    break;
+                  }
+                }
+              
+                // 上書き保存
+                workbook.toFileAsync(filePath).then(result => {
+                  console.log("タイピングのスコアをエクセルとテーブルに記録しました！");
+                });
+              });
+            }
+        });
+      });
     }
   }, 60_000);  // 1分ごと
 });
@@ -1879,70 +1935,8 @@ client.on("messageCreate", message => {
 
     if(message.author.username === "まき"){
 
-      // 日付取得
-      let now   = new Date();
-      let month = now.getMonth() + 1;
-      let date  = now.getDate();
-
-      // 入力したデータを元にスコアをエクセルとテーブルに記録
-      if(data.length === 2){
-        // 入力された値を小数と整数に変換
-        let perSec = parseFloat(data[0]);
-        let miss   = Number(data[1]);
-        let scores = def.scoreCalc(perSec, miss);
-        let today  = month + "月" + date + "日";
-
-        xlsxPopulate.fromFileAsync(filePath).then(workbook => {
-          let rowIndex = 3;
-        
-          while(true){
-            if(workbook.sheet("タイピング").cell("B" + String(rowIndex)).value()){
-              // 同じ日だった場合はその日の記録を更新(row_index の行に結果を記録)
-              if(workbook.sheet("タイピング").cell("B" + String(rowIndex)).value() === today){
-                workbook.sheet("タイピング").cell("C" + String(rowIndex)).value(scores[0]);
-                workbook.sheet("タイピング").cell("D" + String(rowIndex)).value(miss);
-                workbook.sheet("タイピング").cell("E" + String(rowIndex)).value(scores[1]);
-
-                // テーブルのデータ更新
-                db.run("update scores set wpm = ?, miss = ?, score = ? where date = ?", scores[0], miss, scores[1], today);
-
-                message.reply("スコアを更新しました！\n\nwpm： " + scores[0] + "\nmiss： " + miss + "\nscore： " + scores[1]);
-                setTimeout(() => {
-                  message.delete()
-                  .then((data) => data)
-                  .catch((err) => err);
-                }, information.message_delete_time);
-                break;
-              }else{
-                rowIndex++;
-              }
-            }else{
-              // 新しく記録(row_index の行に結果を記録)
-              workbook.sheet("タイピング").cell("B" + String(rowIndex)).value(today);
-              workbook.sheet("タイピング").cell("C" + String(rowIndex)).value(scores[0]);
-              workbook.sheet("タイピング").cell("D" + String(rowIndex)).value(miss);
-              workbook.sheet("タイピング").cell("E" + String(rowIndex)).value(scores[1]);
-
-              // テーブルにデータ追加
-              db.run("insert into scores(date, wpm, miss, score) values(?, ?, ?, ?)", today, scores[0], miss, scores[1]);
-
-              message.reply("スコアを記録しました！\n\nwpm： " + scores[0] + "\nmiss： " + miss + "\nscore： " + scores[1]);
-              setTimeout(() => {
-                message.delete()
-                .then((data) => data)
-                .catch((err) => err);
-              }, information.message_delete_time);
-              break;
-            }
-          }
-        
-          // 上書き保存
-          workbook.toFileAsync(filePath).then(result => {
-            result;
-          });
-        });
       // 最高記録などを出力
-      }else if(data.length === 1){
+      if(data.length === 1){
         if(data[0] === "wpm"){
           db.all("select date, max(wpm) from scores", (err, rows) => {
             message.reply("最速wpm： " + String(rows[0]["max(wpm)"]) + "\n最速wpm更新日時： " + String(rows[0]["date"]));
