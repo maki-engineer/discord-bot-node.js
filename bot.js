@@ -253,12 +253,12 @@ client.on("ready", () => {
       let formatDate  = today_date.toString().padStart(2, "0");
       let fileName    = formatYear + formatMonth + formatDate + "t.txt";
 
-      fs.readdir("../../../タイプウェル国語R/JR全履歴", (err, files) => {
+      fs.readdir("E:/タイプウェル国語R/JR全履歴", (err, files) => {
         files.forEach(file => {
             if(file === fileName){
               let highScores;
               let highScore  = 0;
-              let text       = fs.readFileSync("../../../タイプウェル国語R/JR全履歴/" + file);
+              let text       = fs.readFileSync("E:/タイプウェル国語R/JR全履歴/" + file);
               let lines      = text.toString().split("\n");
               lines.pop();
 
