@@ -311,30 +311,32 @@ client.on("ready", () => {
             let rowIndex = 3;
             let aveWpm   = 0;
             let aveMiss  = 0;
-            let aveScore = 0;
+            let avePerSec;
+            let aveScore;
   
             while(true){
               // 各日のスコアなどを足していく
               if(workbook.sheet("タイピング").cell("B" + String(rowIndex)).value()){
                 aveWpm   += workbook.sheet("タイピング").cell("C" + String(rowIndex)).value();
                 aveMiss  += workbook.sheet("タイピング").cell("D" + String(rowIndex)).value();
-                aveScore += workbook.sheet("タイピング").cell("E" + String(rowIndex)).value();
-  
+
                 rowIndex++;
               }else{
                 // 各値の平均値を計算
                 aveWpm   = Math.round(aveWpm / (rowIndex - 3));
                 aveMiss  = Math.round(aveMiss / (rowIndex - 3));
-                aveScore = Math.round(aveScore / (rowIndex - 3));
-  
+
+                avePerSec = Math.round((aveWpm / 60) * 100) / 100;
+                aveScore  = def.scoreCalc(avePerSec, aveMiss);
+
                 // 平均値を新しく記録(row_index の行に結果を記録)
                 workbook.sheet("タイピング").cell("B" + String(rowIndex)).value(today);
                 workbook.sheet("タイピング").cell("C" + String(rowIndex)).value(aveWpm);
                 workbook.sheet("タイピング").cell("D" + String(rowIndex)).value(aveMiss);
-                workbook.sheet("タイピング").cell("E" + String(rowIndex)).value(aveScore);
+                workbook.sheet("タイピング").cell("E" + String(rowIndex)).value(aveScore[1]);
   
                 // テーブルにデータ追加
-                db.run("insert into scores(date, wpm, miss, score) values(?, ?, ?, ?)", today, aveWpm, aveMiss, aveScore);
+                db.run("insert into scores(date, wpm, miss, score) values(?, ?, ?, ?)", today, aveWpm, aveMiss, aveScore[1]);
                 break;
               }
             }
