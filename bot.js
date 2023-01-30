@@ -1977,53 +1977,69 @@ client.on("messageCreate", message => {
   }else if(command === "rs"){            // rsコマンド タイピングのスコアを記録したりするコマンド 俺以外は打てないようにする。
 
     if(message.author.username === "まき"){
+      switch(data.length){
+        // 打／秒とミス数からwpmとスコアを求めて出力
+        case 2:
+          let perSec = parseFloat(data[0]);
+          let miss   = Number(data[1]);
 
-      // 最高記録などを出力
-      if(data.length === 1){
-        if(data[0] === "wpm"){
-          db.all("select date, max(wpm) from scores", (err, rows) => {
-            message.reply("最速wpm： " + String(rows[0]["max(wpm)"]) + "\n最速wpm更新日時： " + String(rows[0]["date"]));
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-          });
-        }else if(data[0] === "miss"){
-          db.all("select max(wpm), miss, max(score) from scores where miss = (select min(miss) from scores)", (err, rows1) => {
-            message.reply("最小ミス数： " + String(rows1[0]["miss"]) + "\n最小ミス時最速wpm： " + String(rows1[0]["max(wpm)"]) + "\n最小ミス時最高スコア： " + String(rows1[0]["max(score)"]));
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-          });
-        }else if(data[0] === "score"){
-          db.all("select date, max(score) from scores", (err, rows) => {
-            message.reply("最高スコア： " + String(rows[0]["max(score)"]) + "\n最高スコア更新日時： " + String(rows[0]["date"]));
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-          });
-        }
-      // 今までのスコア一覧を出力
-      }else if(data.length === 0){
-        let text = "";
+          let scores = def.scoreCalc(perSec, miss);
 
-        db.all("select * from scores limit 10", (err, rows) => {
-          rows.forEach(row => {
-            text += row.date + "　wpm： " + row.wpm + "　miss： " + row.miss + "　score： " + row.score + "\n";
-          });
-
-          message.reply(text);
+          message.reply("wpm： " + scores[0] + "， score： " + scores[1]);
           setTimeout(() => {
             message.delete()
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-        });
+          break;
+        // 最高記録などを出力
+        case 1:
+          if(data[0] === "wpm"){
+            db.all("select date, max(wpm) from scores", (err, rows) => {
+              message.reply("最速wpm： " + String(rows[0]["max(wpm)"]) + "\n最速wpm更新日時： " + String(rows[0]["date"]));
+              setTimeout(() => {
+                message.delete()
+                .then((data) => data)
+                .catch((err) => err);
+              }, information.message_delete_time);
+            });
+          }else if(data[0] === "miss"){
+            db.all("select max(wpm), miss, max(score) from scores where miss = (select min(miss) from scores)", (err, rows1) => {
+              message.reply("最小ミス数： " + String(rows1[0]["miss"]) + "\n最小ミス時最速wpm： " + String(rows1[0]["max(wpm)"]) + "\n最小ミス時最高スコア： " + String(rows1[0]["max(score)"]));
+              setTimeout(() => {
+                message.delete()
+                .then((data) => data)
+                .catch((err) => err);
+              }, information.message_delete_time);
+            });
+          }else if(data[0] === "score"){
+            db.all("select date, max(score) from scores", (err, rows) => {
+              message.reply("最高スコア： " + String(rows[0]["max(score)"]) + "\n最高スコア更新日時： " + String(rows[0]["date"]));
+              setTimeout(() => {
+                message.delete()
+                .then((data) => data)
+                .catch((err) => err);
+              }, information.message_delete_time);
+            });
+          }
+          break;
+        // 今までのスコア一覧を出力(7日間)
+        case 0:
+          let text = "";
+    
+          db.all("select * from scores where id > (select max(id) from scores) - 7", (err, rows) => {
+            rows.forEach(row => {
+              text += row.date + "　wpm： " + row.wpm + "　miss： " + row.miss + "　score： " + row.score + "\n";
+            });
+    
+            message.reply(text);
+            setTimeout(() => {
+              message.delete()
+              .then((data) => data)
+              .catch((err) => err);
+            }, information.message_delete_time);
+          });
+          break;
       }
     }
 
