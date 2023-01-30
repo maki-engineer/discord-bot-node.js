@@ -2027,7 +2027,7 @@ client.on("messageCreate", message => {
         case 0:
           let text = "";
     
-          db.all("select * from scores limit 7", (err, rows) => {
+          db.all("select * from scores where id > (select max(id) from scores) - 7", (err, rows) => {
             rows.forEach(row => {
               text += row.date + "　wpm： " + row.wpm + "　miss： " + row.miss + "　score： " + row.score + "\n";
             });
