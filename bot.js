@@ -259,6 +259,7 @@ client.on("ready", () => {
         files.forEach(file => {
             if(file === fileName){
               let highScores;
+              isSearch       = true;
               let highScore  = 0;
               let text       = fs.readFileSync("E:/タイプウェル国語R/JR全履歴/" + file);
               let lines      = text.toString().split("\n");
