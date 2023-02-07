@@ -2055,30 +2055,6 @@ client.on("messageCreate", message => {
       }, information.message_delete_time);
     }
 
-  }else{                             // コマンドを間違って打っちゃってた時の処理
-
-    const commands     = ["ap", "apall", "notap", "apsearch", "help", "birthday", "men", "roomdivision"];
-    let command_min    = 0xFFFF;
-    let result_command = "";
-
-    for(let result of commands){
-        if(command_min > def.levenshteinDistance(command, result)){
-            command_min    = def.levenshteinDistance(command.toUpperCase(), result.toUpperCase());
-            result_command = result;
-        }
-    }
-
-    if(command_min <= 3){
-
-      message.reply("コマンド名が間違っているようです。\n\nもしかして　235" + result_command + "？");
-      setTimeout(() => {
-        message.delete()
-        .then((data) => data)
-        .catch((err) => err);
-      }, information.message_delete_time);
-
-    }
-
   }
 
 });
