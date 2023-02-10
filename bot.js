@@ -214,39 +214,6 @@ client.on("ready", () => {
       }
 
     }else if((today_hour === 21) && (today_min === 0)){
-      // 百合botのフォロワー数などをエクセルに記録する
-      bot.get("users/show", {screen_name: "maki_lily_bot"}, (err, user, res) => {
-        if(err){
-          console.log(err);
-        }else{
-          xlsxPopulate.fromFileAsync(filePath).then(workbook => {
-            let rowIndex         = 3;
-            let today            = today_month + "月" + today_date + "日";
-            let ratioToDayBefore = 0;
-
-            while(true){
-              if(workbook.sheet("百合bot").cell("B" + String(rowIndex)).value()){
-                rowIndex++;
-              }else{
-                // 前日比を計算
-                ratioToDayBefore = user.followers_count - workbook.sheet("百合bot").cell("C" + String(rowIndex - 1)).value();
-
-                // 新しく記録(row_index の行にフォロワー数と前日比を記録)
-                workbook.sheet("百合bot").cell("B" + String(rowIndex)).value(today);
-                workbook.sheet("百合bot").cell("C" + String(rowIndex)).value(user.followers_count);
-                workbook.sheet("百合bot").cell("D" + String(rowIndex)).value(ratioToDayBefore);
-
-                break;
-              }
-            }
-
-            workbook.toFileAsync(filePath).then(result => {
-              console.log("本日の百合botのフォロワー数や前日比などをエクセルに記録しました！");
-            });
-          });
-        }
-      });
-
       // タイピングのスコアをエクセルとテーブルに記録する
       let formatYear  = today_year.toString().slice(-2);
       let formatMonth = today_month.toString().padStart(2, "0");
