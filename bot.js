@@ -1873,23 +1873,6 @@ client.on("messageCreate", message => {
             });
           }
           break;
-        // 今までのスコア一覧を出力(7日間)
-        case 0:
-          let text = "";
-    
-          db.all("select * from scores where id > (select max(id) from scores) - 7", (err, rows) => {
-            rows.forEach(row => {
-              text += row.date + "　wpm： " + row.wpm + "　miss： " + row.miss + "　score： " + row.score + "\n";
-            });
-    
-            message.reply(text);
-            setTimeout(() => {
-              message.delete()
-              .then((data) => data)
-              .catch((err) => err);
-            }, information.message_delete_time);
-          });
-          break;
       }
     }
 
