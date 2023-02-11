@@ -4,9 +4,6 @@
 const sqlite3 = require("sqlite3");
 const db      = new sqlite3.Database("235data.db");
 
-// fs モジュール導入
-const fs = require("fs");
-
 // 別ファイル導入
 const birthday_for_235_member     = require("./birthday-for-235-member");
 const birthday_for_million_member = require("./birthday-for-million-member");
@@ -47,10 +44,6 @@ const client                        = new Client({
     GatewayIntentBits.GuildScheduledEvents
   ]
 });
-
-// xlsx-populate導入、対象のエクセルファイル読み込み
-const xlsxPopulate = require("xlsx-populate");
-const filePath     = "../デスクトップ/data.xlsx";
 
 // 常時行う処理
 client.on("ready", () => {
