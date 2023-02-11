@@ -1842,20 +1842,6 @@ client.on("messageCreate", message => {
 
     if(message.author.username === "まき"){
       switch(data.length){
-        // 打／秒とミス数からwpmとスコアを求めて出力
-        case 2:
-          let perSec = parseFloat(data[0]);
-          let miss   = Number(data[1]);
-
-          let scores = def.scoreCalc(perSec, miss);
-
-          message.reply("wpm： " + scores[0] + "， score： " + scores[1]);
-          setTimeout(() => {
-            message.delete()
-            .then((data) => data)
-            .catch((err) => err);
-          }, information.message_delete_time);
-          break;
         // 最高記録などを出力
         case 1:
           if(data[0] === "wpm"){
