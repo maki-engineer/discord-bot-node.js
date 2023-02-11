@@ -1,5 +1,6 @@
 node_modules
 img
+235bot_login.bat
 235data.db
 discord-token.json
 twitter-token.json
