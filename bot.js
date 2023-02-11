@@ -102,6 +102,7 @@ client.on("ready", () => {
     }
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
+    // 23時に自動で停止
     if((today_hour === 9) && (today_min === 0)){
 
       for(let member of birthday_for_235_member.data){
@@ -205,6 +206,8 @@ client.on("ready", () => {
         }
       }
 
+    }else if((today_hour === 23) && (today_min === 0)){
+      process.exit();
     }
   }, 60_000);  // 1分ごと
 });
