@@ -650,7 +650,7 @@ client.on("messageCreate", message => {
 
                   }else if((min > 1) && (min < 6)){
 
-                    message.reply("取り消しに失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
+                    message.reply("取り消しに失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235apremove " + suggest_music);
                     setTimeout(() => {
                       message.delete()
                       .then((data) => data)
