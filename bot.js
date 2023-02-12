@@ -1183,7 +1183,7 @@ client.on("messageCreate", message => {
 
                     if(rows[0][names + "_flg"] === 1){
   
-                      message.reply(suggest_music + " は既にAPすることが出来ています！");
+                      message.reply(suggest_music + " は既にAP出来ています！");
                       setTimeout(() => {
                         message.delete()
                         .then((data) => data)
@@ -1226,7 +1226,7 @@ client.on("messageCreate", message => {
               }else{
                 if(rows[0][names + "_flg"] === 1){
 
-                  message.reply(rows[0].name + " は既にAPすることが出来ています！");
+                  message.reply(rows[0].name + " は既にAP出来ています！");
                   setTimeout(() => {
                     message.delete()
                     .then((data) => data)
