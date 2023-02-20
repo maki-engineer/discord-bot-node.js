@@ -16,5 +16,8 @@
     "sqlite3": "^5.1.4",
     "twitter": "^1.7.1",
     "xlsx-populate": "^1.21.0"
+  },
+  "devDependencies": {
+    "jsdom": "^21.1.0"
   }
 }
