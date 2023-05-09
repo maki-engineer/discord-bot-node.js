@@ -221,7 +221,7 @@ client.on("ready", () => {
         res.on("data", line => html += line);
         res.on("end", () => {
           const dom = new JSDOM(html);
-          let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(2).querySelector("tbody").querySelectorAll("tr");
+          let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(1).querySelector("tbody").querySelectorAll("tr");
       
           contestTableUpcoming.forEach(row => {
             let aTags            = row.querySelectorAll("a");
@@ -260,7 +260,7 @@ client.on("ready", () => {
         res.on("data", line => html += line);
         res.on("end", () => {
           const dom = new JSDOM(html);
-          let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(2).querySelector("tbody").querySelectorAll("tr");
+          let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(1).querySelector("tbody").querySelectorAll("tr");
       
           contestTableUpcoming.forEach(row => {
             let aTags            = row.querySelectorAll("a");
