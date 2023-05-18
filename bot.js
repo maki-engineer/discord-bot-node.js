@@ -9,6 +9,7 @@ const birthday_for_235_member     = require("./birthday-for-235-member");
 const birthday_for_million_member = require("./birthday-for-million-member");
 const information                 = require("./information-for-235");
 const def                         = require("./function");
+const openai                      = require("./chat-gpt-api-key");
 
 // twitter導入
 let twitter      = require("twitter");
@@ -406,6 +407,22 @@ client.on("messageCreate", message => {
 
   // botからのメッセージは無視
   if(message.author.bot) return;
+
+  // chatgpt用
+  if (message.mentions.users.has(client.user.id)) {
+    let strIndex = message.content.indexOf(">");
+    let msg = message.content.substr(strIndex + 2);
+
+    message.channel.sendTyping();
+
+    (async () => {
+      const response = await openai.chatGpt.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        messages: [{role: "user", content: msg}]
+      });
+      setTimeout(() => message.reply(response.data.choices[0].message.content), 5_000);
+    })();
+  }
 
   // コマンドメッセージ以外は無視
   if(!message.content.startsWith(information.prefix)) return;
