@@ -5,7 +5,6 @@ const sqlite3 = require("sqlite3");
 const db      = new sqlite3.Database("235data.db");
 
 // 別ファイル導入
-const birthday_for_235_member     = require("./birthday-for-235-member");
 const birthday_for_million_member = require("./birthday-for-million-member");
 const information                 = require("./information-for-235");
 const def                         = require("./function");
@@ -113,43 +112,36 @@ client.on("ready", () => {
     // 23時に自動で停止
     if((today_hour === 9) && (today_min === 0)){
 
-      for(let member of birthday_for_235_member.data){
-        if((today_month === member.month) && (today_date === member.date)){
-          information.today_birthday_for_235_member.push(member.name);
-        }
-      }
-
-      // 誕生日が1人いた時と複数人いた時
-      if(information.today_birthday_for_235_member.length === 1){
-
-        if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-          client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[0] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[0] + "さん、お誕生日おめでとうございます♪");
-        }
-
-      }else if(information.today_birthday_for_235_member.length > 1){
-
-        let birthday_timer = setInterval(function(){
-          if(information.today_birthday_people_for_235_member === information.today_birthday_for_235_member.length){
-            clearInterval(birthday_timer);
-          }else if(information.today_birthday_people_for_235_member === 0){
-
-            if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-              client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
-            }
-
-            information.today_birthday_people_for_235_member++;
-
-          }else{
-
-            if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-              client.channels.cache.get(information.channel_for_235_chat_place).send("さらに！！　本日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日でもあります！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
-            }
-
-            information.today_birthday_people_for_235_member++;
-
+      db.all("select * from birthday_for_235_members", (err, rows) => {
+        rows.forEach(row => {
+          if((today_month === row.month) && (today_date === row.date)){
+            information.today_birthday_for_235_member.push(row.name);
           }
-        }, 4_000)  // 4秒ごと
-      }
+        });
+
+        // 誕生日が1人いた時と複数人いた時
+        if(information.today_birthday_for_235_member.length === 1){
+          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[0] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[0] + "さん、お誕生日おめでとうございます♪");
+          }
+        }else if(information.today_birthday_for_235_member.length > 1){
+          let birthday_timer = setInterval(function(){
+            if(information.today_birthday_people_for_235_member === information.today_birthday_for_235_member.length){
+              clearInterval(birthday_timer);
+            }else if(information.today_birthday_people_for_235_member === 0){
+              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+                client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
+              }
+              information.today_birthday_people_for_235_member++;
+            }else{
+              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+                client.channels.cache.get(information.channel_for_235_chat_place).send("さらに！！　本日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日でもあります！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
+              }
+              information.today_birthday_people_for_235_member++;
+            }
+          }, 4_000)  // 4秒ごと
+        }
+      });
 
     }else if((today_hour === 9) && (today_min === 30)){
 
@@ -1462,28 +1454,28 @@ client.on("messageCreate", message => {
                 ];
         
                 text += text_1[Math.floor(Math.random() * text_1.length)];
-        
-                for(let member of birthday_for_235_member.data){
-                  if(member.month === month){
-                    text += "**" + member.date + "日..." + member.name + "さん**\n";
-                  }
-                }
 
-                text += text_2[Math.floor(Math.random() * text_2.length)];
-        
-                text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+                db.all("select * from birthday_for_235_members", (err, rows) => {
+                  rows.forEach(row => {
+                    if(row.month === month){
+                      text += "**" + row.date + "日..." + row.name + "さん**\n";
+                    }
 
-                text += text_3[Math.floor(Math.random() * text_3.length)];
-        
-                message.channel.send(text);
-                setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-                setTimeout(() => {
-                  message.delete()
-                  .then((data) => data)
-                  .catch((err) => err);
-                }, information.message_delete_time);
-  
-  
+                    text += text_2[Math.floor(Math.random() * text_2.length)];
+            
+                    text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+    
+                    text += text_3[Math.floor(Math.random() * text_3.length)];
+            
+                    message.channel.send(text);
+                    setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+                  });
+                });
               }else{
                 message.reply("時間は0～23の間で入力してください！");
                 setTimeout(() => {
@@ -1577,30 +1569,30 @@ client.on("messageCreate", message => {
                 ];
         
                 text += text_1[Math.floor(Math.random() * text_1.length)];
-        
-                for(let member of birthday_for_235_member.data){
-                  if(member.month === month){
-                    text += "**" + member.date + "日..." + member.name + "さん**\n";
-                  }
-                }
 
-                text += text_2[Math.floor(Math.random() * text_2.length)];
-        
-                text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+                db.all("select * from birthday_for_235_members", (err, rows) => {
+                  rows.forEach(row => {
+                    if(row.month === month){
+                      text += "**" + row.date + "日..." + row.name + "さん**\n";
+                    }
 
-                text += text_3[Math.floor(Math.random() * text_3.length)];
-
-                text += "\n" + data[3];
-        
-                message.channel.send(text);
-                setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-                setTimeout(() => {
-                  message.delete()
-                  .then((data) => data)
-                  .catch((err) => err);
-                }, information.message_delete_time);
-  
-  
+                    text += text_2[Math.floor(Math.random() * text_2.length)];
+            
+                    text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+    
+                    text += text_3[Math.floor(Math.random() * text_3.length)];
+    
+                    text += "\n" + data[3];
+            
+                    message.channel.send(text);
+                    setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
+                    setTimeout(() => {
+                      message.delete()
+                      .then((data) => data)
+                      .catch((err) => err);
+                    }, information.message_delete_time);
+                  });
+                });
               }else{
                 message.reply("時間は0～23の間で入力してください！");
                 setTimeout(() => {
