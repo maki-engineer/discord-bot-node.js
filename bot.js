@@ -1455,26 +1455,26 @@ client.on("messageCreate", message => {
         
                 text += text_1[Math.floor(Math.random() * text_1.length)];
 
-                db.all("select * from birthday_for_235_members", (err, rows) => {
+                db.all("select * from birthday_for_235_members order by month, date", (err, rows) => {
                   rows.forEach(row => {
                     if(row.month === month){
                       text += "**" + row.date + "日..." + row.name + "さん**\n";
                     }
-
-                    text += text_2[Math.floor(Math.random() * text_2.length)];
-            
-                    text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
-    
-                    text += text_3[Math.floor(Math.random() * text_3.length)];
-            
-                    message.channel.send(text);
-                    setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-                    setTimeout(() => {
-                      message.delete()
-                      .then((data) => data)
-                      .catch((err) => err);
-                    }, information.message_delete_time);
                   });
+
+                  text += text_2[Math.floor(Math.random() * text_2.length)];
+          
+                  text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+
+                  text += text_3[Math.floor(Math.random() * text_3.length)];
+          
+                  message.channel.send(text);
+                  setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
+                  setTimeout(() => {
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
+                  }, information.message_delete_time);
                 });
               }else{
                 message.reply("時間は0～23の間で入力してください！");
@@ -1570,28 +1570,28 @@ client.on("messageCreate", message => {
         
                 text += text_1[Math.floor(Math.random() * text_1.length)];
 
-                db.all("select * from birthday_for_235_members", (err, rows) => {
+                db.all("select * from birthday_for_235_members order by month, date", (err, rows) => {
                   rows.forEach(row => {
                     if(row.month === month){
                       text += "**" + row.date + "日..." + row.name + "さん**\n";
                     }
-
-                    text += text_2[Math.floor(Math.random() * text_2.length)];
-            
-                    text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
-    
-                    text += text_3[Math.floor(Math.random() * text_3.length)];
-    
-                    text += "\n" + data[3];
-            
-                    message.channel.send(text);
-                    setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
-                    setTimeout(() => {
-                      message.delete()
-                      .then((data) => data)
-                      .catch((err) => err);
-                    }, information.message_delete_time);
                   });
+
+                  text += text_2[Math.floor(Math.random() * text_2.length)];
+          
+                  text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
+  
+                  text += text_3[Math.floor(Math.random() * text_3.length)];
+  
+                  text += "\n" + data[3];
+          
+                  message.channel.send(text);
+                  setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
+                  setTimeout(() => {
+                    message.delete()
+                    .then((data) => data)
+                    .catch((err) => err);
+                  }, information.message_delete_time);
                 });
               }else{
                 message.reply("時間は0～23の間で入力してください！");
@@ -1941,6 +1941,11 @@ client.on("messageCreate", message => {
 
   }
 
+});
+
+// サーバーから誰かが退出した時に行う処理
+client.on("guildMemberRemove", member => {
+  console.log(member.id);
 });
 
 client.login(token.BOT_TOKEN);
