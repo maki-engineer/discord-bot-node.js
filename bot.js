@@ -401,7 +401,7 @@ client.on("messageCreate", message => {
   if(message.author.bot) return;
 
   // chatgpt用
-  if (message.mentions.users.has(client.user.id)) {
+  /*if (message.mentions.users.has(client.user.id)) {
     let strIndex = message.content.indexOf(">");
     let msg = message.content.substr(strIndex + 2);
 
@@ -414,7 +414,12 @@ client.on("messageCreate", message => {
       });
       setTimeout(() => message.reply(response.data.choices[0].message.content), 5_000);
     })();
-  }
+    setTimeout(() => {
+      message.delete()
+      .then((data) => data)
+      .catch((err) => err);
+    }, information.message_delete_time);
+  }*/
 
   // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する
   if (client.channels.cache.get(information.channel_for_235_introduction) !== undefined) {
