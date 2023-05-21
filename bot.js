@@ -416,6 +416,35 @@ client.on("messageCreate", message => {
     })();
   }
 
+  // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する
+  if (client.channels.cache.get(information.channel_for_235_introduction) !== undefined) {
+    if (message.channelId === information.channel_for_235_introduction) {
+      let targetMsg = message.content.replace(/\r?\n/g, '');
+      let result    = targetMsg.split(/：|・/);
+
+      for (let i = 0; i < result.length; i++) {
+        if (result[i] === "生年月日") {
+          let birthday = result[i + 1].split(/年|月|\//);
+
+          for (let i = 0; i < birthday.length; i++) {
+            birthday[i] = birthday[i].match(/\d+/g)[0];
+            birthday[i] = birthday[i].replace(/^0+/, '');
+          }
+
+          if (birthday.length === 3) {
+            birthday.shift();
+          }
+
+          db.run("insert into birthday_for_235_members(name, user_id, month, date) values(?, ?, ?, ?)", message.author.username, message.author.id, birthday[0], birthday[1]);
+
+          client.users.cache.get(information.user_for_maki).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthday[0]}月${birthday[1]}日`);
+          client.users.cache.get(information.user_for_utatane).send(`${message.author.username}さんの誕生日を新しく登録しました！\n${birthday[0]}月${birthday[1]}日\nもし間違いがあった場合は報告をお願いします！`);
+          break;
+        }
+      }
+    }
+  }
+
   // コマンドメッセージ以外は無視
   if(!message.content.startsWith(information.prefix)) return;
 
@@ -1945,7 +1974,10 @@ client.on("messageCreate", message => {
 
 // サーバーから誰かが退出した時に行う処理
 client.on("guildMemberRemove", member => {
-  console.log(member.id);
+  db.run("delete from birthday_for_235_members where member_id = ?", member.id);
+  // 俺とうたたねさんに退出したメンバーの誕生日を削除した報告をする
+  client.users.cache.get(information.user_for_maki).send(`${member.nickname}さんがサーバーから退出されたため、${member.nickname}さんの誕生日を削除しました！`);
+  client.users.cache.get(information.user_for_utatane).send(`${member.nickname}さんがサーバーから退出されたため、${member.nickname}さんの誕生日を削除しました！\nもし間違いがあった場合は報告をお願いします！`);
 });
 
 client.login(token.BOT_TOKEN);
