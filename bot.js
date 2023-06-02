@@ -8,7 +8,6 @@ const db      = new sqlite3.Database("235data.db");
 const birthday_for_million_member = require("./birthday-for-million-member");
 const information                 = require("./information-for-235");
 const def                         = require("./function");
-const openai                      = require("./chat-gpt-api-key");
 
 // twitter導入
 let twitter      = require("twitter");
@@ -401,27 +400,25 @@ client.on("messageCreate", message => {
   if(message.author.bot) return;
 
   // chatgpt用
-  /*if (message.mentions.users.has(client.user.id)) {
+  if (message.mentions.users.has(client.user.id)) {
     let strIndex = message.content.indexOf(">");
     let msg = message.content.substr(strIndex + 2);
 
     message.channel.sendTyping();
 
     (async () => {
-      const response = await openai.chatGpt.createChatCompletion({
-        model: "gpt-3.5-turbo",
-        messages: [{role: "user", content: msg}]
+      def.runPythonScript("chat-gpt.py", [msg]).then(result => {
+        setTimeout(() => message.reply(result), 5_000);
       });
-      setTimeout(() => message.reply(response.data.choices[0].message.content), 5_000);
     })();
     setTimeout(() => {
       message.delete()
       .then((data) => data)
       .catch((err) => err);
-    }, information.message_delete_time);
-  }*/
+    }, 40_000);
+  }
 
-  // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する
+  // 自己紹介チャンネルから新しく入ったメンバーの誕生日を登録する＆挨拶をする
   if (client.channels.cache.get(information.channel_for_235_introduction) !== undefined) {
     if (message.channelId === information.channel_for_235_introduction) {
       let targetMsg = message.content.replace(/\r?\n/g, '');
@@ -447,6 +444,9 @@ client.on("messageCreate", message => {
           break;
         }
       }
+
+      // 挨拶
+      message.reply(`${message.author.username}さん、235プロダクションへようこそ！\nこれからもよろしくおねがいします♪`);
     }
   }
 
