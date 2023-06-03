@@ -122,6 +122,7 @@ client.on("ready", () => {
         if(information.today_birthday_for_235_member.length === 1){
           if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
             client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[0] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[0] + "さん、お誕生日おめでとうございます♪");
+            db.run("insert into emojis_for_birthday_235(count) values(?)", 2);
           }
         }else if(information.today_birthday_for_235_member.length > 1){
           let birthday_timer = setInterval(function(){
@@ -130,11 +131,13 @@ client.on("ready", () => {
             }else if(information.today_birthday_people_for_235_member === 0){
               if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
                 client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
+                db.run("insert into emojis_for_birthday_235(count) values(?)", 2);
               }
               information.today_birthday_people_for_235_member++;
             }else{
               if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
                 client.channels.cache.get(information.channel_for_235_chat_place).send("さらに！！　本日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日でもあります！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
+                db.run("insert into emojis_for_birthday_235(count) values(?)", 2);
               }
               information.today_birthday_people_for_235_member++;
             }
@@ -152,18 +155,41 @@ client.on("ready", () => {
 
       if(information.today_birthday_for_million_member.length === 1){
 
+        // まずは絵文字探索
+        let emoji_search_result = "";
+        for (let idol_member of information.emojis_for_birthday_idol) {
+          if (idol_member.name === information.today_birthday_for_million_member[0].name) {
+            emoji_search_result = idol_member.emoji;
+          }
+        }
+
         if(birthday_for_million_member.validation.includes(information.today_birthday_for_million_member[0].name)){
           if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
             client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[0].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[0].img]});
+            if (emoji_search_result !== "") {
+              db.run("insert into emojis_for_birthday_idol(count) values(?)", emoji_search_result);
+            }
           }
         }else{
           if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
             client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[0].name + "**のお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[0].img]});
+            db.run("insert into emojis_for_birthday_idol(count) values(?)", emoji_search_result);
           }
         }
 
 
       }else if(information.today_birthday_for_million_member.length > 1){
+
+        // まずは絵文字探索
+        let emoji_search_results = [];
+        for (let idol_member of information.emojis_for_birthday_idol) {
+          if (idol_member.name === information.today_birthday_for_million_member[0].name) {
+            emoji_search_results.push(idol_member.emoji);
+          }
+          if (idol_member.name === information.today_birthday_for_million_member[1].name) {
+            emoji_search_results.push(idol_member.emoji);
+          }
+        }
 
         let birthday_timer = setInterval(function(){
           if(information.today_birthday_people_for_million_member === information.today_birthday_for_million_member.length){
@@ -172,6 +198,9 @@ client.on("ready", () => {
 
             if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
               client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].img]});
+              if (emoji_search_results.length !== 0) {
+                db.run("insert into emojis_for_birthday_idol(count) values(?)", emoji_search_results[0]);
+              }
             }
 
             information.today_birthday_people_for_million_member++;
@@ -180,6 +209,9 @@ client.on("ready", () => {
 
             if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
               client.channels.cache.get(information.channel_for_235_chat_place).send({content: "さらに！！　本日は**" + information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].name + "**のお誕生日でもあります！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].img]});
+              if (emoji_search_results.length !== 0) {
+                db.run("insert into emojis_for_birthday_idol(count) values(?)", emoji_search_results[1]);
+              }
             }
 
             information.today_birthday_people_for_million_member++;
@@ -375,6 +407,36 @@ client.on("messageCreate", message => {
 
         // emojisテーブル初期化
         db.run("delete from emojis");
+      }
+    }
+  });
+
+  // 235メンバーの誕生日をお祝い
+  db.all("select * from emojis_for_birthday_235", (err, rows) => {
+    if(err){
+      console.log(err);
+    }else{
+      if(rows.length === 1){
+        for(let i = 0; i < rows[0].count; i++){
+          message.react(information.emojis_for_birthday_235[i]);
+        }
+
+        // emojisテーブル初期化
+        db.run("delete from emojis_for_birthday_235");
+      }
+    }
+  });
+
+  // ミリオンメンバーの誕生日をお祝い
+  db.all("select * from emojis_for_birthday_idol", (err, rows) => {
+    if(err){
+      console.log(err);
+    }else{
+      if(rows.length === 1){
+        message.react(rows[0].emoji_name);
+
+        // テーブル初期化
+        db.run("delete from emojis_for_birthday_idol");
       }
     }
   });
