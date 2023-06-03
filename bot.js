@@ -174,7 +174,7 @@ client.on("ready", () => {
         if(birthday_for_million_member.validation.includes(information.today_birthday_for_million_member[0].name)){
           if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
             client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[0].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[0].img]});
-            if (emoji_search_result === "") {
+            if (emoji_search_result !== "") {
               db.run("insert into emojis_for_birthday_idol(count) values(?)", emoji_search_result);
             }
           }
