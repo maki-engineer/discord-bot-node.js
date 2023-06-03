@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "child_process": "^1.0.2",
     "discord.js": "^14.3.0",
     "n-gram": "^2.0.1",
+    "openai": "^3.2.1",
     "request": "^2.88.2",
     "sqlite3": "^5.1.4",
     "twitter": "^1.7.1",
