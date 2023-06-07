@@ -166,14 +166,12 @@ client.on("ready", () => {
         if(birthday_for_million_member.validation.includes(information.today_birthday_for_million_member[0].name)){
           if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
             client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[0].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[0].img]});
-            if (emoji_search_result !== "") {
-              db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_result);
-            }
+            if (emoji_search_result !== "") db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_result);
           }
         }else{
           if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
             client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[0].name + "**のお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[0].img]});
-            db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_result);
+            if (emoji_search_result !== "") db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_result);
           }
         }
 
@@ -183,12 +181,8 @@ client.on("ready", () => {
         // まずは絵文字探索
         let emoji_search_results = [];
         for (let idol_member of information.emojis_for_birthday_idol) {
-          if (idol_member.name === information.today_birthday_for_million_member[0].name) {
-            emoji_search_results.push(idol_member.emoji);
-          }
-          if (idol_member.name === information.today_birthday_for_million_member[1].name) {
-            emoji_search_results.push(idol_member.emoji);
-          }
+          if (idol_member.name === information.today_birthday_for_million_member[0].name) emoji_search_results.push(idol_member.emoji);
+          if (idol_member.name === information.today_birthday_for_million_member[1].name) emoji_search_results.push(idol_member.emoji);
         }
 
         let birthday_timer = setInterval(function(){
@@ -198,9 +192,7 @@ client.on("ready", () => {
 
             if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
               client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].img]});
-              if (emoji_search_results.length !== 0) {
-                db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_results[0]);
-              }
+              if (emoji_search_results.length !== 0) db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_results[0]);
             }
 
             information.today_birthday_people_for_million_member++;
@@ -209,9 +201,7 @@ client.on("ready", () => {
 
             if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
               client.channels.cache.get(information.channel_for_235_chat_place).send({content: "さらに！！　本日は**" + information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].name + "**のお誕生日でもあります！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].img]});
-              if (emoji_search_results.length !== 0) {
-                db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_results[1]);
-              }
+              if (emoji_search_results.length !== 0) db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_results[1]);
             }
 
             information.today_birthday_people_for_million_member++;
