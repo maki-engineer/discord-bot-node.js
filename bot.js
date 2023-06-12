@@ -1435,7 +1435,7 @@ client.on("messageCreate", message => {
   }else if(command === "help"){          // helpコマンド 235botの機能一覧を教える。
 
     switch(message.author.username){
-      case "うたたねさん":
+      case information.server_235_owner:
 
         message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
@@ -1460,7 +1460,7 @@ client.on("messageCreate", message => {
   }else if(command === "birthday"){      // birthdayコマンド 毎月の誕生日祝い企画文章を作成
 
     // うたたねさん以外は使えないように
-    if(message.author.username !== "うたたねさん"){
+    if(message.author.username !== information.server_235_owner){
 
       message.reply("235birthday コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
       setTimeout(() => {
@@ -1721,7 +1721,7 @@ client.on("messageCreate", message => {
   }else if(command === "men"){           // mendateコマンド 男子会の日程を決めるためのコマンド
 
     // うたたねさん以外は使えないように
-    if(message.author.username !== "うたたねさん"){
+    if(message.author.username !== information.server_235_owner){
 
       message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
       setTimeout(() => {
