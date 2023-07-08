@@ -113,6 +113,8 @@ client.on("ready", () => {
 
       db.all("select * from birthday_for_235_members", (err, rows) => {
         rows.forEach(row => {
+          if (row.name === "まき") return;
+
           if((today_month === row.month) && (today_date === row.date)){
             information.today_birthday_for_235_member.push(row.name);
           }
