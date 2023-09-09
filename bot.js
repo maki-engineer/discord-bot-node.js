@@ -1670,110 +1670,88 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "men"){           // mendateコマンド 男子会の日程を決めるためのコマンド
-
+  } else if (command === "men") {           // mendateコマンド 男子会の日程を決めるためのコマンド
     // うたたねさん以外は使えないように
-    if(message.author.username !== information.server_235_owner){
-
+    if (message.author.id !== information.user_for_utatane) {
       message.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
         .catch((err) => err);
       }, information.message_delete_time);
-
-    }else{
-
-      if(data.length === 0){
-        
+    } else {
+      if (data.length === 0) {
         message.reply("235menコマンドは、235士官学校の日程を決めるために使用するコマンドです。\n開校したい日程を**半角スペースで区切って**入力してください。（半角数字のみ、月、曜日などは不要）\n入力できる日程の数は**2～10個まで**です！\n\n235men 8 12 15 21");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
           .catch((err) => err);
         }, information.message_delete_time);
-  
-      }else if((data.length > 10) || (data.length === 1)){
-        
+      } else if ((data.length > 10) || (data.length === 1)) {
         message.reply("235menコマンドで入力することができる日程の数は**2～10個まで**です！");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
           .catch((err) => err);
         }, information.message_delete_time);
-  
-      }else{
-        
+      } else {
         let int_check = true;
-  
-        for(let check of data){
-          if(!Number.isInteger(Number(check))){
-            int_check = false;
-          }
+
+        for (let check of data) {
+          if (!Number.isInteger(Number(check))) int_check = false;
         }
-  
-        if(!int_check){
-  
+
+        if (!int_check) {
           message.reply("半角数字以外が含まれています！\n日程は**半角数字のみ**で入力してください！");
           setTimeout(() => {
             message.delete()
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-  
-        }else{
-          
-          if(def.existsSameValue(data)){
-  
+        } else {
+          if (def.existsSameValue(data)) {
             message.reply("同じ日程が入力されています！\n日程を入力するときは同じ日程を入力しないように気をつけてください！");
             setTimeout(() => {
               message.delete()
               .then((data) => data)
               .catch((err) => err);
             }, information.message_delete_time);
-  
-          }else{
-  
+          } else {
             let date_check      = true;
             let last_date_check = new Date();
             let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
             let last_date       = last_date_month.getDate();                                                   // 今月末日
-  
-            for(let date of data){
-              if((Number(date) < 1) || (Number(date) > last_date)){
-                date_check = false;
-              }
+
+            for (let date of data) {
+              if ((Number(date) < 1) || (Number(date) > last_date)) date_check = false;
             }
   
-            if(!date_check){
-  
+            if (!date_check) {
               message.reply("日は1～" + last_date + "の間で入力してください！");
               setTimeout(() => {
                 message.delete()
                 .then((data) => data)
                 .catch((err) => err);
               }, information.message_delete_time);
-  
-            }else{
-  
+            } else {
               const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
-        
+
               // 指定された日の曜日を取得
-              let now      = new Date();
-              let year     = now.getFullYear();
-              let month    = now.getMonth() + 1;
+              let now = new Date();
+              let year = now.getFullYear();
+              let month = now.getMonth() + 1;
               let eventDays = [];
               let dayIndexs = [];
-  
-              for(let i = 0; i < data.length; i++){
+
+              for (let i = 0; i < data.length; i++) {
                 data[i] = Number(data[i]);
                 eventDays.push(new Date(year, month - 1, data[i]));
                 dayIndexs.push(eventDays[i].getDay());
               }
-  
+
               // 昇順にする
               data.sort(def.compareFunc);
-  
+
               let text = "@everyone\n";
 
               let text_1 = [
@@ -1789,12 +1767,12 @@ client.on("messageCreate", message => {
               text += text_1[Math.floor(Math.random() * text_1.length)];
   
               // 日程一覧
-              for(let i = 0; i < data.length; i++){
+              for (let i = 0; i < data.length; i++) {
                 text += "**" + month + "月" + data[i] + "日 （" + dayArray[dayIndexs[i]] + "）…　" + information.emojis[i] + "**\n";
               }
-  
-              text += text_2[Math.floor(Math.random() * text_2.length)];;
-  
+
+              text += text_2[Math.floor(Math.random() * text_2.length)];
+
               message.channel.send(text);
               db.run("insert into emojis(count) values(?)", data.length);
               setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
@@ -1803,18 +1781,11 @@ client.on("messageCreate", message => {
                 .then((data) => data)
                 .catch((err) => err);
               }, information.message_delete_time);
-  
-  
             }
-  
           }
-  
         }
-  
       }
-
     }
-
   } else if (command === "roomdivision") {  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
     // 雑談チャンネルに参加しているメンバー一覧をシャッフル
     let members = client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.map(member => member);
