@@ -1409,49 +1409,40 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "birthday"){      // birthdayコマンド 毎月の誕生日祝い企画文章を作成
-
+  } else if (command === "birthday") {      // birthdayコマンド 毎月の誕生日祝い企画文章を作成
     // うたたねさん以外は使えないように
-    if(message.author.username !== information.server_235_owner){
-
+    if (message.author.id !== information.user_for_utatane) {
       message.reply("235birthday コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
         .catch((err) => err);
       }, information.message_delete_time);
-
-    }else{
-
-      if(data.length === 3){
-  
+    } else {
+      if (data.length === 3) {
         let int_check = true;
-  
-        for(let check of data){
-          if(!Number.isInteger(Number(check))){
-            int_check = false;
-          }
+
+        for (let check of data) {
+          if (!Number.isInteger(Number(check))) int_check = false;
         }
-  
-        if(!int_check){
-  
+
+        if (!int_check) {
           message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！");
           setTimeout(() => {
             message.delete()
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-  
-        }else{
-          if((Number(data[0]) >= 1) && (Number(data[0]) <= 12)){
+        } else {
+          if ((Number(data[0]) >= 1) && (Number(data[0]) <= 12)) {
             let last_date_check = new Date();
             let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-            let last_date       = last_date_month.getDate();                                // 今月末日
-  
-            if((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)){
-              if((Number(data[2]) >= 0) && (Number(data[2]) <= 23)){
+            let last_date = last_date_month.getDate();                                // 今月末日
+
+            if ((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)) {
+              if ((Number(data[2]) >= 0) && (Number(data[2]) <= 23)) {
                 const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
-        
+
                 // 指定された日の曜日を取得
                 let now      = new Date();
                 let year     = now.getFullYear();
@@ -1495,7 +1486,7 @@ client.on("messageCreate", message => {
 
                 db.all("select * from birthday_for_235_members order by month, date", (err, rows) => {
                   rows.forEach(row => {
-                    if(row.month === month){
+                    if (row.month === month) {
                       text += "**" + row.date + "日..." + row.name + "さん**\n";
                     }
                   });
@@ -1505,7 +1496,7 @@ client.on("messageCreate", message => {
                   text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
 
                   text += text_3[Math.floor(Math.random() * text_3.length)];
-          
+
                   message.channel.send(text);
                   setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
                   setTimeout(() => {
@@ -1514,7 +1505,7 @@ client.on("messageCreate", message => {
                     .catch((err) => err);
                   }, information.message_delete_time);
                 });
-              }else{
+              } else {
                 message.reply("時間は0～23の間で入力してください！");
                 setTimeout(() => {
                   message.delete()
@@ -1522,7 +1513,7 @@ client.on("messageCreate", message => {
                   .catch((err) => err);
                 }, information.message_delete_time);
               }
-            }else{
+            } else {
               message.reply("日は1～" + last_date + "の間で入力してください！");
               setTimeout(() => {
                 message.delete()
@@ -1530,7 +1521,7 @@ client.on("messageCreate", message => {
                 .catch((err) => err);
               }, information.message_delete_time);
             }
-          }else{
+          } else {
             message.reply("月は1～12の間で入力してください！");
             setTimeout(() => {
               message.delete()
@@ -1539,34 +1530,30 @@ client.on("messageCreate", message => {
             }, information.message_delete_time);
           }
         }
-  
-      }else if(data.length === 4){
-  
+      } else if(data.length === 4) {
         let int_check = true;
 
         for(let i = 0; i < data.length - 1; i++){
-          if(!Number.isInteger(Number(data[i]))) int_check = false;
+          if (!Number.isInteger(Number(data[i]))) int_check = false;
         }
-  
-        if(!int_check){
-  
+
+        if (!int_check) {
           message.reply("半角数字以外が含まれています！\n月、日、時間は全て**半角数字のみ**で入力してください！");
           setTimeout(() => {
             message.delete()
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-  
-        }else{
-          if((Number(data[0]) >= 1) && (Number(data[0]) <= 12)){
+        } else {
+          if ((Number(data[0]) >= 1) && (Number(data[0]) <= 12)) {
             let last_date_check = new Date();
             let last_date_month = new Date(last_date_check.getFullYear(), last_date_check.getMonth() + 1, 0);  // 今月末を取得
-            let last_date       = last_date_month.getDate();                                // 今月末日
-  
-            if((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)){
-              if((Number(data[2]) >= 0) && (Number(data[2]) <= 23)){
+            let last_date = last_date_month.getDate();                                // 今月末日
+
+            if ((Number(data[1]) >= 1) && (Number(data[1]) <= last_date)) {
+              if ((Number(data[2]) >= 0) && (Number(data[2]) <= 23)) {
                 const dayArray = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"];
-        
+
                 // 指定された日の曜日を取得
                 let now      = new Date();
                 let year     = now.getFullYear();
@@ -1610,7 +1597,7 @@ client.on("messageCreate", message => {
 
                 db.all("select * from birthday_for_235_members order by month, date", (err, rows) => {
                   rows.forEach(row => {
-                    if(row.month === month){
+                    if (row.month === month) {
                       text += "**" + row.date + "日..." + row.name + "さん**\n";
                     }
                   });
@@ -1618,11 +1605,11 @@ client.on("messageCreate", message => {
                   text += text_2[Math.floor(Math.random() * text_2.length)];
           
                   text += "\n\n**開催日：" + month + "月" + data[1] + "日 （" + dayArray[dayIndex] + "）**\n**時間：" + data[2] + "時ごろ～眠くなるまで**\n**場所：ラウンジDiscord雑談通話**\n**持参品：**:shaved_ice::icecream::ice_cream::cup_with_straw::champagne_glass::pizza::cookie:\n\n";
-  
+
                   text += text_3[Math.floor(Math.random() * text_3.length)];
-  
+
                   text += "\n" + data[3];
-          
+
                   message.channel.send(text);
                   setTimeout(() => message.reply("うたたねさん、今回もお疲れ様です！\nいつもありがとうございます♪"), 6_000);
                   setTimeout(() => {
@@ -1631,7 +1618,7 @@ client.on("messageCreate", message => {
                     .catch((err) => err);
                   }, information.message_delete_time);
                 });
-              }else{
+              } else {
                 message.reply("時間は0～23の間で入力してください！");
                 setTimeout(() => {
                   message.delete()
@@ -1639,7 +1626,7 @@ client.on("messageCreate", message => {
                   .catch((err) => err);
                 }, information.message_delete_time);
               }
-            }else{
+            } else {
               message.reply("日は1～" + last_date + "の間で入力してください！");
               setTimeout(() => {
                 message.delete()
@@ -1647,7 +1634,7 @@ client.on("messageCreate", message => {
                 .catch((err) => err);
               }, information.message_delete_time);
             }
-          }else{
+          } else {
             message.reply("月は1～12の間で入力してください！");
             setTimeout(() => {
               message.delete()
@@ -1656,20 +1643,15 @@ client.on("messageCreate", message => {
             }, information.message_delete_time);
           }
         }
-
-      }else{
-
+      } else {
         message.reply("235birthdayコマンドを使う場合、birthdayの後にオンライン飲み会を開催したい月、日、時間 （半角数字のみ、曜日は不要） の3つを入力してください。\n任意のテキストを追加したい場合は、3つ入力した後に、追加したいテキストを入力してください。\n※半角スペースで区切るのを忘れずに！！\n\n235birthday 8 15 21");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
           .catch((err) => err);
         }, information.message_delete_time);
-
       }
-
     }
-
   } else if (command === "men") {           // mendateコマンド 男子会の日程を決めるためのコマンド
     // うたたねさん以外は使えないように
     if (message.author.id !== information.user_for_utatane) {
