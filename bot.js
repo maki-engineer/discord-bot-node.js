@@ -1385,10 +1385,8 @@ client.on("messageCreate", message => {
     }
 
   }else if(command === "help"){          // helpコマンド 235botの機能一覧を教える。
-
-    switch(message.author.username){
-      case information.server_235_owner:
-
+    switch (message.author.id) {
+      case information.user_for_utatane:
         message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235birthday\n\n・235men\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
@@ -1398,7 +1396,6 @@ client.on("messageCreate", message => {
         break;
 
       default:
-
         message.reply("235botは以下のようなコマンドを使用することが出来ます。\n\n・235ap\n\n・235apremove\n\n・235apall\n\n・235notap\n\n・235apsearch\n\n・235roomdivision\n\n各コマンドの機能の詳細を知りたい場合は、スラッシュコマンド **/** を使って知りたい機能を選択してください。");
         setTimeout(() => {
           message.delete()
@@ -1406,9 +1403,7 @@ client.on("messageCreate", message => {
           .catch((err) => err);
         }, information.message_delete_time);
         break;
-
     }
-
   } else if (command === "birthday") {      // birthdayコマンド 毎月の誕生日祝い企画文章を作成
     // うたたねさん以外は使えないように
     if (message.author.id !== information.user_for_utatane) {
