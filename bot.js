@@ -514,7 +514,7 @@ client.on("messageCreate", message => {
     // apコマンドのみの場合 初めて使った人ならAP曲データ登録、2度目以降なら曲名入れてね警告する。
     if (data.length === 0) {
       let names = message.author.username.split("");
-      
+
       for (let i = 0; i < names.length; i++) {
         if (information.escapes.includes(names[i])) names[i] = "";
       }
