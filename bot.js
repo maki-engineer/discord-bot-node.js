@@ -1966,9 +1966,8 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "test"){          // testコマンド テスト用 俺以外は打てないようにする。
-
-    if(message.author.username === "まき"){
+  } else if (command === "test") {          // testコマンド テスト用 俺以外は打てないようにする。
+    if (message.author.id === information.user_for_maki) {
       message.reply("テスト用コマンド");
       setTimeout(() => {
         message.delete()
@@ -1976,9 +1975,7 @@ client.on("messageCreate", message => {
         .catch((err) => err);
       }, information.message_delete_time);
     }
-
   }
-
 });
 
 // サーバーから誰かが退出した時に行う処理
