@@ -1256,25 +1256,21 @@ client.on("messageCreate", message => {
       }, information.message_delete_time);
     }
 
-  }else if(command === "apsearch"){      // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
-
-    if(data.length === 0){
-
+  } else if (command === "apsearch") {      // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
+    if (data.length === 0) {
       message.reply("曲名が入力されていません！ 235apsearch DIAMOND のように曲名を入力してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、見つけることが出来ません。）");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
         .catch((err) => err);
       }, information.message_delete_time);
-
-    }else{
-
+    } else {
       const musics    = msg.slice(9).split("^");
 
       let names = message.author.username.split("");
       
-      for(let i = 0; i < names.length; i++){
-        if(information.escapes.includes(names[i])) names[i] = "";
+      for (let i = 0; i < names.length; i++) {
+        if (information.escapes.includes(names[i])) names[i] = "";
       }
 
       names = names.join("");
@@ -1282,8 +1278,7 @@ client.on("messageCreate", message => {
       let text = "";
 
       db.all("select name, " + names + "_flg from APmusics", (err, rows) => {
-        if(err){
-
+        if (err) {
           text += "まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！";
 
           message.reply(text);
@@ -1292,98 +1287,76 @@ client.on("messageCreate", message => {
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-
-        }else{
-
-          let min   = 0xFFFF;
+        } else {
+          let min = 0xFFFF;
           let suggest_music = "";
 
-          for(let row of rows){
-              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
+          for (let row of rows) {
+              if (min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())) {
                   min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
                   suggest_music = row.name;
               }
           }
 
-          for(let music of musics){
+          for (let music of musics) {
             db.all("select * from APmusics where name = ?", music, (err, rows) => {
-              if(rows.length === 0){
-
-                if(min <= 1){
-
+              if (rows.length === 0) {
+                if (min <= 1) {
                   db.all("select * from APmusics where name = ?", suggest_music, (err, rows) => {
 
-                    if(rows[0][names + "_flg"] === 1){
-  
+                    if (rows[0][names + "_flg"] === 1) {
                       message.reply(suggest_music + " は既にAP出来ています！");
                       setTimeout(() => {
                         message.delete()
                         .then((data) => data)
                         .catch((err) => err);
                       }, information.message_delete_time);
-    
-                    }else{
-    
+                    } else {
                       message.reply(suggest_music + " はまだAP出来ていません！");
                       setTimeout(() => {
                         message.delete()
                         .then((data) => data)
                         .catch((err) => err);
                       }, information.message_delete_time);
-    
                     }
-
                   });
-
-                }else if((min > 1) && (min < 6)){
-
+                } else if ((min > 1) && (min < 6)) {
                   message.reply("曲名を見つけることが出来ませんでした......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235apsearch " + suggest_music);
                   setTimeout(() => {
                     message.delete()
                     .then((data) => data)
                     .catch((err) => err);
                   }, information.message_delete_time);
-
-                }else{
-
+                } else {
                   message.reply("曲名を見つけることが出来ませんでした......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**どうか確認してみてください！");
                   setTimeout(() => {
                     message.delete()
                     .then((data) => data)
                     .catch((err) => err);
                   }, information.message_delete_time);
-
                 }
-
-              }else{
-                if(rows[0][names + "_flg"] === 1){
-
+              } else {
+                if (rows[0][names + "_flg"] === 1) {
                   message.reply(rows[0].name + " は既にAP出来ています！");
                   setTimeout(() => {
                     message.delete()
                     .then((data) => data)
                     .catch((err) => err);
                   }, information.message_delete_time);
-
-                }else{
-
+                } else {
                   message.reply(rows[0].name + " はまだAP出来ていません！");
                   setTimeout(() => {
                     message.delete()
                     .then((data) => data)
                     .catch((err) => err);
                   }, information.message_delete_time);
-
                 }
               }
             });
           }
-
         }
       });
-
     }
-
   }else if(command === "help"){          // helpコマンド 235botの機能一覧を教える。
     switch (message.author.id) {
       case information.user_for_utatane:
