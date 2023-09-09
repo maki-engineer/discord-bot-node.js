@@ -1815,20 +1815,21 @@ client.on("messageCreate", message => {
 
     }
 
-  }else if(command === "roomdivision"){  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
-
+  } else if (command === "roomdivision") {  // roomdivisionコマンド ボイスチャンネルに参加しているメンバーを2つに分ける
     // 雑談チャンネルに参加しているメンバー一覧をシャッフル
-    let members     = client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.map(member => member);
-    members         = def.shuffle(members);
+    let members = client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.map(member => member);
+    members = def.shuffle(members);
 
     let membersName = members.map(data => {
       switch(data.nickname){
         case null:
-
-          return data.user.username;
+          for (let key in information.notSetNickNameMemberList) {
+            if (data.user.username === key) {
+              return information.notSetNickNameMemberList[key];
+            }
+          }
 
         default:
-
           return data.nickname;
       }
     });
@@ -1836,19 +1837,15 @@ client.on("messageCreate", message => {
     let membersId = members.map(data => data.user.id);
 
     //ボイスチャンネルに参加していない人は打てないように そして参加している人が10人未満の時も打てないように
-    if(membersId.includes(message.author.id)){
-
-      if(client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.size < 10){
-
+    if (membersId.includes(message.author.id)) {
+      if (client.voice.client.channels.cache.get(information.voice_channel_for_235_chat_place).members.size < 10) {
         message.reply("雑談ボイスチャンネルに参加しているメンバーの人数が10人未満のため、分けることが出来ません！");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
           .catch((err) => err);
         }, information.message_delete_time);
-
-      }else{
-
+      } else {
         message.channel.sendTyping();
 
         let divisionCount    = 0;
@@ -1860,46 +1857,36 @@ client.on("messageCreate", message => {
         let halfIndex1       = 0;
         let halfIndex2       = 0;
 
-
         db.all("select * from half_members", (err, rows) => {
           let dataIds = rows.map(data => data.id);
-          while(duplicationCount >= 3){
+          while (duplicationCount >= 3) {
             // 初期化
             duplicationCount = 0;
 
             // 配列を2個の配列に分ける
-            if(membersName.length % 2 === 0){
-
+            if (membersName.length % 2 === 0) {
               halfIndex1 = Math.floor(membersName.length / 2) - 1;
               halfIndex2 = membersName.length - halfIndex1 - 1;
-
-            }else{
-
-              halfIndex1  = Math.floor(membersName.length / 2);
-              halfIndex2  = membersName.length - halfIndex1;
-
+            } else {
+              halfIndex1 = Math.floor(membersName.length / 2);
+              halfIndex2 = membersName.length - halfIndex1;
             }
 
-            for(let i = 0; i <= halfIndex1; i++){
-
+            for (let i = 0; i <= halfIndex1; i++) {
               halfMembersName1.push(membersName[i]);
               halfMembersId1.push(membersId[i]);
-
             }
 
-            for(let i = halfIndex2; i < membersName.length; i++){
-
+            for (let i = halfIndex2; i < membersName.length; i++) {
               halfMembersName2.push(membersName[i]);
               halfMembersId2.push(membersId[i]);
-
             }
 
             // 3人以上被ってないかチェック
             duplicationCount = halfMembersId2.filter(x => dataIds.indexOf(x) !== -1).length;
 
             // 2個目の配列の人達を雑談その2に移動させる
-            if(duplicationCount < 3){
-
+            if (duplicationCount < 3) {
               db.run("delete from half_members");
 
               setTimeout(() => message.reply("このような結果になりました！\n\n**雑談**\n------------------------------------------------------------\n" + halfMembersName1.join("\n") + "\n------------------------------------------------------------\n\n**雑談その2**\n------------------------------------------------------------\n" + halfMembersName2.join("\n") + "\n------------------------------------------------------------\n\n自動で分けられますのでしばらくお待ちください。"), 2_000);
@@ -1907,39 +1894,34 @@ client.on("messageCreate", message => {
               setTimeout(() => {
 
                 let roomDivisionTimer = setInterval(() => {
-                  if(divisionCount === halfMembersName2.length){
-
+                  if (divisionCount === halfMembersName2.length) {
                     message.delete()
                     .then((data) => data)
                     .catch((err) => err);
                     clearInterval(roomDivisionTimer);
-
-                  }else{
-
+                  } else {
                     db.run("insert into half_members(id) values(?)", halfMembersId2[divisionCount]);
                     client.guilds.cache.get(information.server_for_235).members.fetch(halfMembersId2[divisionCount]).then((user) => user.voice.setChannel(information.voice_channel_for_235_chat_place_2));
                     divisionCount++;
-
                   }
                 }, 1_000);
-
               }, 9_000);
-
               break;
-
             }
 
             // 初期化
-            members          = def.shuffle(members);
+            members = def.shuffle(members);
 
-            membersName      = members.map(data => {
+            membersName = members.map(data => {
               switch(data.nickname){
                 case null:
-
-                  return data.user.username;
+                  for (let key in information.notSetNickNameMemberList) {
+                    if (data.user.username === key) {
+                      return information.notSetNickNameMemberList[key];
+                    }
+                  }
 
                 default:
-
                   return data.nickname;
               }
             });
@@ -1949,23 +1931,17 @@ client.on("messageCreate", message => {
             halfMembersName2 = [];
             halfMembersId1   = [];
             halfMembersId2   = [];
-
           }
         });
-
       }
-
-    }else{
-
+    } else {
       message.reply("235roomdivision コマンドは、雑談ボイスチャンネルに参加しているメンバーが使用できるコマンドです。");
       setTimeout(() => {
         message.delete()
         .then((data) => data)
         .catch((err) => err);
       }, information.message_delete_time);
-
     }
-
   } else if (command === "test") {          // testコマンド テスト用 俺以外は打てないようにする。
     if (message.author.id === information.user_for_maki) {
       message.reply("テスト用コマンド");
