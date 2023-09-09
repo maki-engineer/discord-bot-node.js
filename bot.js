@@ -389,11 +389,11 @@ client.on("interactionCreate", interaction => {
 client.on("messageCreate", message => {
   // イベント企画の文章作成機能でアクションを付ける必要がある235botのメッセージだけは反応する
   db.all("select * from emojis", (err, rows) => {
-    if(err){
+    if (err) {
       console.log(err);
-    }else{
-      if(rows.length === 1){
-        for(let i = 0; i < rows[0].count; i++){
+    } else {
+      if (rows.length === 1) {
+        for (let i = 0; i < rows[0].count; i++) {
           message.react(information.emojis[i]);
         }
 
@@ -405,11 +405,11 @@ client.on("messageCreate", message => {
 
   // 235メンバーの誕生日をお祝い
   db.all("select * from emojis_for_birthday_235", (err, rows) => {
-    if(err){
+    if (err) {
       console.log(err);
-    }else{
-      if(rows.length === 1){
-        for(let i = 0; i < rows[0].count; i++){
+    } else {
+      if (rows.length === 1) {
+        for (let i = 0; i < rows[0].count; i++) {
           message.react(information.emojis_for_birthday_235[i]);
         }
 
@@ -421,10 +421,10 @@ client.on("messageCreate", message => {
 
   // ミリオンメンバーの誕生日をお祝い
   db.all("select * from emojis_for_birthday_idol", (err, rows) => {
-    if(err){
+    if (err) {
       console.log(err);
-    }else{
-      if(rows.length === 1){
+    } else {
+      if (rows.length === 1) {
         message.react(rows[0].emoji_name);
 
         // テーブル初期化
@@ -434,14 +434,14 @@ client.on("messageCreate", message => {
   });
 
   // 235botのメッセージがリプライだった場合、1分後に削除する
-  if((message.author.bot) && (message.mentions.repliedUser)){
-    setTimeout(function(){message.delete();}, 60_000);
+  if ((message.author.bot) && (message.mentions.repliedUser)) {
+    setTimeout(() => message.delete(), 60_000);
   };
 
   // 雑談場（通話外）の235botのリプライじゃないメッセージを保存（１週間後に消すため）
-  if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+  if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
 
-    if((message.channelId === information.channel_for_235_chat_place) && (message.author.bot) && (message.mentions.repliedUser === null)){
+    if ((message.channelId === information.channel_for_235_chat_place) && (message.author.bot) && (message.mentions.repliedUser === null)) {
       const now  = new Date();
       const date = now.getDate();
 
@@ -451,7 +451,7 @@ client.on("messageCreate", message => {
   }
 
   // botからのメッセージは無視
-  if(message.author.bot) return;
+  if (message.author.bot) return;
 
   // chatgpt用
   if (message.mentions.users.has(client.user.id)) {
@@ -505,28 +505,24 @@ client.on("messageCreate", message => {
   }
 
   // コマンドメッセージ以外は無視
-  if(!message.content.startsWith(information.prefix)) return;
-
-  const msg     = message.content.slice(information.prefix.length);  // 235の文字だけ削除
-  const data    = msg.split(" ");                                    // コマンド以外の文字があったらそれを配列で取得
+  if (!message.content.startsWith(information.prefix)) return;
+  const msg = message.content.slice(information.prefix.length);  // 235の文字だけ削除
+  const data = msg.split(" ");                                    // コマンド以外の文字があったらそれを配列で取得
   const command = data.shift().toLowerCase();                        // コマンド内容を小文字で取得
 
-
-  if(command === "ap"){                  // apコマンド このコマンドを初めて使った人のAP曲データ登録、APした曲をデータに登録する。
+  if (command === "ap") {                  // apコマンド このコマンドを初めて使った人のAP曲データ登録、APした曲をデータに登録する。
     // apコマンドのみの場合 初めて使った人ならAP曲データ登録、2度目以降なら曲名入れてね警告する。
-    if(data.length === 0){
-
+    if (data.length === 0) {
       let names = message.author.username.split("");
       
-      for(let i = 0; i < names.length; i++){
-        if(information.escapes.includes(names[i])) names[i] = "";
+      for (let i = 0; i < names.length; i++) {
+        if (information.escapes.includes(names[i])) names[i] = "";
       }
 
       names = names.join("");
 
       db.all("select " + names + "_flg" + " from APmusics where " + names + "_flg = 1", (err, rows) => {
-        if(err){
-
+        if (err) {
           db.run("alter table APmusics add column " + names + "_flg default 0");
 
           message.reply("今回" + message.author.username + "さんは初めて235apコマンドを使ったので、新しく" + message.author.username + "さんのAP曲データを登録しました！\nAPすることが出来たら、235ap DIAMOND のようにコマンドを使って、どんどんAPすることが出来た曲を登録していきましょう！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
@@ -535,68 +531,57 @@ client.on("messageCreate", message => {
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-
-        }else{
-
+        } else {
           message.reply(message.author.username + "さんは既にAP曲データが登録されています！ APすることが出来た曲を登録したい場合、235ap DIAMOND のようにコマンドを使って登録してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、登録することが出来ません。）");
           setTimeout(() => {
             message.delete()
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-
         }
       });
-
-    }else{
-
+    } else {
       let names = message.author.username.split("");
-      
-      for(let i = 0; i < names.length; i++){
-        if(information.escapes.includes(names[i])) names[i] = "";
+
+      for (let i = 0; i < names.length; i++) {
+        if (information.escapes.includes(names[i])) names[i] = "";
       }
 
       names = names.join("");
 
-      const musics    = msg.slice(3).split("^");
+      const musics = msg.slice(3).split("^");
 
       db.all("select name, " + names + "_flg" + " from APmusics", (err, rows) => {
         // コマンドを打ってきた人がまだカラムを登録してなかったらカラムを登録して曲を追加
-        if(err){
-
+        if (err) {
           db.run("alter table APmusics add column " + names + "_flg default 0");
 
           let min   = 0xFFFF;
           let suggest_music = "";
 
-          for(let row of rows){
-              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
-                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
+          for (let row of rows) {
+              if (min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())) {
+                  min = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
                   suggest_music = row.name;
               }
           }
 
-          for(let music of musics){
+          for (let music of musics) {
             db.all("select * from APmusics where name = ?", music, (err, rows) => {
-              if(err){
+              if (err) {
                 console.log(err);
-              }else{
-                if(rows.length === 0){
-
-                  if(min <= 1){
-
+              } else {
+                if (rows.length === 0) {
+                  if (min <= 1) {
                     db.all("select * from APmusics where name = ?", suggest_music, (err, results) => {
-                      if(results[0][names + "_flg"] === 1){
-
+                      if (results[0][names + "_flg"] === 1) {
                         message.reply(results[0].name + " は既に登録されています！");
                         setTimeout(() => {
                           message.delete()
                           .then((data) => data)
                           .catch((err) => err);
                         }, information.message_delete_time);
-
-                      }else{
-
+                      } else {
                         db.run("update APmusics set " + names + "_flg = 1 where name = ?", suggest_music);
                         message.reply("登録成功：" + suggest_music + "\nAPおめでとうございます♪");
                         setTimeout(() => {
@@ -604,42 +589,32 @@ client.on("messageCreate", message => {
                           .then((data) => data)
                           .catch((err) => err);
                         }, information.message_delete_time);
-
                       }
                     });
-
-                  }else if((min > 1) && (min < 6)){
-
+                  } else if ((min > 1) && (min < 6)) {
                     message.reply("登録に失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
                     setTimeout(() => {
                       message.delete()
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
-                  }else{
-
+                  } else {
                     message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
                     setTimeout(() => {
                       message.delete()
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
                   }
-                }else{
-
-                  if(rows[0][names + "_flg"] === 1){
-
+                } else {
+                  if (rows[0][names + "_flg"] === 1) {
                     message.reply(rows[0].name + " は既に登録されています！");
                     setTimeout(() => {
                       message.delete()
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
-                  }else{
-
+                  } else {
                     db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
                     message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
                     setTimeout(() => {
@@ -647,47 +622,38 @@ client.on("messageCreate", message => {
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
                   }
-
                 }
               }
             });
           }
-
-        }else{
-
+        } else {
           let min   = 0xFFFF;
           let suggest_music = "";
 
-          for(let row of rows){
-              if(min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())){
-                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
+          for (let row of rows) {
+              if (min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())) {
+                  min = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
                   suggest_music = row.name;
               }
           }
 
-          for(let music of musics){
+          for (let music of musics) {
             db.all("select * from APmusics where name = ?", music, (err, rows) => {
-              if(err){
+              if (err) {
                 console.log(err);
-              }else{
-                if(rows.length === 0){
-
-                  if(min <= 1){
-
+              } else {
+                if (rows.length === 0) {
+                  if (min <= 1) {
                     db.all("select * from APmusics where name = ?", suggest_music, (err, results) => {
-                      if(results[0][names + "_flg"] === 1){
-
+                      if (results[0][names + "_flg"] === 1) {
                         message.reply(results[0].name + " は既に登録されています！");
                         setTimeout(() => {
                           message.delete()
                           .then((data) => data)
                           .catch((err) => err);
                         }, information.message_delete_time);
-
-                      }else{
-
+                      } else {
                         db.run("update APmusics set " + names + "_flg = 1 where name = ?", suggest_music);
                         message.reply("登録成功：" + suggest_music + "\nAPおめでとうございます♪");
                         setTimeout(() => {
@@ -695,42 +661,32 @@ client.on("messageCreate", message => {
                           .then((data) => data)
                           .catch((err) => err);
                         }, information.message_delete_time);
-
                       }
                     });
-
-                  }else if((min > 1) && (min < 6)){
-
+                  } else if ((min > 1) && (min < 6)) {
                     message.reply("登録に失敗しました......\n\nこちらのコマンドを試してみてはいかがでしょうか？　235ap " + suggest_music);
                     setTimeout(() => {
                       message.delete()
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
-                  }else{
-
+                  } else {
                     message.reply("登録に失敗しました......\n正しく曲名を**フル**で入力できているか、もしくは**2曲以上入力していないか**確認してください！");
                     setTimeout(() => {
                       message.delete()
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
                   }
-                }else{
-
-                  if(rows[0][names + "_flg"] === 1){
-
+                } else {
+                  if (rows[0][names + "_flg"] === 1) {
                     message.reply(rows[0].name + " は既に登録されています！");
                     setTimeout(() => {
                       message.delete()
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
-                  }else{
-
+                  } else {
                     db.run("update APmusics set " + names + "_flg = 1 where name = ?", music);
                     message.reply("登録成功：" + music + "\nAPおめでとうございます♪");
                     setTimeout(() => {
@@ -738,20 +694,14 @@ client.on("messageCreate", message => {
                       .then((data) => data)
                       .catch((err) => err);
                     }, information.message_delete_time);
-
                   }
-
                 }
               }
             });
           }
-
         }
-
       });
-
     }
-
   }else if(command === "apremove"){      // apremoveコマンド 間違ってAP曲データに登録してしまった曲を取り消す。
 
     if(data.length === 0){
