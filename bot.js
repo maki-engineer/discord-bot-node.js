@@ -2,17 +2,17 @@
 
 // SQLite3導入
 const sqlite3 = require("sqlite3");
-const db      = new sqlite3.Database("235data.db");
+const db = new sqlite3.Database("235data.db");
 
 // 別ファイル導入
 const birthday_for_million_member = require("./birthday-for-million-member");
-const information                 = require("./information-for-235");
-const def                         = require("./function");
+const information = require("./information-for-235");
+const def = require("./function");
 
 // twitter導入
-let twitter      = require("twitter");
+let twitter = require("twitter");
 let twitterToken = require("./twitter-token.json");
-let bot          = new twitter({
+let bot = new twitter({
   consumer_key       : twitterToken.consumer_key,
   consumer_secret    : twitterToken.consumer_secret,
   access_token_key   : twitterToken.access_token_key,
@@ -20,15 +20,15 @@ let bot          = new twitter({
 });
 
 // モジュール導入
-const https     = require("https");
-const jsdom     = require("jsdom");
+const https = require("https");
+const jsdom = require("jsdom");
 const { JSDOM } = jsdom;
-const url       = "https://atcoder.jp/contests/?lang=ja";
+const url = "https://atcoder.jp/contests/?lang=ja";
 
 // discord.js導入
 const { Client, GatewayIntentBits } = require("discord.js");
-const token                         = require("./discord-token.json");
-const client                        = new Client({
+const token = require("./discord-token.json");
+const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMembers,
@@ -52,8 +52,7 @@ const client                        = new Client({
 
 // 常時行う処理
 client.on("ready", () => {
-
-  if(client.guilds.cache.get(information.server_for_235) !== undefined){
+  if (client.guilds.cache.get(information.server_for_235) !== undefined) {
     client.application.commands.set(information.commands, information.server_for_235);
   }
 
@@ -74,70 +73,66 @@ client.on("ready", () => {
 
 
     // 雑談場（通話外）でメッセージ送信して1週間経ったメッセージは削除する
-    if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
-
+    if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
       let setTime = new Date();
       setTime.setDate(setTime.getDate() - 7);
       let dateSevenDaysAgo = setTime.getDate();
 
       db.all("select * from delete_messages where date = ?", dateSevenDaysAgo, (err, rows) => {
-        if(rows.length > 0){
+        if (rows.length > 0) {
           let deleteIndex = 0;
+
           let deleteTimer = setInterval(() => {
-            switch(deleteIndex){
+            switch (deleteIndex) {
               case rows.length:
-  
                 clearInterval(deleteTimer);
                 break;
-  
+
               default:
-  
                 client.channels.cache.get(information.channel_for_235_chat_place).messages.fetch(rows[deleteIndex].message_id)
                 .then((message) => message.delete())
                 .catch((error)  => error);
+
                 db.run("delete from delete_messages where message_id = ?", rows[deleteIndex].message_id);
                 deleteIndex++;
                 break;
-  
             }
           }, 5_000);
         }
       });
-
     }
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     // ABCコンテストの開催日に、15時に参加登録をするように促し、20時50分ぐらいにまもなく始まりますよ通知を送る
     // 23時に自動で停止
-    if((today_hour === 9) && (today_min === 0)){
-
+    if ((today_hour === 9) && (today_min === 0)) {
       db.all("select * from birthday_for_235_members", (err, rows) => {
         rows.forEach(row => {
           if (row.name === "まき") return;
 
-          if((today_month === row.month) && (today_date === row.date)){
+          if ((today_month === row.month) && (today_date === row.date)) {
             information.today_birthday_for_235_member.push(row.name);
           }
         });
 
         // 誕生日が1人いた時と複数人いた時
-        if(information.today_birthday_for_235_member.length === 1){
-          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+        if (information.today_birthday_for_235_member.length === 1) {
+          if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
             client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[0] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[0] + "さん、お誕生日おめでとうございます♪");
             db.run("insert into emojis_for_birthday_235(count) values(?)", 2);
           }
-        }else if(information.today_birthday_for_235_member.length > 1){
-          let birthday_timer = setInterval(function(){
-            if(information.today_birthday_people_for_235_member === information.today_birthday_for_235_member.length){
+        } else if (information.today_birthday_for_235_member.length > 1) {
+          let birthday_timer = setInterval(function () {
+            if (information.today_birthday_people_for_235_member === information.today_birthday_for_235_member.length) {
               clearInterval(birthday_timer);
-            }else if(information.today_birthday_people_for_235_member === 0){
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            } else if (information.today_birthday_people_for_235_member === 0) {
+              if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
                 client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日です！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
                 db.run("insert into emojis_for_birthday_235(count) values(?)", 2);
               }
               information.today_birthday_people_for_235_member++;
-            }else{
-              if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+            } else {
+              if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
                 client.channels.cache.get(information.channel_for_235_chat_place).send("さらに！！　本日は**" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん**のお誕生日でもあります！！\n" + information.today_birthday_for_235_member[information.today_birthday_people_for_235_member] + "さん、お誕生日おめでとうございます♪");
                 db.run("insert into emojis_for_birthday_235(count) values(?)", 2);
               }
@@ -146,116 +141,104 @@ client.on("ready", () => {
           }, 4_000)  // 4秒ごと
         }
       });
-
-    }else if((today_hour === 9) && (today_min === 30)){
-
-      for(let member of birthday_for_million_member.data){
-        if((today_month === member.month) && (today_date === member.date)){
+    } else if ((today_hour === 9) && (today_min === 30)) {
+      for (let member of birthday_for_million_member.data) {
+        if ((today_month === member.month) && (today_date === member.date)) {
           information.today_birthday_for_million_member.push(member);
         }
       }
 
-      if(information.today_birthday_for_million_member.length === 1){
-
+      if (information.today_birthday_for_million_member.length === 1) {
         // まずは絵文字探索
         let emoji_search_result = "";
+
         for (let idol_member of information.emojis_for_birthday_idol) {
           if (idol_member.name === information.today_birthday_for_million_member[0].name) {
             emoji_search_result = idol_member.emoji;
           }
         }
 
-        if(birthday_for_million_member.validation.includes(information.today_birthday_for_million_member[0].name)){
-          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+        if (birthday_for_million_member.validation.includes(information.today_birthday_for_million_member[0].name)) {
+          if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
             client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[0].name + "**さんのお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[0].img]});
             if (emoji_search_result !== "") db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_result);
           }
-        }else{
-          if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+        } else {
+          if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
             client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[0].name + "**のお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[0].img]});
             if (emoji_search_result !== "") db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_result);
           }
         }
 
-
-      }else if(information.today_birthday_for_million_member.length > 1){
-
+      } else if (information.today_birthday_for_million_member.length > 1) {
         // まずは絵文字探索
         let emoji_search_results = [];
+
         for (let idol_member of information.emojis_for_birthday_idol) {
           if (idol_member.name === information.today_birthday_for_million_member[0].name) emoji_search_results.push(idol_member.emoji);
           if (idol_member.name === information.today_birthday_for_million_member[1].name) emoji_search_results.push(idol_member.emoji);
         }
 
-        let birthday_timer = setInterval(function(){
-          if(information.today_birthday_people_for_million_member === information.today_birthday_for_million_member.length){
+        let birthday_timer = setInterval(function () {
+          if (information.today_birthday_people_for_million_member === information.today_birthday_for_million_member.length) {
             clearInterval(birthday_timer);
-          }else if(information.today_birthday_people_for_million_member === 0){
-
-            if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+          } else if (information.today_birthday_people_for_million_member === 0) {
+            if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
               client.channels.cache.get(information.channel_for_235_chat_place).send({content: "本日" + today_month + "月" + today_date + "日は**" + information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].name + "**のお誕生日です！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].img]});
               if (emoji_search_results.length !== 0) db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_results[0]);
             }
 
             information.today_birthday_people_for_million_member++;
-
-          }else{
-
-            if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+          } else {
+            if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
               client.channels.cache.get(information.channel_for_235_chat_place).send({content: "さらに！！　本日は**" + information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].name + "**のお誕生日でもあります！！\nHappy Birthday♪", files: [information.today_birthday_for_million_member[information.today_birthday_people_for_million_member].img]});
               if (emoji_search_results.length !== 0) db.run("insert into emojis_for_birthday_idol(emoji_name) values(?)", emoji_search_results[1]);
             }
 
             information.today_birthday_people_for_million_member++;
-
           }
         }, 4_000)  // 4秒ごと
-
       }
-
-    }else if((today_hour === 10) && (today_min === 0)){
-
-      for(let anniversary_data of information.anniversary_datas){
-        if((today_month === anniversary_data.month) && (today_date === anniversary_data.date)){
-          if(anniversary_data.name === "235プロダクション"){
-            if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+    } else if ((today_hour === 10) && (today_min === 0)) {
+      for (let anniversary_data of information.anniversary_datas) {
+        if ((today_month === anniversary_data.month) && (today_date === anniversary_data.date)) {
+          if (anniversary_data.name === "235プロダクション") {
+            if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
               client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**が設立されて**" + Number(today_year - anniversary_data.year) + "年**が経ちました！！\nHappy Birthday♪　これからも235プロがずっと続きますように♪");
             }
-          }else{
-            if(client.channels.cache.get(information.channel_for_235_chat_place) !== undefined){
+          } else {
+            if (client.channels.cache.get(information.channel_for_235_chat_place) !== undefined) {
               client.channels.cache.get(information.channel_for_235_chat_place).send("本日" + today_month + "月" + today_date + "日で**" + anniversary_data.name + "**は**" + Number(today_year - anniversary_data.year) + "周年**を迎えます！！\nHappy Birthday♪　アイマス最高！！！");
             }
           }
         }
       }
-
-    }else if((today_hour === 15) && (today_min === 0)){
-
+    } else if ((today_hour === 15) && (today_min === 0)) {
       https.get(url, res => {
         let html = "";
-      
+
         res.on("data", line => html += line);
         res.on("end", () => {
           const dom = new JSDOM(html);
           let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(1).querySelector("tbody").querySelectorAll("tr");
-      
+
           contestTableUpcoming.forEach(row => {
-            let aTags            = row.querySelectorAll("a");
+            let aTags = row.querySelectorAll("a");
             let contestStartDate = aTags[0];
-            let contestName      = aTags[1];
+            let contestName = aTags[1];
 
             if (contestName.textContent.includes("AtCoder Beginner Contest")) {
-              let contestDate  = new Date(contestStartDate.textContent);
+              let contestDate = new Date(contestStartDate.textContent);
               let startMonth = contestDate.getMonth() + 1;
-              let startDate  = contestDate.getDate();
+              let startDate = contestDate.getDate();
 
               if ((today_month === startMonth) && (today_date === startDate)) {
                 let contestUrl = "https://atcoder.jp/contests/abc";
                 let searchNums = contestName.textContent.match(/\d+/g);
 
-                for(let num of searchNums){
+                for (let num of searchNums) {
                   https.get(contestUrl + num, res => {
-                    if(res.statusCode === 200){
+                    if (res.statusCode === 200) {
                       contestUrl += num;
 
                       client.channels.cache.get(information.channel_for_test_solo_chat_place).send("@everyone\n本日は **" + contestName.textContent + "** が開催されます！\nまだ参加登録をしていない場合は、今のうちに参加登録をしておきましょう！\n\n" + contestUrl);
@@ -267,34 +250,32 @@ client.on("ready", () => {
           });
         });
       });
-
-    }else if((today_hour === 20) && (today_min === 50)){
-
+    } else if ((today_hour === 20) && (today_min === 50)) {
       https.get(url, res => {
         let html = "";
-      
+
         res.on("data", line => html += line);
         res.on("end", () => {
           const dom = new JSDOM(html);
           let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(1).querySelector("tbody").querySelectorAll("tr");
-      
+
           contestTableUpcoming.forEach(row => {
-            let aTags            = row.querySelectorAll("a");
+            let aTags = row.querySelectorAll("a");
             let contestStartDate = aTags[0];
-            let contestName      = aTags[1];
+            let contestName = aTags[1];
 
             if (contestName.textContent.includes("AtCoder Beginner Contest")) {
-              let contestDate  = new Date(contestStartDate.textContent);
+              let contestDate = new Date(contestStartDate.textContent);
               let startMonth = contestDate.getMonth() + 1;
-              let startDate  = contestDate.getDate();
+              let startDate = contestDate.getDate();
 
               if ((today_month === startMonth) && (today_date === startDate)) {
                 let contestUrl = "https://atcoder.jp/contests/abc";
                 let searchNums = contestName.textContent.match(/\d+/g);
 
-                for(let num of searchNums){
+                for (let num of searchNums) {
                   https.get(contestUrl + num, res => {
-                    if(res.statusCode === 200){
+                    if (res.statusCode === 200) {
                       contestUrl += num;
 
                       client.channels.cache.get(information.channel_for_test_solo_chat_place).send("@everyone\nまもなく **" + contestName.textContent + "** が開催されます！\n\n" + contestUrl);
@@ -306,8 +287,7 @@ client.on("ready", () => {
           });
         });
       });
-
-    }else if((today_hour === 23) && (today_min === 0)){
+    } else if ((today_hour === 23) && (today_min === 0)) {
       process.exit();
     }
   }, 60_000);  // 1分ごと
@@ -315,74 +295,51 @@ client.on("ready", () => {
 
 // スラッシュコマンドが使われた時に行う処理
 client.on("interactionCreate", interaction => {
-  if(!interaction.isCommand()) return;
+  if (!interaction.isCommand()) return;
 
-  if(interaction.commandName === "235ap"){
-
+  if (interaction.commandName === "235ap") {
     interaction.reply("235apコマンドを使用することで、" + interaction.user.username + "さんがAPすることが出来た曲を登録することが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
     setTimeout(() => interaction.deleteReply() , 180_000);
-
-  }else if(interaction.commandName === "235apremove"){
-
+  } else if (interaction.commandName === "235apremove") {
     interaction.reply("235apremoveコマンドを使用することで、間違ってAP曲データに登録してしまった曲を取り消すことが出来ます。\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
     setTimeout(() => interaction.deleteReply() , 180_000);
-
-  }else if(interaction.commandName === "235apall"){
-
+  } else if(interaction.commandName === "235apall") {
     interaction.reply("235apallコマンドを使用することで、" + interaction.user.username + "さんが今までAPしてきた曲と曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAPしてきた曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
     setTimeout(() => interaction.deleteReply() , 180_000);
-
-  }else if(interaction.commandName === "235notap"){
-
+  } else if (interaction.commandName === "235notap") {
     interaction.reply("235notapコマンドを使用することで、" + interaction.user.username + "さんがまだAP出来ていない曲と曲数を知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n曲数をタイプで絞りたい場合、235apall Fairy のように入力することで、入力されたタイプでAP出来ていない曲と曲数を知ることが出来ます。\n（絞ることが出来るタイプの数は**1つ**だけです！）");
     setTimeout(() => interaction.deleteReply() , 180_000);
-
-  }else if(interaction.commandName === "235apsearch"){
-
+  } else if (interaction.commandName === "235apsearch") {
     interaction.reply("235apsearchコマンドを使用することで、" + interaction.user.username + "さんが入力した曲が既にAP出来ているか知ることが出来ます。\nなお、もしまだ" + interaction.user.username + "さんが235apコマンドを使用したことがない場合、まずはAP曲データを登録する必要があるので、235ap と入力をして、AP曲データを登録してください。\n登録してからは、235ap 真夏のダイヤ☆ など、APすることが出来た曲名を入力することによって、入力された曲を登録することが出来ます！\n※入力することが出来る曲は1曲だけです。また、曲名はフルで入力する必要があります。2曲以上入力しているか、もしくはフルで入力することが出来ていない場合、登録することが出来ないので注意してください！");
     setTimeout(() => interaction.deleteReply() , 180_000);
-
-  }else if(interaction.commandName === "235birthday"){
-
-    switch(interaction.user.username){
-      case "うたたねさん":
-
+  } else if (interaction.commandName === "235birthday") {
+    switch (interaction.user.id) {
+      case information.user_for_utatane:
         interaction.reply("235birthdayコマンドを使用することで、毎月開催されるオンライン飲み会の企画文章を作成することが出来ます。コマンドを使用するときは、開催したい月、日程、時間の**3つ**を**半角数字のみ**、**半角スペースで区切って**入力してください。\n\n235birthday 12 14 21");
         setTimeout(() => interaction.deleteReply() , 180_000);
         break;
 
       default:
-
         interaction.reply("235birthday コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
         setTimeout(() => interaction.deleteReply() , 180_000);
         break;
-
     }
-
-  }else if(interaction.commandName === "235men"){
-
-    switch(interaction.user.username){
-      case "うたたねさん":
-
+  } else if (interaction.commandName === "235men") {
+    switch (interaction.user.id) {
+      case information.user_for_utatane:
         interaction.reply("235menコマンドを使用することで、毎月開催される235士官学校🌹の日程を決める文章を作成することが出来ます。コマンドを使用するときは、開催したい日程を**2～10個**、**半角数字のみ**で入力してください。\n\n235mendate 12 14 16 17");
         setTimeout(() => interaction.deleteReply() , 180_000);
         break;
 
       default:
-
         interaction.reply("235men コマンドは、ラウンジマスターである**うたたねさん**だけが使用出来るコマンドです。");
         setTimeout(() => interaction.deleteReply() , 180_000);
         break;
-
     }
-
-  }else if(interaction.commandName === "235roomdivision"){
-
+  } else if (interaction.commandName === "235roomdivision") {
     interaction.reply("235roomdivisionコマンドを使用することで、雑談ボイスチャンネルに参加しているメンバーが10以上になったときに、部屋を分けることが出来ます。\nなお、雑談ボイスチャンネルに参加しているメンバーが**10人未満**のときは分けることが出来ません。また、235roomdivisionコマンドは、雑談ボイスチャンネルに参加しているメンバーのみが使用できます。");
     setTimeout(() => interaction.deleteReply() , 180_000);
-
   }
-
 });
 
 // メッセージが送信された時に行う処理
@@ -722,7 +679,7 @@ client.on("messageCreate", message => {
           }
         }
       }
-      
+
       for (let i = 0; i < names.length; i++) {
         if (information.escapes.includes(names[i])) names[i] = "";
       }
