@@ -1034,9 +1034,8 @@ client.on("messageCreate", message => {
             }
           }
         });
-
       }
-    }else{
+    } else {
       message.reply("入力された内容が多すぎます！ 絞ることができるタイプの数は**1つだけ**です！\n\n235apall Angel");
       setTimeout(() => {
         message.delete()
@@ -1044,162 +1043,151 @@ client.on("messageCreate", message => {
         .catch((err) => err);
       }, information.message_delete_time);
     }
+  } else if (command === "notap") {         // notapコマンド まだAPしてない曲一覧を教える。
+    if (data.length === 0) {
+      let names = message.author.username;
 
-  }else if(command === "notap"){         // notapコマンド まだAPしてない曲一覧を教える。
-
-    if(data.length === 0){
-
-      let names = message.author.username.split("");
-      
-      for(let i = 0; i < names.length; i++){
-        if(information.escapes.includes(names[i])) names[i] = "";
+      if (message.guild.members.cache.get(message.author.id).nickname) {
+        names = message.guild.members.cache.get(message.author.id).nickname.split("");
+      } else {
+        for (let matchName in information.notSetNickNameMemberList) {
+          if (message.author.username === matchName) {
+            names = information.notSetNickNameMemberList[matchName].split("");
+          }
+        }
       }
 
-      names = names.join("");
+      for (let i = 0; i < names.length; i++) {
+        if (information.escapes.includes(names[i])) names[i] = "";
+      }
 
-      db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 0", (err, rows) => {
+      let escapedName = names.join("");
+
+      db.all("select name, " + escapedName + "_flg" + " from APmusics where " + escapedName + "_flg = 0", (err, rows) => {
         // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-        if(err){
-
-          message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+        if (err) {
+          message.reply("まだ" + names + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + names + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
           setTimeout(() => {
             message.delete()
             .then((data) => data)
             .catch((err) => err);
           }, information.message_delete_time);
-
-        }else{
-
+        } else {
           // まだ1曲もAPしてないかどうか
-          if(rows.length === 0){
-
-            message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
+          if (rows.length === 0) {
+            message.reply(names + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
             setTimeout(() => {
               message.delete()
               .then((data) => data)
               .catch((err) => err);
             }, information.message_delete_time);
-
-          }else{
-
-            let musicNames  = rows.map((item) => {return item.name});
+          } else {
+            let musicNames = rows.map((item) => {return item.name});
             let sliceMusics = def.sliceByNumber(musicNames, 100);
-            let count       = 0;
-            let text        = "";
+            let count = 0;
+            let text = "";
 
-            if(sliceMusics.length === 1){
-
+            if (sliceMusics.length === 1) {
               text = sliceMusics[count].join("\n");
               message.reply("AP未達成曲\n\n" + text + "\n\n合計" + rows.length + "曲");
+
               setTimeout(() => {
                 message.delete()
                 .then((data) => data)
                 .catch((err) => err);
               }, information.message_delete_time);
-
-            }else{
-
+            } else {
               text = sliceMusics[count].join("\n");
               message.reply("AP未達成曲\n\n" + text);
               count++;
 
               let text_timer = setInterval(() => {
-                if(count === sliceMusics.length){
-
+                if (count === sliceMusics.length) {
                   message.delete()
                   .then((data) => data)
                   .catch((err) => err);
                   clearInterval(text_timer);
-
-                }else{
-
+                } else {
                   text = sliceMusics[count].join("\n");
 
-                  if(count === sliceMusics.length - 1){
-
+                  if (count === sliceMusics.length - 1) {
                     message.reply(text + "\n\n合計" + rows.length + "曲");
-
-                  }else{
-
+                  } else {
                     message.reply(text);
-
                   }
 
                   count++;
                 }
               }, 3_000);
-
             }
-
           }
         }
       });
-    }else if(data.length === 1){
+    } else if (data.length === 1) {
+      let names = message.author.username;
 
-      let names = message.author.username.split("");
-      
-      for(let i = 0; i < names.length; i++){
-        if(information.escapes.includes(names[i])) names[i] = "";
+      if (message.guild.members.cache.get(message.author.id).nickname) {
+        names = message.guild.members.cache.get(message.author.id).nickname.split("");
+      } else {
+        for (let matchName in information.notSetNickNameMemberList) {
+          if (message.author.username === matchName) {
+            names = information.notSetNickNameMemberList[matchName].split("");
+          }
+        }
       }
 
-      names = names.join("");
+      for (let i = 0; i < names.length; i++) {
+        if (information.escapes.includes(names[i])) names[i] = "";
+      }
+
+      let escapedName = names.join("");
 
       // タイプ以外の文字が入力されてたら警告
-      let check             = false;
+      let check = false;
 
-      for(let i = 0; i < information.types.length; i++){
-        if(data[0].toUpperCase().startsWith(information.check_types[i])){
+      for (let i = 0; i < information.types.length; i++) {
+        if (data[0].toUpperCase().startsWith(information.check_types[i])) {
           data[0] = information.types[i];
         }
       }
 
-      if(!def.isIncludes(["All", "Princess", "Angel", "Fairy"], data[0])){
+      if (!def.isIncludes(["All", "Princess", "Angel", "Fairy"], data[0])) {
         check = true;
       }
 
-      if(check){
-
+      if (check) {
         message.reply("入力された文字の中にタイプ名じゃない文字が入っています！\n正しいタイプ名(All, Princess, Fairy, Angel)を入力してください！\n\n235apall All");
         setTimeout(() => {
           message.delete()
           .then((data) => data)
           .catch((err) => err);
         }, information.message_delete_time);
-
-      }else{
-
-        db.all("select name, " + names + "_flg" + " from APmusics where " + names + "_flg = 0 and type = ?", data[0], (err, rows) => {
+      } else {
+        db.all("select name, " + escapedName + "_flg" + " from APmusics where " + escapedName + "_flg = 0 and type = ?", data[0], (err, rows) => {
           // コマンドを打ってきた人がまだカラムを登録してなかったらapコマンド使うように警告
-          if(err){
-  
-            message.reply("まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
+          if (err) {
+            message.reply("まだ" + names + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + names + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！");
             setTimeout(() => {
               message.delete()
               .then((data) => data)
               .catch((err) => err);
             }, information.message_delete_time);
-  
-          }else{
-  
+          } else {
             // まだ1曲もAPしてないかどうか
-            if(rows.length === 0){
-  
-              message.reply(message.author.username + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
+            if (rows.length === 0) {
+              message.reply(names + "さんはもう既に全ての曲をAPすることが出来ています！\nおめでとうございます♪");
               setTimeout(() => {
                 message.delete()
                 .then((data) => data)
                 .catch((err) => err);
               }, information.message_delete_time);
-  
-            }else{
-
-              let musicNames  = rows.map((item) => {return item.name});
+            } else {
+              let musicNames = rows.map((item) => {return item.name});
               let sliceMusics = def.sliceByNumber(musicNames, 100);
-              let count       = 0;
-              let text        = "";
+              let count = 0;
+              let text = "";
 
-              if(sliceMusics.length === 1){
-
+              if (sliceMusics.length === 1) {
                 text = sliceMusics[count].join("\n");
                 message.reply(data[0] + " AP未達成曲\n\n" + text + "\n\n合計" + rows.length + "曲");
                 setTimeout(() => {
@@ -1207,47 +1195,35 @@ client.on("messageCreate", message => {
                   .then((data) => data)
                   .catch((err) => err);
                 }, information.message_delete_time);
-
-              }else{
-
+              } else {
                 text = sliceMusics[count].join("\n");
                 message.reply(data[0] + " AP未達成曲\n\n" + text);
                 count++;
 
                 let text_timer = setInterval(() => {
-                  if(count === sliceMusics.length){
-
+                  if (count === sliceMusics.length) {
                     message.delete()
                     .then((data) => data)
                     .catch((err) => err);
                     clearInterval(text_timer);
-
-                  }else{
-
+                  } else {
                     text = sliceMusics[count].join("\n");
 
-                    if(count === sliceMusics.length - 1){
-
+                    if (count === sliceMusics.length - 1) {
                       message.reply(text + "\n\n合計" + rows.length + "曲");
-
-                    }else{
-
+                    } else {
                       message.reply(text);
-
                     }
 
                     count++;
                   }
                 }, 3_000);
-
               }
-  
             }
           }
         });
-
       }
-    }else{
+    } else {
       message.reply("入力された内容が多すぎます！ 絞ることができるタイプの数は**1つだけ**です！\n\n235apall Angel");
       setTimeout(() => {
         message.delete()
@@ -1255,7 +1231,6 @@ client.on("messageCreate", message => {
         .catch((err) => err);
       }, information.message_delete_time);
     }
-
   } else if (command === "apsearch") {      // apsearchコマンド 指定された曲がAPしてあるかどうか教える。
     if (data.length === 0) {
       message.reply("曲名が入力されていません！ 235apsearch DIAMOND のように曲名を入力してください！\n※曲名はフルで入力してください！（フルで入力することが出来ていなかったり、2曲以上入力している場合、見つけることが出来ません。）");
