@@ -1265,21 +1265,30 @@ client.on("messageCreate", message => {
         .catch((err) => err);
       }, information.message_delete_time);
     } else {
-      const musics    = msg.slice(9).split("^");
+      const musics = msg.slice(9).split("^");
+      let names = message.author.username;
 
-      let names = message.author.username.split("");
-      
+      if (message.guild.members.cache.get(message.author.id).nickname) {
+        names = message.guild.members.cache.get(message.author.id).nickname.split("");
+      } else {
+        for (let matchName in information.notSetNickNameMemberList) {
+          if (message.author.username === matchName) {
+            names = information.notSetNickNameMemberList[matchName].split("");
+          }
+        }
+      }
+
       for (let i = 0; i < names.length; i++) {
         if (information.escapes.includes(names[i])) names[i] = "";
       }
 
-      names = names.join("");
+      let escapedName = names.join("");
 
       let text = "";
 
-      db.all("select name, " + names + "_flg from APmusics", (err, rows) => {
+      db.all("select name, " + escapedName + "_flg from APmusics", (err, rows) => {
         if (err) {
-          text += "まだ" + message.author.username + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + message.author.username + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！";
+          text += "まだ" + names + "さんのAP曲データが登録されていないようです......\nまずは 235ap コマンドを使って" + names + "さんのAP曲データを登録してからAPすることが出来た曲を登録してください！";
 
           message.reply(text);
           setTimeout(() => {
@@ -1293,7 +1302,7 @@ client.on("messageCreate", message => {
 
           for (let row of rows) {
               if (min > def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase())) {
-                  min   = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
+                  min = def.levenshteinDistance(def.hiraToKana(musics[0]).toUpperCase(), def.hiraToKana(row.name).toUpperCase());
                   suggest_music = row.name;
               }
           }
@@ -1303,8 +1312,7 @@ client.on("messageCreate", message => {
               if (rows.length === 0) {
                 if (min <= 1) {
                   db.all("select * from APmusics where name = ?", suggest_music, (err, rows) => {
-
-                    if (rows[0][names + "_flg"] === 1) {
+                    if (rows[0][escapedName + "_flg"] === 1) {
                       message.reply(suggest_music + " は既にAP出来ています！");
                       setTimeout(() => {
                         message.delete()
@@ -1336,7 +1344,7 @@ client.on("messageCreate", message => {
                   }, information.message_delete_time);
                 }
               } else {
-                if (rows[0][names + "_flg"] === 1) {
+                if (rows[0][escapedName + "_flg"] === 1) {
                   message.reply(rows[0].name + " は既にAP出来ています！");
                   setTimeout(() => {
                     message.delete()
