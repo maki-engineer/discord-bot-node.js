@@ -2,6 +2,7 @@ node_modules
 img
 235bot_login.bat
 235data.db
+mathiodata.db
 discord-token.json
 twitter-token.json
 package-lock.json
@@ -13,3 +14,4 @@ test.js
 chat-gpt.py
 storage
 .env
+birthday_for_235_members.csv
