@@ -3,6 +3,7 @@
 // SQLite3導入
 const sqlite3 = require("sqlite3");
 const db = new sqlite3.Database("235data.db");
+const mathioDb = new sqlite3.Database('mathiodata.db');
 
 // 別ファイル導入
 const birthday_for_million_member = require("./birthday-for-million-member");
@@ -101,6 +102,30 @@ client.on("ready", () => {
         }
       });
     }
+
+    // まてぃおサーバーの最終ログイン日チェック
+    {
+      let setTime = new Date();
+      setTime.setDate(setTime.getDate() - 7);
+      let dateSevenDaysAgo = setTime.getDate();
+
+      mathioDb.all('select * from lobby_voice_channel_login_log where date <= ? and send_flg = 0', dateSevenDaysAgo, (err, rows) => {
+        if (rows.length !== 0) {
+          client.users.cache.get(information.user_for_maki).send('ロビーボイスチャンネルに参加してから1週間が経過しています！');
+
+          mathioDb.run('update lobby_voice_channel_login_log set send_flg = 1');
+        }
+      });
+
+      mathioDb.all('select * from horror_club_voice_channel_login_log where date <= ? and send_flg = 0', dateSevenDaysAgo, (err, rows) => {
+        if (rows.length !== 0) {
+          client.users.cache.get(information.user_for_maki).send('ホラゲー研究部ボイスチャンネルに参加してから1週間が経過しています！');
+
+          mathioDb.run('update horror_club_voice_channel_login_log set send_flg = 1');
+        }
+      });
+    }
+
 
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
     // ABCコンテストの開催日に、15時に参加登録をするように促し、20時50分ぐらいにまもなく始まりますよ通知を送る
@@ -1780,6 +1805,32 @@ client.on("messageCreate", message => {
         .then((data) => data)
         .catch((err) => err);
       }, information.message_delete_time);
+    }
+  } else if (command === "dakoku") {          // dakokuコマンド まてぃおサーバーの打刻コマンド
+    if (message.author.id === information.user_for_maki) {
+      const today = new Date();
+      const date = today.getDate();
+
+      if (data.length === 0) {
+        mathioDb.run('update lobby_voice_channel_login_log set date = ?, send_flg = 0', date);
+
+        message.reply('ロビーボイスチャンネルの打刻が完了しました！');
+        setTimeout(() => {
+          message.delete()
+          .then((data) => data)
+          .catch((err) => err);
+        }, information.message_delete_time);
+      } else {
+        mathioDb.run('update lobby_voice_channel_login_log set date = ?, send_flg = 0', date);
+        mathioDb.run('update horror_club_voice_channel_login_log set date = ?, send_flg = 0', date);
+
+        message.reply('ホラゲー研究部ボイスチャンネルの打刻が完了しました！');
+        setTimeout(() => {
+          message.delete()
+          .then((data) => data)
+          .catch((err) => err);
+        }, information.message_delete_time);
+      }
     }
   } else if (command === "test") {          // testコマンド テスト用 俺以外は打てないようにする。
     if (message.author.id === information.user_for_maki) {
