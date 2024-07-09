@@ -1806,32 +1806,6 @@ client.on("messageCreate", message => {
         .catch((err) => err);
       }, information.message_delete_time);
     }
-  } else if (command === "dakoku") {          // dakokuコマンド まてぃおサーバーの打刻コマンド
-    if (message.author.id === information.user_for_maki) {
-      const today = new Date();
-      const date = today.getDate();
-
-      if (data.length === 0) {
-        mathioDb.run('update lobby_voice_channel_login_log set date = ?, send_flg = 0', date);
-
-        message.reply('ロビーボイスチャンネルの打刻が完了しました！');
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-      } else {
-        mathioDb.run('update lobby_voice_channel_login_log set date = ?, send_flg = 0', date);
-        mathioDb.run('update horror_club_voice_channel_login_log set date = ?, send_flg = 0', date);
-
-        message.reply('ホラゲー研究部ボイスチャンネルの打刻が完了しました！');
-        setTimeout(() => {
-          message.delete()
-          .then((data) => data)
-          .catch((err) => err);
-        }, information.message_delete_time);
-      }
-    }
   } else if (command === "test") {          // testコマンド テスト用 俺以外は打てないようにする。
     if (message.author.id === information.user_for_maki) {
       message.reply("テスト用コマンド");
