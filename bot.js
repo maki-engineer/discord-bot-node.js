@@ -3,28 +3,11 @@
 // SQLite3導入
 const sqlite3 = require("sqlite3");
 const db = new sqlite3.Database("235data.db");
-const mathioDb = new sqlite3.Database('mathiodata.db');
 
 // 別ファイル導入
 const birthday_for_million_member = require("./birthday-for-million-member");
 const information = require("./information-for-235");
 const def = require("./function");
-
-// twitter導入
-let twitter = require("twitter");
-let twitterToken = require("./twitter-token.json");
-let bot = new twitter({
-  consumer_key       : twitterToken.consumer_key,
-  consumer_secret    : twitterToken.consumer_secret,
-  access_token_key   : twitterToken.access_token_key,
-  access_token_secret: twitterToken.access_token_secret
-});
-
-// モジュール導入
-const https = require("https");
-const jsdom = require("jsdom");
-const { JSDOM } = jsdom;
-const url = "https://atcoder.jp/contests/?lang=ja";
 
 // discord.js導入
 const { Client, GatewayIntentBits } = require("discord.js");
@@ -103,32 +86,7 @@ client.on("ready", () => {
       });
     }
 
-    // まてぃおサーバーの最終ログイン日チェック
-    {
-      let setTime = new Date();
-      setTime.setDate(setTime.getDate() - 7);
-      let dateSevenDaysAgo = setTime.getDate();
-
-      mathioDb.all('select * from lobby_voice_channel_login_log where date <= ? and send_flg = 0', dateSevenDaysAgo, (err, rows) => {
-        if (rows.length !== 0) {
-          client.users.cache.get(information.user_for_maki).send('ロビーボイスチャンネルに参加してから1週間が経過しています！');
-
-          mathioDb.run('update lobby_voice_channel_login_log set send_flg = 1');
-        }
-      });
-
-      mathioDb.all('select * from horror_club_voice_channel_login_log where date <= ? and send_flg = 0', dateSevenDaysAgo, (err, rows) => {
-        if (rows.length !== 0) {
-          client.users.cache.get(information.user_for_maki).send('ホラゲー研究部ボイスチャンネルに参加してから1週間が経過しています！');
-
-          mathioDb.run('update horror_club_voice_channel_login_log set send_flg = 1');
-        }
-      });
-    }
-
-
     // 9時にメンバーの誕生日、9時半にミリシタのキャラの誕生日、10時に周年祝い
-    // ABCコンテストの開催日に、15時に参加登録をするように促し、20時50分ぐらいにまもなく始まりますよ通知を送る
     // 23時に自動で停止
     if ((today_hour === 9) && (today_min === 0)) {
       db.all("select * from birthday_for_235_members", (err, rows) => {
@@ -238,80 +196,6 @@ client.on("ready", () => {
           }
         }
       }
-    } else if ((today_hour === 15) && (today_min === 0)) {
-      https.get(url, res => {
-        let html = "";
-
-        res.on("data", line => html += line);
-        res.on("end", () => {
-          const dom = new JSDOM(html);
-          let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(1).querySelector("tbody").querySelectorAll("tr");
-
-          contestTableUpcoming.forEach(row => {
-            let aTags = row.querySelectorAll("a");
-            let contestStartDate = aTags[0];
-            let contestName = aTags[1];
-
-            if (contestName.textContent.includes("AtCoder Beginner Contest")) {
-              let contestDate = new Date(contestStartDate.textContent);
-              let startMonth = contestDate.getMonth() + 1;
-              let startDate = contestDate.getDate();
-
-              if ((today_month === startMonth) && (today_date === startDate)) {
-                let contestUrl = "https://atcoder.jp/contests/abc";
-                let searchNums = contestName.textContent.match(/\d+/g);
-
-                for (let num of searchNums) {
-                  https.get(contestUrl + num, res => {
-                    if (res.statusCode === 200) {
-                      contestUrl += num;
-
-                      client.channels.cache.get(information.channel_for_test_solo_chat_place).send("@everyone\n本日は **" + contestName.textContent + "** が開催されます！\nまだ参加登録をしていない場合は、今のうちに参加登録をしておきましょう！\n\n" + contestUrl);
-                    }
-                  });
-                }
-              }
-            }
-          });
-        });
-      });
-    } else if ((today_hour === 20) && (today_min === 50)) {
-      https.get(url, res => {
-        let html = "";
-
-        res.on("data", line => html += line);
-        res.on("end", () => {
-          const dom = new JSDOM(html);
-          let contestTableUpcoming = dom.window.document.getElementsByClassName("table table-default table-striped table-hover table-condensed table-bordered small").item(1).querySelector("tbody").querySelectorAll("tr");
-
-          contestTableUpcoming.forEach(row => {
-            let aTags = row.querySelectorAll("a");
-            let contestStartDate = aTags[0];
-            let contestName = aTags[1];
-
-            if (contestName.textContent.includes("AtCoder Beginner Contest")) {
-              let contestDate = new Date(contestStartDate.textContent);
-              let startMonth = contestDate.getMonth() + 1;
-              let startDate = contestDate.getDate();
-
-              if ((today_month === startMonth) && (today_date === startDate)) {
-                let contestUrl = "https://atcoder.jp/contests/abc";
-                let searchNums = contestName.textContent.match(/\d+/g);
-
-                for (let num of searchNums) {
-                  https.get(contestUrl + num, res => {
-                    if (res.statusCode === 200) {
-                      contestUrl += num;
-
-                      client.channels.cache.get(information.channel_for_test_solo_chat_place).send("@everyone\nまもなく **" + contestName.textContent + "** が開催されます！\n\n" + contestUrl);
-                    }
-                  });
-                }
-              }
-            }
-          });
-        });
-      });
     } else if ((today_hour === 23) && (today_min === 0)) {
       process.exit();
     }
